@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="no-js immersion-color amoled-dark toolbar-blur article-header-style-default ">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5">
+<meta property="og:title" content="301海外跳转原理解析兼谈缓解假墙伪墙攻击勒索的多种技术手段 - 雅丶涵">
+<meta property="og:type" content="article">
+<meta property="og:url" content="/301%E6%B5%B7%E5%A4%96%E8%B7%B3%E8%BD%AC%E5%8E%9F%E7%90%86%E8%A7%A3%E6%9E%90%E5%85%BC%E8%B0%88%E7%BC%93%E8%A7%A3%E5%81%87%E5%A2%99%E4%BC%AA%E5%A2%99%E6%94%BB%E5%87%BB%E5%8B%92%E7%B4%A2%E7%9A%84">
+<meta name="description" content="我们知道，墙封锁一个网站有DNS污染、IP封锁、TCP Reset（TCP连接重置）等手段。而一个网站一旦被墙，一般情况下是无法直接通过301（或302）跳转到其他网站的。如果只是IP被封还好说，换IP通常能解决问题。 &hellip;">
+<meta property="og:description" content="我们知道，墙封锁一个网站有DNS污染、IP封锁、TCP Reset（TCP连接重置）等手段。而一个网站一旦被墙，一般情况下是无法直接通过301（或302）跳转到其他网站的。如果只是IP被封还好说，换IP通常能解决问题。 &hellip;">
+<meta property="og:image" content="/wp-content/uploads/2021/09/1E61D72A-5DBB-42CD-8713-6F50C03A3B5F.jpeg">
+<meta name="theme-color" content="#fa7298">
+<meta name="theme-color-rgb" content="250,114,152">
+<meta name="theme-color-origin" content="#fa7298">
+<meta name="argon-enable-custom-theme-color" content="true">
+<meta name="theme-card-radius" content="4">
+<meta name="theme-card-radius-origin" content="4">
+<meta name="theme-version" content="1.3.5">
+<link rel="profile" href="https://gmpg.org/xfn/11">
+<link rel="pingback" href="/xmlrpc.php">
+<title>301海外跳转原理解析兼谈缓解假墙伪墙攻击勒索的多种技术手段 - 雅丶涵</title>
+<meta name="description" content="我们知道，墙封锁一个网站有DNS污染、IP封锁、TCP Reset（TCP连接重置）等手段。而一个网站一旦被墙，一般情况下是无法直接通过301（或302）跳转到其他网站的。如果只是IP被封还好说，换IP通常能解决问题。 &hellip;">
+<meta name="robots" content="max-image-preview:large">
+<link rel="dns-prefetch" href="//fonts.lug.ustc.edu.cn">
+<link rel="stylesheet" id="argon_css_merged-css" href="/wp-content/themes/argon/assets/argon_css_merged.css?ver=1.3.5" type="text/css" media="all">
+<link rel="stylesheet" id="style-css" href="/wp-content/themes/argon/style.css?ver=1.3.5" type="text/css" media="all">
+<link rel="stylesheet" id="googlefont-css" href="//fonts.lug.ustc.edu.cn/css?family=Open+Sans%3A300%2C400%2C600%2C700%7CNoto+Serif+SC%3A300%2C600&#038;display=swap" type="text/css" media="all">
+<style id="classic-theme-styles-inline-css" type="text/css">/*! This file is auto-generated */
+.wp-block-button__link{color:#fff;background-color:#32373c;border-radius:9999px;box-shadow:none;text-decoration:none;padding:calc(.667em + 2px) calc(1.333em + 2px);font-size:1.125em}.wp-block-file__button{background:#32373c;color:#fff;text-decoration:none}</style>
+<style id="global-styles-inline-css" type="text/css">body{--wp--preset--color--black: #000000;--wp--preset--color--cyan-bluish-gray: #abb8c3;--wp--preset--color--white: #ffffff;--wp--preset--color--pale-pink: #f78da7;--wp--preset--color--vivid-red: #cf2e2e;--wp--preset--color--luminous-vivid-orange: #ff6900;--wp--preset--color--luminous-vivid-amber: #fcb900;--wp--preset--color--light-green-cyan: #7bdcb5;--wp--preset--color--vivid-green-cyan: #00d084;--wp--preset--color--pale-cyan-blue: #8ed1fc;--wp--preset--color--vivid-cyan-blue: #0693e3;--wp--preset--color--vivid-purple: #9b51e0;--wp--preset--gradient--vivid-cyan-blue-to-vivid-purple: linear-gradient(135deg,rgba(6,147,227,1) 0%,rgb(155,81,224) 100%);--wp--preset--gradient--light-green-cyan-to-vivid-green-cyan: linear-gradient(135deg,rgb(122,220,180) 0%,rgb(0,208,130) 100%);--wp--preset--gradient--luminous-vivid-amber-to-luminous-vivid-orange: linear-gradient(135deg,rgba(252,185,0,1) 0%,rgba(255,105,0,1) 100%);--wp--preset--gradient--luminous-vivid-orange-to-vivid-red: linear-gradient(135deg,rgba(255,105,0,1) 0%,rgb(207,46,46) 100%);--wp--preset--gradient--very-light-gray-to-cyan-bluish-gray: linear-gradient(135deg,rgb(238,238,238) 0%,rgb(169,184,195) 100%);--wp--preset--gradient--cool-to-warm-spectrum: linear-gradient(135deg,rgb(74,234,220) 0%,rgb(151,120,209) 20%,rgb(207,42,186) 40%,rgb(238,44,130) 60%,rgb(251,105,98) 80%,rgb(254,248,76) 100%);--wp--preset--gradient--blush-light-purple: linear-gradient(135deg,rgb(255,206,236) 0%,rgb(152,150,240) 100%);--wp--preset--gradient--blush-bordeaux: linear-gradient(135deg,rgb(254,205,165) 0%,rgb(254,45,45) 50%,rgb(107,0,62) 100%);--wp--preset--gradient--luminous-dusk: linear-gradient(135deg,rgb(255,203,112) 0%,rgb(199,81,192) 50%,rgb(65,88,208) 100%);--wp--preset--gradient--pale-ocean: linear-gradient(135deg,rgb(255,245,203) 0%,rgb(182,227,212) 50%,rgb(51,167,181) 100%);--wp--preset--gradient--electric-grass: linear-gradient(135deg,rgb(202,248,128) 0%,rgb(113,206,126) 100%);--wp--preset--gradient--midnight: linear-gradient(135deg,rgb(2,3,129) 0%,rgb(40,116,252) 100%);--wp--preset--font-size--small: 13px;--wp--preset--font-size--medium: 20px;--wp--preset--font-size--large: 36px;--wp--preset--font-size--x-large: 42px;--wp--preset--spacing--20: 0.44rem;--wp--preset--spacing--30: 0.67rem;--wp--preset--spacing--40: 1rem;--wp--preset--spacing--50: 1.5rem;--wp--preset--spacing--60: 2.25rem;--wp--preset--spacing--70: 3.38rem;--wp--preset--spacing--80: 5.06rem;--wp--preset--shadow--natural: 6px 6px 9px rgba(0, 0, 0, 0.2);--wp--preset--shadow--deep: 12px 12px 50px rgba(0, 0, 0, 0.4);--wp--preset--shadow--sharp: 6px 6px 0px rgba(0, 0, 0, 0.2);--wp--preset--shadow--outlined: 6px 6px 0px -3px rgba(255, 255, 255, 1), 6px 6px rgba(0, 0, 0, 1);--wp--preset--shadow--crisp: 6px 6px 0px rgba(0, 0, 0, 1);}:where(.is-layout-flex){gap: 0.5em;}:where(.is-layout-grid){gap: 0.5em;}body .is-layout-flow > .alignleft{float: left;margin-inline-start: 0;margin-inline-end: 2em;}body .is-layout-flow > .alignright{float: right;margin-inline-start: 2em;margin-inline-end: 0;}body .is-layout-flow > .aligncenter{margin-left: auto !important;margin-right: auto !important;}body .is-layout-constrained > .alignleft{float: left;margin-inline-start: 0;margin-inline-end: 2em;}body .is-layout-constrained > .alignright{float: right;margin-inline-start: 2em;margin-inline-end: 0;}body .is-layout-constrained > .aligncenter{margin-left: auto !important;margin-right: auto !important;}body .is-layout-constrained > :where(:not(.alignleft):not(.alignright):not(.alignfull)){max-width: var(--wp--style--global--content-size);margin-left: auto !important;margin-right: auto !important;}body .is-layout-constrained > .alignwide{max-width: var(--wp--style--global--wide-size);}body .is-layout-flex{display: flex;}body .is-layout-flex{flex-wrap: wrap;align-items: center;}body .is-layout-flex > *{margin: 0;}body .is-layout-grid{display: grid;}body .is-layout-grid > *{margin: 0;}:where(.wp-block-columns.is-layout-flex){gap: 2em;}:where(.wp-block-columns.is-layout-grid){gap: 2em;}:where(.wp-block-post-template.is-layout-flex){gap: 1.25em;}:where(.wp-block-post-template.is-layout-grid){gap: 1.25em;}.has-black-color{color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-color{color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-color{color: var(--wp--preset--color--white) !important;}.has-pale-pink-color{color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-color{color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-color{color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-color{color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-color{color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-color{color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-color{color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-color{color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-color{color: var(--wp--preset--color--vivid-purple) !important;}.has-black-background-color{background-color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-background-color{background-color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-background-color{background-color: var(--wp--preset--color--white) !important;}.has-pale-pink-background-color{background-color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-background-color{background-color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-background-color{background-color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-background-color{background-color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-background-color{background-color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-background-color{background-color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-background-color{background-color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-background-color{background-color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-background-color{background-color: var(--wp--preset--color--vivid-purple) !important;}.has-black-border-color{border-color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-border-color{border-color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-border-color{border-color: var(--wp--preset--color--white) !important;}.has-pale-pink-border-color{border-color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-border-color{border-color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-border-color{border-color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-border-color{border-color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-border-color{border-color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-border-color{border-color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-border-color{border-color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-border-color{border-color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-border-color{border-color: var(--wp--preset--color--vivid-purple) !important;}.has-vivid-cyan-blue-to-vivid-purple-gradient-background{background: var(--wp--preset--gradient--vivid-cyan-blue-to-vivid-purple) !important;}.has-light-green-cyan-to-vivid-green-cyan-gradient-background{background: var(--wp--preset--gradient--light-green-cyan-to-vivid-green-cyan) !important;}.has-luminous-vivid-amber-to-luminous-vivid-orange-gradient-background{background: var(--wp--preset--gradient--luminous-vivid-amber-to-luminous-vivid-orange) !important;}.has-luminous-vivid-orange-to-vivid-red-gradient-background{background: var(--wp--preset--gradient--luminous-vivid-orange-to-vivid-red) !important;}.has-very-light-gray-to-cyan-bluish-gray-gradient-background{background: var(--wp--preset--gradient--very-light-gray-to-cyan-bluish-gray) !important;}.has-cool-to-warm-spectrum-gradient-background{background: var(--wp--preset--gradient--cool-to-warm-spectrum) !important;}.has-blush-light-purple-gradient-background{background: var(--wp--preset--gradient--blush-light-purple) !important;}.has-blush-bordeaux-gradient-background{background: var(--wp--preset--gradient--blush-bordeaux) !important;}.has-luminous-dusk-gradient-background{background: var(--wp--preset--gradient--luminous-dusk) !important;}.has-pale-ocean-gradient-background{background: var(--wp--preset--gradient--pale-ocean) !important;}.has-electric-grass-gradient-background{background: var(--wp--preset--gradient--electric-grass) !important;}.has-midnight-gradient-background{background: var(--wp--preset--gradient--midnight) !important;}.has-small-font-size{font-size: var(--wp--preset--font-size--small) !important;}.has-medium-font-size{font-size: var(--wp--preset--font-size--medium) !important;}.has-large-font-size{font-size: var(--wp--preset--font-size--large) !important;}.has-x-large-font-size{font-size: var(--wp--preset--font-size--x-large) !important;}
+.wp-block-navigation a:where(:not(.wp-element-button)){color: inherit;}
+:where(.wp-block-post-template.is-layout-flex){gap: 1.25em;}:where(.wp-block-post-template.is-layout-grid){gap: 1.25em;}
+:where(.wp-block-columns.is-layout-flex){gap: 2em;}:where(.wp-block-columns.is-layout-grid){gap: 2em;}
+.wp-block-pullquote{font-size: 1.5em;line-height: 1.6;}</style>
+<script type="text/javascript" src="/wp-content/themes/argon/assets/argon_js_merged.js?ver=1.3.5" id="argon_js_merged-js"></script>
+<script type="text/javascript" src="/wp-content/themes/argon/assets/js/argon.min.js?ver=1.3.5" id="argonjs-js"></script>
+<link rel="canonical" href="/301%e6%b5%b7%e5%a4%96%e8%b7%b3%e8%bd%ac%e5%8e%9f%e7%90%86%e8%a7%a3%e6%9e%90%e5%85%bc%e8%b0%88%e7%bc%93%e8%a7%a3%e5%81%87%e5%a2%99%e4%bc%aa%e5%a2%99%e6%94%bb%e5%87%bb%e5%8b%92%e7%b4%a2%e7%9a%84/">
+<script type="text/javascript"></script>
+<style type="text/css"></style>
+<meta name="ssp-config-path" content="/wp-content/uploads/simply-static/configs/">
+<style type="text/css">.recentcomments a{display:inline !important;padding:0 !important;margin:0 !important;}</style>
+<link rel="icon" href="/wp-content/uploads/2022/06/cropped-IMG_9644-e1655738850667-32x32.png" sizes="32x32">
+<link rel="icon" href="/wp-content/uploads/2022/06/cropped-IMG_9644-e1655738850667-192x192.png" sizes="192x192">
+<link rel="apple-touch-icon" href="/wp-content/uploads/2022/06/cropped-IMG_9644-e1655738850667-180x180.png">
+<meta name="msapplication-TileImage" content="/wp-content/uploads/2022/06/cropped-IMG_9644-e1655738850667-270x270.png">
+<script>document.documentElement.classList.remove("no-js");
+		var argonConfig = {
+			wp_path: "/",
+			language: "zh_CN",
+			dateFormat: "YMD",
+							zoomify: false,
+						pangu: "article|shuoshuo|comment",
+							lazyload: {
+					threshold: 800,
+					effect: "fadeIn"
+				},
+						fold_long_comments: false,
+			fold_long_shuoshuo: false,
+			disable_pjax: false,
+			pjax_animation_durtion: 600,
+			headroom: "true",
+			waterflow_columns: "1",
+			code_highlight: {
+				enable: true,
+				hide_linenumber: false,
+				transparent_linenumber: true,
+				break_line: true			}
+		}</script>
+<script>
+		var darkmodeAutoSwitch = "system";
+		function setDarkmode(enable){
+			if (enable == true){
+				$("html").addClass("darkmode");
+			}else{
+				$("html").removeClass("darkmode");
+			}
+			$(window).trigger("scroll");
+		}
+		function toggleDarkmode(){
+			if ($("html").hasClass("darkmode")){
+				setDarkmode(false);
+				sessionStorage.setItem("Argon_Enable_Dark_Mode", "false");
+			}else{
+				setDarkmode(true);
+				sessionStorage.setItem("Argon_Enable_Dark_Mode", "true");
+			}
+		}
+		if (sessionStorage.getItem("Argon_Enable_Dark_Mode") == "true"){
+			setDarkmode(true);
+		}
+		function toggleDarkmodeByPrefersColorScheme(media){
+			if (sessionStorage.getItem('Argon_Enable_Dark_Mode') == "false" || sessionStorage.getItem('Argon_Enable_Dark_Mode') == "true"){
+				return;
+			}
+			if (media.matches){
+				setDarkmode(true);
+			}else{
+				setDarkmode(false);
+			}
+		}
+		function toggleDarkmodeByTime(){
+			if (sessionStorage.getItem('Argon_Enable_Dark_Mode') == "false" || sessionStorage.getItem('Argon_Enable_Dark_Mode') == "true"){
+				return;
+			}
+			let hour = new Date().getHours();
+			if (hour < 7 || hour >= 22){
+				setDarkmode(true);
+			}else{
+				setDarkmode(false);
+			}
+		}
+		if (darkmodeAutoSwitch == 'system'){
+			var darkmodeMediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+			darkmodeMediaQuery.addListener(toggleDarkmodeByPrefersColorScheme);
+			toggleDarkmodeByPrefersColorScheme(darkmodeMediaQuery);
+		}
+		if (darkmodeAutoSwitch == 'time'){
+			toggleDarkmodeByTime();
+		}
+		if (darkmodeAutoSwitch == 'alwayson'){
+			setDarkmode(true);
+		}
+
+		function toggleAmoledDarkMode(){
+			$("html").toggleClass("amoled-dark");
+			if ($("html").hasClass("amoled-dark")){
+				localStorage.setItem("Argon_Enable_Amoled_Dark_Mode", "true");
+			}else{
+				localStorage.setItem("Argon_Enable_Amoled_Dark_Mode", "false");
+			}
+		}
+		if (localStorage.getItem("Argon_Enable_Amoled_Dark_Mode") == "true"){
+			$("html").addClass("amoled-dark");
+		}else if (localStorage.getItem("Argon_Enable_Amoled_Dark_Mode") == "false"){
+			$("html").removeClass("amoled-dark");
+		}
+	</script>
+<script>if (navigator.userAgent.indexOf("Safari") !== -1 && navigator.userAgent.indexOf("Chrome") === -1){
+			$("html").addClass("using-safari");
+		}</script>
+<script src="/wp-content/themes/argon/assets/vendor/smoothscroll/smoothscroll1.js"></script>
+</head>
+<style id="themecolor_css">:root{
+		--themecolor: #fa7298;
+		--themecolor-R: 250;
+		--themecolor-G: 114;
+		--themecolor-B: 152;
+		--themecolor-H: 343;
+		--themecolor-S: 93;
+		--themecolor-L: 71;
+	}</style>
+<style id="theme_cardradius_css">:root{
+		--card-radius: 4px;
+	}</style>
+<body class="post-template-default single single-post postid-68 single-format-standard">
+<div id="toolbar">
+<header class="header-global">
+<nav id="navbar-main" class="navbar navbar-main navbar-expand-lg navbar-transparent navbar-light bg-primary headroom--not-bottom headroom--not-top headroom--pinned">
+<div class="container">
+<button id="open_sidebar" class="navbar-toggler" type="button" aria-expanded="false" aria-label="Toggle sidebar">
+<span class="navbar-toggler-icon"></span>
+</button>
+<div class="navbar-brand mr-0">
+<a class="navbar-brand navbar-title" href="/">雅丶涵</a>
+</div>
+<div class="navbar-collapse collapse" id="navbar_global">
+<div class="navbar-collapse-header">
+<div class="row" style="display: none;">
+<div class="col-6 collapse-brand"></div>
+<div class="col-6 collapse-close">
+<button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbar_global" aria-controls="navbar_global" aria-expanded="false" aria-label="Toggle navigation">
+<span></span>
+<span></span>
+</button>
+</div>
+</div>
+<div class="input-group input-group-alternative">
+<div class="input-group-prepend">
+<span class="input-group-text"><i class="fa fa-search"></i></span>
+</div>
+<input id="navbar_search_input_mobile" class="form-control" placeholder="搜索什么..." type="text" autocomplete="off">
+</div>
+</div>
+<ul class="navbar-nav navbar-nav-hover align-items-lg-center">
+<li class="nav-item">
+<a href="/category/%e6%b8%b8%e6%88%8f/" class="nav-link" target title>
+<i class="ni ni-book-bookmark d-lg-none"></i>
+<span class="nav-link-inner--text">游戏</span>
+</a>
+</li>
+<li class="nav-item">
+<a href="/category/%e8%bd%af%e4%bb%b6%e5%88%86%e4%ba%ab/" class="nav-link" target title>
+<i class="ni ni-book-bookmark d-lg-none"></i>
+<span class="nav-link-inner--text">软件分享</span>
+</a>
+</li>
+<li class="nav-item">
+<a href="/category/%e6%8a%80%e6%9c%af%e8%ae%b0%e5%bd%95/" class="nav-link" target title>
+<i class="ni ni-book-bookmark d-lg-none"></i>
+<span class="nav-link-inner--text">技术记录</span>
+</a>
+</li>
+<li class="nav-item">
+<a href="/category/%e4%b8%8a%e7%bd%91%e5%b7%a5%e5%85%b7/" class="nav-link" target title>
+<i class="ni ni-book-bookmark d-lg-none"></i>
+<span class="nav-link-inner--text">上网工具</span>
+</a>
+</li>
+<li class="nav-item">
+<a href="/category/eve/" class="nav-link" target title>
+<i class="ni ni-book-bookmark d-lg-none"></i>
+<span class="nav-link-inner--text">EVE</span>
+</a>
+</li>
+</ul> <ul class="navbar-nav align-items-lg-center ml-lg-auto">
+<li id="navbar_search_container" class="nav-item" data-toggle="modal">
+<div id="navbar_search_input_container">
+<div class="input-group input-group-alternative">
+<div class="input-group-prepend">
+<span class="input-group-text"><i class="fa fa-search"></i></span>
+</div>
+<input id="navbar_search_input" class="form-control" placeholder="搜索什么..." type="text" autocomplete="off">
+</div>
+</div>
+</li>
+</ul>
+</div>
+<div id="navbar_menu_mask" data-toggle="collapse" data-target="#navbar_global"></div>
+<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar_global" aria-controls="navbar_global" aria-expanded="false" aria-label="Toggle navigation">
+<span class="navbar-toggler-icon navbar-toggler-searcg-icon"></span>
+</button>
+</div>
+</nav>
+</header>
+</div>
+<div class="modal fade" id="argon_search_modal" tabindex="-1" role="dialog" aria-labelledby aria-hidden="true">
+<div class="modal-dialog modal-dialog-centered modal-sm" role="document">
+<div class="modal-content">
+<div class="modal-header">
+<h5 class="modal-title">搜索</h5>
+<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+<span aria-hidden="true">&times;</span>
+</button>
+</div>
+<div class="modal-body">
+<form id="argon_serach_form" method="get" action="https://i19.eu">
+<div class="form-group mb-3">
+<div class="input-group input-group-alternative">
+<div class="input-group-prepend">
+<span class="input-group-text"><i class="fa fa-search"></i></span>
+</div>
+<input name="s" class="form-control" placeholder="搜索什么..." type="text" autocomplete="off">
+</div>
+</div>
+<div class="text-center">
+<button onclick="if($('#argon_serach_form input[name=\'s\']').val() != '') {document.getElementById('argon_serach_form').submit();}" type="button" class="btn btn-primary">搜索</button>
+</div>
+</form> </div>
+</div>
+</div>
+</div>
+
+<section id="banner" class="banner section section-lg section-shaped">
+<div class="shape shape-style-1 shape-default">
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+</div>
+<div id="banner_container" class="banner-container container text-center">
+<div class="banner-title text-white" data-interval="100">
+<span data-text="雅丶涵" class="banner-title-inner">&nbsp;</span>
+</div>
+</div>
+</section>
+<style>#banner:after {
+			content: '';
+			width: 100vw;
+			position: absolute;
+			left: 0;
+			top: 0;
+			height: 120px;
+			background: linear-gradient(180deg, rgba(0,0,0,0.25) 0%, rgba(0,0,0,0.15) 35%, rgba(0,0,0,0) 100%);
+			display: block;
+			z-index: -1;
+		}
+		.banner-title {
+			text-shadow: 0 5px 15px rgba(0, 0, 0, .2);
+		}</style>
+<div id="float_action_buttons" class="float-action-buttons fabtns-unloaded">
+<button id="fabtn_toggle_sides" class="btn btn-icon btn-neutral fabtn shadow-sm" type="button" aria-hidden="true" tooltip-move-to-left="移至左侧" tooltip-move-to-right="移至右侧">
+<span class="btn-inner--icon fabtn-show-on-right"><i class="fa fa-caret-left"></i></span>
+<span class="btn-inner--icon fabtn-show-on-left"><i class="fa fa-caret-right"></i></span>
+</button>
+<button id="fabtn_back_to_top" class="btn btn-icon btn-neutral fabtn shadow-sm" type="button" aria-label="Back To Top" tooltip="回到顶部">
+<span class="btn-inner--icon"><i class="fa fa-angle-up"></i></span>
+</button>
+<button id="fabtn_go_to_comment" class="btn btn-icon btn-neutral fabtn shadow-sm d-none" type="button" aria-label="Comment" tooltip="评论">
+<span class="btn-inner--icon"><i class="fa fa-comment-o"></i></span>
+</button>
+<button id="fabtn_toggle_darkmode" class="btn btn-icon btn-neutral fabtn shadow-sm" type="button" style="display: none;" aria-label="Toggle Darkmode" tooltip-darkmode="夜间模式" tooltip-blackmode="暗黑模式" tooltip-lightmode="日间模式">
+<span class="btn-inner--icon"><i class="fa fa-moon-o"></i><i class="fa fa-lightbulb-o"></i></span>
+</button>
+<button id="fabtn_toggle_blog_settings_popup" class="btn btn-icon btn-neutral fabtn shadow-sm" type="button" aria-label="Open Blog Settings Menu" tooltip="设置">
+<span class="btn-inner--icon"><i class="fa fa-cog"></i></span>
+</button>
+<div id="fabtn_blog_settings_popup" class="card shadow-sm" style="opacity: 0;" aria-hidden="true">
+<div id="close_blog_settings"><i class="fa fa-close"></i></div>
+<div class="blog-setting-item mt-3">
+<div style="transform: translateY(-4px);"><div id="blog_setting_toggle_darkmode_and_amoledarkmode" tooltip-switch-to-darkmode="切换到夜间模式" tooltip-switch-to-blackmode="切换到暗黑模式">
+<span>夜间模式</span><span>暗黑模式</span>
+</div></div>
+<div style="flex: 1;"></div>
+<label id="blog_setting_darkmode_switch" class="custom-toggle">
+<span class="custom-toggle-slider rounded-circle"></span>
+</label>
+</div>
+<div class="blog-setting-item mt-3">
+<div style="flex: 1;">字体</div>
+<div>
+<button id="blog_setting_font_sans_serif" type="button" class="blog-setting-font btn btn-outline-primary blog-setting-selector-left">Sans Serif</button><button id="blog_setting_font_serif" type="button" class="blog-setting-font btn btn-outline-primary blog-setting-selector-right">Serif</button>
+</div>
+</div>
+<div class="blog-setting-item mt-3">
+<div style="flex: 1;">阴影</div>
+<div>
+<button id="blog_setting_shadow_small" type="button" class="blog-setting-shadow btn btn-outline-primary blog-setting-selector-left">浅阴影</button><button id="blog_setting_shadow_big" type="button" class="blog-setting-shadow btn btn-outline-primary blog-setting-selector-right">深阴影</button>
+</div>
+</div>
+<div class="blog-setting-item mt-3 mb-3">
+<div style="flex: 1;">滤镜</div>
+<div id="blog_setting_filters" class="ml-3">
+<button id="blog_setting_filter_off" type="button" class="blog-setting-filter-btn ml-0" filter-name="off">关闭</button>
+<button id="blog_setting_filter_sunset" type="button" class="blog-setting-filter-btn" filter-name="sunset">日落</button>
+<button id="blog_setting_filter_darkness" type="button" class="blog-setting-filter-btn" filter-name="darkness">暗化</button>
+<button id="blog_setting_filter_grayscale" type="button" class="blog-setting-filter-btn" filter-name="grayscale">灰度</button>
+</div>
+</div>
+<div class="blog-setting-item mb-3">
+<div id="blog_setting_card_radius_to_default" style="cursor: pointer;" tooltip="恢复默认">圆角</div>
+<div style="flex: 1;margin-left: 20px;margin-right: 8px;transform: translateY(2px);">
+<div id="blog_setting_card_radius"></div>
+</div>
+</div>
+<div class="blog-setting-item mt-1 mb-3">
+<div style="flex: 1;">主题色</div>
+<div id="theme-color-picker" class="ml-3"></div>
+</div>
+</div>
+<button id="fabtn_reading_progress" class="btn btn-icon btn-neutral fabtn shadow-sm" type="button" aria-hidden="true" tooltip="阅读进度">
+<div id="fabtn_reading_progress_bar" style="width: 0%;"></div>
+<span id="fabtn_reading_progress_details">0%</span>
+</button>
+</div>
+<div id="content" class="site-content">
+<div class="page-information-card-container"></div>
+<div id="sidebar_mask"></div>
+<aside id="leftbar" class="leftbar widget-area" role="complementary">
+<div id="leftbar_part1" class="widget widget_search card bg-white shadow-sm border-0">
+<div class="leftbar-banner card-body">
+<span class="leftbar-banner-title text-white">雅丶涵</span>
+</div>
+<ul id="leftbar_part1_menu" class="leftbar-menu">
+<li class="leftbar-menu-item">
+<a href="/category/%e6%b8%b8%e6%88%8f/" target>游戏</a>
+</li>
+<li class="leftbar-menu-item">
+<a href="/category/%e8%bd%af%e4%bb%b6%e5%88%86%e4%ba%ab/" target>软件分享</a>
+</li>
+<li class="leftbar-menu-item">
+<a href="/category/%e6%8a%80%e6%9c%af%e8%ae%b0%e5%bd%95/" target>技术记录</a>
+</li>
+<li class="leftbar-menu-item">
+<a href="/category/%e4%b8%8a%e7%bd%91%e5%b7%a5%e5%85%b7/" target>上网工具</a>
+</li>
+<li class="leftbar-menu-item">
+<a href="/category/eve/" target>EVE</a>
+</li>
+</ul> <div class="card-body text-center leftbar-search-button">
+<button id="leftbar_search_container" class="btn btn-secondary btn-lg active btn-sm btn-block border-0" role="button">
+<i class="menu-item-icon fa fa-search mr-0"></i> 搜索 <input id="leftbar_search_input" type="text" placeholder="搜索什么..." class="form-control form-control-alternative" autocomplete="off">
+</button>
+</div>
+</div>
+<div id="leftbar_part2" class="widget widget_search card bg-white shadow-sm border-0">
+<div id="leftbar_part2_inner" class="card-body">
+<div class="nav-wrapper" style="padding-top: 5px; display:none;">
+<ul class="nav nav-pills nav-fill" role="tablist">
+<li class="nav-item sidebar-tab-switcher">
+<a class="active show" id="leftbar_tab_overview_btn" data-toggle="tab" href="#leftbar_tab_overview" role="tab" aria-controls="leftbar_tab_overview" no-pjax>站点概览</a>
+</li>
+</ul>
+</div>
+<div>
+<div class="tab-content" style="padding: 10px 10px 0 10px;">
+<div class="tab-pane fade text-center active show" id="leftbar_tab_overview" role="tabpanel" aria-labelledby="leftbar_tab_overview_btn">
+<div id="leftbar_overview_author_image" style="background-image: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz48c3ZnIHZlcnNpb249IjEuMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgeD0iMHB4IiB5PSIwcHgiIHZpZXdCb3g9IjAgMCAxMDAgMTAwIiB4bWw6c3BhY2U9InByZXNlcnZlIj48cmVjdCBmaWxsPSIjNUU3MkU0MjIiIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIi8+PGc+PGcgb3BhY2l0eT0iMC4zIj48cGF0aCBmaWxsPSIjNUU3MkU0IiBkPSJNNzQuMzksMzIuODZjLTAuOTgtMS43LTMuMzktMy4wOS01LjM1LTMuMDlINDUuNjJjLTEuOTYsMC00LjM3LDEuMzktNS4zNSwzLjA5TDI4LjU3LDUzLjE1Yy0wLjk4LDEuNy0wLjk4LDQuNDgsMCw2LjE3bDExLjcxLDIwLjI5YzAuOTgsMS43LDMuMzksMy4wOSw1LjM1LDMuMDloMjMuNDNjMS45NiwwLDQuMzctMS4zOSw1LjM1LTMuMDlMODYuMSw1OS4zMmMwLjk4LTEuNywwLjk4LTQuNDgsMC02LjE3TDc0LjM5LDMyLjg2eiIvPjwvZz48ZyBvcGFjaXR5PSIwLjgiPjxwYXRoIGZpbGw9IiM1RTcyRTQiIGQ9Ik02Mi4wNCwyMC4zOWMtMC45OC0xLjctMy4zOS0zLjA5LTUuMzUtMy4wOUgzMS43M2MtMS45NiwwLTQuMzcsMS4zOS01LjM1LDMuMDlMMTMuOSw0Mi4wMWMtMC45OCwxLjctMC45OCw0LjQ4LDAsNi4xN2wxMi40OSwyMS42MmMwLjk4LDEuNywzLjM5LDMuMDksNS4zNSwzLjA5aDI0Ljk3YzEuOTYsMCw0LjM3LTEuMzksNS4zNS0zLjA5bDEyLjQ5LTIxLjYyYzAuOTgtMS43LDAuOTgtNC40OCwwLTYuMTdMNjIuMDQsMjAuMzl6Ii8+PC9nPjwvZz48L3N2Zz4=)" class="rounded-circle shadow-sm" alt="avatar"></div>
+<h6 id="leftbar_overview_author_name">雅丶涵</h6>
+<nav class="site-state">
+<div class="site-state-item site-state-posts">
+<a style="cursor: default;">
+<span class="site-state-item-count">22</span>
+<span class="site-state-item-name">文章</span>
+</a>
+</div>
+<div class="site-state-item site-state-categories">
+<a data-toggle="modal" data-target="#blog_categories">
+<span class="site-state-item-count">6</span>
+<span class="site-state-item-name">分类</span>
+</a>
+</div>
+<div class="site-state-item site-state-tags">
+<a data-toggle="modal" data-target="#blog_tags">
+<span class="site-state-item-count">17</span>
+<span class="site-state-item-name">标签</span>
+</a>
+</div>
+</nav>
+<div class="site-author-links">
+<div class="site-author-links-item">
+<a href="/category/%e6%b8%b8%e6%88%8f/" rel="noopener" target="_blank">游戏</a>
+</div>
+<div class="site-author-links-item">
+<a href="/category/%e8%bd%af%e4%bb%b6%e5%88%86%e4%ba%ab/" rel="noopener" target="_blank">软件分享</a>
+</div>
+<div class="site-author-links-item">
+<a href="/category/%e6%8a%80%e6%9c%af%e8%ae%b0%e5%bd%95/" rel="noopener" target="_blank">技术记录</a>
+</div>
+<div class="site-author-links-item">
+<a href="/category/%e4%b8%8a%e7%bd%91%e5%b7%a5%e5%85%b7/" rel="noopener" target="_blank">上网工具</a>
+</div>
+<div class="site-author-links-item">
+<a href="/category/eve/" rel="noopener" target="_blank">EVE</a>
+</div>
+</div> <div class="site-friend-links">
+<div class="site-friend-links-title">
+<i class="fa fa-fw fa-link"></i> Links</div>
+<ul class="site-friend-links-ul">
+<li class="site-friend-links-item">
+<a href="/category/%e6%b8%b8%e6%88%8f/" rel="noopener" target="_blank">游戏</a>
+</li>
+<li class="site-friend-links-item">
+<a href="/category/%e8%bd%af%e4%bb%b6%e5%88%86%e4%ba%ab/" rel="noopener" target="_blank">软件分享</a>
+</li>
+<li class="site-friend-links-item">
+<a href="/category/%e6%8a%80%e6%9c%af%e8%ae%b0%e5%bd%95/" rel="noopener" target="_blank">技术记录</a>
+</li>
+<li class="site-friend-links-item">
+<a href="/category/%e4%b8%8a%e7%bd%91%e5%b7%a5%e5%85%b7/" rel="noopener" target="_blank">上网工具</a>
+</li>
+<li class="site-friend-links-item">
+<a href="/category/eve/" rel="noopener" target="_blank">EVE</a>
+</li>
+</ul>
+</div> </div>
+</div>
+</div>
+</div>
+</div>
+</aside>
+<div class="modal fade" id="blog_categories" tabindex="-1" role="dialog" aria-labelledby aria-hidden="true">
+<div class="modal-dialog modal-dialog-centered">
+<div class="modal-content">
+<div class="modal-header">
+<h5 class="modal-title">分类</h5>
+<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+<span aria-hidden="true">&times;</span>
+</button>
+</div>
+<div class="modal-body">
+<a href="/category/eve/" class="badge badge-secondary tag">EVE <span class="tag-num">3</span></a><a href="/category/%e4%b8%8a%e7%bd%91%e5%b7%a5%e5%85%b7/" class="badge badge-secondary tag">上网工具 <span class="tag-num">4</span></a><a href="/category/%e6%8a%80%e6%9c%af%e8%ae%b0%e5%bd%95/" class="badge badge-secondary tag">技术记录 <span class="tag-num">5</span></a><a href="/category/uncategorized/" class="badge badge-secondary tag">未分类 <span class="tag-num">0</span></a><a href="/category/%e6%b8%b8%e6%88%8f/" class="badge badge-secondary tag">游戏 <span class="tag-num">1</span></a><a href="/category/%e8%bd%af%e4%bb%b6%e5%88%86%e4%ba%ab/" class="badge badge-secondary tag">软件分享 <span class="tag-num">9</span></a> </div>
+</div>
+</div>
+</div>
+<div class="modal fade" id="blog_tags" tabindex="-1" role="dialog" aria-labelledby aria-hidden="true">
+<div class="modal-dialog modal-dialog-centered">
+<div class="modal-content">
+<div class="modal-header">
+<h5 class="modal-title">标签</h5>
+<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+<span aria-hidden="true">&times;</span>
+</button>
+</div>
+<div class="modal-body">
+<a href="/tag/cf/" class="badge badge-secondary tag">cf <span class="tag-num">2</span></a><a href="/tag/cloudflare/" class="badge badge-secondary tag">cloudflare <span class="tag-num">3</span></a><a href="/tag/coreldraw/" class="badge badge-secondary tag">CorelDRAW <span class="tag-num">1</span></a><a href="/tag/dns/" class="badge badge-secondary tag">DNS <span class="tag-num">1</span></a><a href="/tag/fineprint/" class="badge badge-secondary tag">FinePrint <span class="tag-num">1</span></a><a href="/tag/fineprint%e6%b3%a8%e5%86%8c%e7%a0%81/" class="badge badge-secondary tag">FinePrint注册码 <span class="tag-num">1</span></a><a href="/tag/fineprint%e7%a0%b4%e8%a7%a3%e7%89%88/" class="badge badge-secondary tag">FinePrint破解版 <span class="tag-num">1</span></a><a href="/tag/key/" class="badge badge-secondary tag">key <span class="tag-num">1</span></a><a href="/tag/pdf/" class="badge badge-secondary tag">PDF <span class="tag-num">1</span></a><a href="/tag/telegram/" class="badge badge-secondary tag">telegram <span class="tag-num">1</span></a><a href="/tag/tvbox/" class="badge badge-secondary tag">tvbox <span class="tag-num">0</span></a><a href="/tag/worker/" class="badge badge-secondary tag">Worker <span class="tag-num">1</span></a><a href="/tag/%e5%8d%8e%e4%b8%ba%e4%ba%91/" class="badge badge-secondary tag">华为云 <span class="tag-num">1</span></a><a href="/tag/%e7%9b%96tv/" class="badge badge-secondary tag">盖tv <span class="tag-num">0</span></a><a href="/tag/%e7%9c%9f%e5%ae%9eip/" class="badge badge-secondary tag">真实ip <span class="tag-num">1</span></a><a href="/tag/%e8%87%aa%e9%80%89ip/" class="badge badge-secondary tag">自选ip <span class="tag-num">1</span></a><a href="/tag/%e8%99%9a%e6%8b%9f%e6%89%93%e5%8d%b0%e6%9c%ba/" class="badge badge-secondary tag">虚拟打印机 <span class="tag-num">1</span></a> </div>
+</div>
+</div>
+</div>
+<div id="primary" class="content-area">
+<main id="main" class="site-main" role="main">
+<article class="post post-full card bg-white shadow-sm border-0" id="post-68">
+<header class="post-header text-center">
+<style>body section.banner {
+						background-image: url(/wp-content/uploads/2021/09/1E61D72A-5DBB-42CD-8713-6F50C03A3B5F.jpeg) !important;
+					}</style> <a class="post-title" href="/301%e6%b5%b7%e5%a4%96%e8%b7%b3%e8%bd%ac%e5%8e%9f%e7%90%86%e8%a7%a3%e6%9e%90%e5%85%bc%e8%b0%88%e7%bc%93%e8%a7%a3%e5%81%87%e5%a2%99%e4%bc%aa%e5%a2%99%e6%94%bb%e5%87%bb%e5%8b%92%e7%b4%a2%e7%9a%84/">301海外跳转原理解析兼谈缓解假墙伪墙攻击勒索的多种技术手段</a>
+<div class="post-meta">
+<div class="post-meta-detail post-meta-detail-time">
+<i class="fa fa-clock-o" aria-hidden="true"></i>
+<time title="发布于 2021-10-23 17:22:57 | 编辑于 2022-10-05 21:53:53">2021-10-23 17:22
+</time>
+</div> <div class="post-meta-devide">|</div> <div class="post-meta-detail post-meta-detail-views">
+<i class="fa fa-eye" aria-hidden="true"></i> 2,477</div> <div class="post-meta-devide">|</div> <div class="post-meta-detail post-meta-detail-comments">
+<i class="fa fa-comments-o" aria-hidden="true"></i> 0</div> <div class="post-meta-devide">|</div> <div class="post-meta-detail post-meta-detail-author">
+<i class="fa fa-user-circle-o" aria-hidden="true"></i> <a href="/author/anglesya/" target="_blank">雅丶涵</a>
+</div> <div class="post-meta-detail post-meta-detail-words">
+<i class="fa fa-file-word-o" aria-hidden="true"></i><span> 4055 字</span>
+</div>
+<div class="post-meta-devide">|</div>
+<div class="post-meta-detail post-meta-detail-words">
+<i class="fa fa-hourglass-end" aria-hidden="true"></i>
+16 分钟
+</div>
+</div>
+</header>
+<div class="post-content" id="post_content">
+<div class="post-outdated-info">
+<i class="fa fa-info-circle" aria-hidden="true"></i>本文最后更新于 417 天前，其中的信息可能已经有所发展或是发生改变。</div>
+<p></p>
+<p>我们知道，墙封锁一个网站有DNS污染、IP封锁、TCP Reset（TCP连接重置）等手段。而一个网站一旦被墙，一般情况下是无法直接通过301（或302）跳转到其他网站的。如果只是IP被封还好说，换IP通常能解决问题。但如果是根据域名关键字进行的TCP Reset，这时候不管怎么换IP（除非是国内IP）都无法解除封锁，当然也不可能进行301跳转（浏览器在收到HTTP服务器的301跳转Response之前TCP连接就已经被墙Reset而断开了，浏览器根本收不到HTTP服务器的任何Response）。而DNS污染的话自然更不用多说，只能换域名了，301跳转更不可能做到。然而，现在出现了很多号称可以解决域名被墙的服务，可以在网站被墙后通过301跳转到新的网站上。经过测试，还真能做到绕过墙的TCP Reset封锁，而这些服务的IP却都在海外（并非是使用了国内IP避免被墙的原因），而客户端只需要一个正常的浏览器即可（即客户端并不需要开启科学上网）。那么它们是怎么做到的呢？</p>
+<p></p>
+<p></p>
+<p>要解释清楚其中的技术原理，还得回到2010年的<a href="https://zh.wikipedia.org/wiki/%E8%A5%BF%E5%8E%A2%E8%AE%A1%E5%88%92">西厢计划</a>。很早就经常科学上网的同学们应该都对<a href="https://zh.wikipedia.org/wiki/%E8%A5%BF%E5%8E%A2%E8%AE%A1%E5%88%92">西厢计划</a>并不陌生，它是一个只需要运行在客户端就能绕过很多封锁访问目标网站的工具，解决TCP Reset的原理是对本地的TCP/IP协议进行修改，在不伤害客户端和服务器之间的TCP连接的前提下让墙误以为TCP连接已经断开或者无法正确跟踪到TCP连接。之后出现的<a href="https://github.com/seclab-ucr/INTANG">INTANG项目</a>同样是这个想法的延续。</p>
+<p></p>
+<p></p>
+<p>不过，不管是<a href="https://zh.wikipedia.org/wiki/%E8%A5%BF%E5%8E%A2%E8%AE%A1%E5%88%92">西厢计划</a>还是<a href="https://github.com/seclab-ucr/INTANG">INTANG</a>，都是运行在客户端上的工具，理论上只在服务器上运行无法起到效果，经过测试也能看到实际和理论相符。那么有没有一种工具可以在只服务器上运行，修改TCP/IP协议从而绕过封锁的工具呢？这方面同样有团队做了研究，研究的成果就是<a href="https://github.com/Kkevsterrr/geneva">Geneva项目</a>，<a href="https://gfw.report/">GFW Report</a>也对其做了<a href="https://gfw.report/blog/gfw_esni_blocking/zh/">详细介绍</a>。在<a href="https://gfw.report/blog/gfw_esni_blocking/zh/">这篇文章</a>中，列举了6种可以绕过TCP Reset的规则，6种规则都可以在只客户端部署生效（这时候服务器并不需要运行<a href="https://github.com/Kkevsterrr/geneva">Geneva</a>），而前4种可以在只服务器部署生效（这时候客户端并不需要运行<a href="https://github.com/Kkevsterrr/geneva">Geneva</a>）。不过<a href="https://github.com/Kkevsterrr/geneva">Geneva</a>的官方Github中只收录了客户端的规则，<a href="https://gfw.report/blog/gfw_esni_blocking/zh/">文章</a>中的服务器规则并没有被收录在<a href="https://github.com/Kkevsterrr/geneva">Geneva</a>的官方Github中。而且<a href="https://gfw.report/blog/gfw_esni_blocking/zh/">文章</a>中的策略3只给出了客户端的规则，遗漏了服务器端的规则。经过阅读<a href="https://github.com/Kkevsterrr/geneva">Geneva</a>的规则介绍和策略3的描述，我已经重新还原了策略3的服务器规则，重新收录了4种服务器规则到我自己的<a href="https://github.com/lehui99/geneva/blob/master/strategies_server.md">Github Fork</a>中。经过本地环境的模拟加上tcpdump抓包观察测试，看到还原的策略3服务器规则和<a href="https://gfw.report/blog/gfw_esni_blocking/zh/">文章</a>中描述的行为一致，可以认为就是策略3本来的服务器规则。但是，在之后的真实环境的测试中发现这4种服务器策略全都失效了（不管HTTP还是HTTPS都已失效），墙依然对TCP进行了Reset。经过抓包看到服务器的行为确实和<a href="https://gfw.report/blog/gfw_esni_blocking/zh/">文章</a>中描述一致，所以可以确认并非是由于<a href="https://github.com/Kkevsterrr/geneva">Geneva</a>没有正常工作导致的，而是墙已经为了应对这4种策略进行进化了。所以，墙并不是一成不变的，而是会进化的，那我们又该怎么办呢？</p>
+<p></p>
+<p></p>
+<p>讲到这里，就不得不提另一个策略发现工具<a href="https://github.com/seclab-ucr/SymTCP">SymTCP</a>了。虽然现有的4种策略已经失效，但并不代表我们不能发现新的策略。而<a href="https://github.com/seclab-ucr/SymTCP">SymTCP</a>就是新策略发现工具，通过自动学习可以自动发现新的策略绕过墙的TCP Reset。之后我们就能把新的策略转换为<a href="https://github.com/Kkevsterrr/geneva">Geneva</a>的规则格式进行使用了。不过，这样的话我们就会陷入到和墙的无休止争斗中，不断发现新策略，而墙则不断封锁新策略。而且规则的转换也是一个麻烦事，暂时还没有工具可以自动从<a href="https://github.com/seclab-ucr/SymTCP">SymTCP</a>的规则转换为<a href="https://github.com/Kkevsterrr/geneva">Geneva</a>的规则，需要人工转换。并且需要修改<a href="https://github.com/seclab-ucr/SymTCP">SymTCP</a>使其不仅可以发现客户端规则同样也能发现服务器端规则。</p>
+<p></p>
+<p></p>
+<p>那么，有没有一种一劳永逸的方法，使墙再怎么进化也无法避免这种策略的影响，而且这种策略只需要运行在服务器上，从而绕过封锁呢？在下结论之前，我们需要来研究一下一个正常的HTTP协议通讯是怎么进行的：<br>1、浏览器发起TCP连接，经过3步（次）握手建立和服务器的TCP连接。<br>2、浏览器发送HTTP Request。<br>3、服务器收到Request，发送HTTP Response。<br>而墙通常在看到浏览器发送的HTTP Request中包含关键字就会进行TCP Reset。讲到这里，聪明的同学或许已经想到了：如果服务器不等HTTP Request，而在TCP连接建立后立即发送HTTP Response，在墙进行TCP Reset之前就将Response送到浏览器进行抢答，是不是就能绕过TCP Reset了？而且还能无视之后墙的进化（因为浏览器的请求根本还没有经过墙）？说干就干，由于抢答模式不符合HTTP规范，所以常见的HTTP服务器无法实现抢答模式，所以让我们写个Python小程序来测试一下：<code>import socket import threading import time def main(): serv_sock = socket.socket() serv_sock.bind(('0.0.0.0', 80)) serv_sock.listen(50) while True: cli_sock, _ = serv_sock.accept() # 关闭Nagle算法，立即发送数据 cli_sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1) cli_sock.sendall(b'''HTTP/1.1 302 Moved Temporarily\r\n''' b'''Content-Type: text/html\r\n''' b'''Content-Length: 0\r\n''' b'''Connection: close\r\n''' b'''Location: https://www.microsoft.com/\r\n\r\n''') def wait_second(): time.sleep(1) # 等待1秒钟，确保数据发送完毕 cli_sock.close() threading.Thread(target=wait_second).start() if __name__ == '__main__': main()</code></p>
+<p></p>
+<p></p>
+<p>写完了来测试一下，发现依旧被TCP Reset了。那么，问题出在哪里？让我们重新回到上述HTTP协议通讯的3个步骤中的第1步——TCP的3步握手：</p>
+<p></p>
+<p></p>
+<figure class="wp-block-image"><a href="https://raw.githubusercontent.com/lehui99/articles/main/img/01.png" target="_blank" rel="noreferrer noopener"><div class="fancybox-wrapper lazyload-container-unload" data-fancybox="post-images" href="https://raw.githubusercontent.com/lehui99/articles/main/img/01.png"><img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+" decoding="async" data-original="https://raw.githubusercontent.com/lehui99/articles/main/img/01.png" alt="TCP三步握手+数据"></div></a></figure>
+<p></p>
+<p></p>
+<p>从TCP的3步握手中，我们可以看到第3步中客户端发送了ACK就已经完成了TCP连接的建立，这时候客户端并不需要再等服务器的回复就能立即发送数据。也就是说，浏览器会在发送ACK后立即发送HTTP Request，ACK和HTTP Request几乎是同时发出的。而服务器在收到浏览器的ACK后基本也就代表着已经收到了HTTP Request了，抢答失败！</p>
+<p></p>
+<p></p>
+<p>那么，有没有办法让浏览器在TCP连接建立后延迟发送HTTP Request，而又不改动客户端行为呢？讲到这里，对TCP协议比较熟悉的同学或许已经想到了，那就是TCP window size。而通过调用<code>setsockopt()</code>就能修改TCP window size。让我们来修改一下Python小程序，把window size改为1再进行测试（TCP连接建立完成后，客户端只能发送1个字节，等待服务器的确认后才能继续发送更多的数据）：<code>import socket import threading import time def main(): serv_sock = socket.socket() serv_sock.bind(('0.0.0.0', 80)) serv_sock.listen(50) while True: cli_sock, _ = serv_sock.accept() # 设置TCP window size为1 cli_sock.setsockopt(socket.SOL_SOCKET, socket.SO_RCVBUF, 1) # 关闭Nagle算法，立即发送数据 cli_sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1) cli_sock.sendall(b'''HTTP/1.1 302 Moved Temporarily\r\n''' b'''Content-Type: text/html\r\n''' b'''Content-Length: 0\r\n''' b'''Connection: close\r\n''' b'''Location: https://www.microsoft.com/\r\n\r\n''') def wait_second(): time.sleep(1) # 等待1秒钟，确保数据发送完毕 cli_sock.close() threading.Thread(target=wait_second).start() if __name__ == '__main__': main()</code></p>
+<p></p>
+<p></p>
+<p>改完测试，发现仍旧被TCP Reset了。什么原因？通过抓包，我们看到对TCP window size的修改并没有生效，window size依旧很大。在查阅了<a href="https://man7.org/linux/man-pages/man7/socket.7.html">Linux man page</a>后我们看到关于<code>SO_RCVBUF</code>有这么一段话：</p>
+<p></p>
+<p></p>
+<blockquote class="wp-block-quote">
+<p>The minimum (doubled) value for this option is 256.</p>
+</blockquote>
+<p></p>
+<p></p>
+<p>这也就意味着即使我们通过<code>setsockopt()</code>将<code>SO_RCVBUF</code>设置为1，Linux内核也会将其作为256处理。而<a href="https://man7.org/linux/man-pages/man7/socket.7.html">Linux man page</a>中也对<code>SO_RCVBUFFORCE</code>做了说明：只能突破最大值的限制（<code>but the rmem_max limit can be overridden</code>），但不能突破最小值的限制。而256字节基本就可以容纳整个HTTP Request。看来通过<code>setsockopt()</code>行不通（不管<code>SO_RCVBUF</code>还是<code>SO_RCVBUFFORCE</code>都行不通），我们得找别的方法。</p>
+<p></p>
+<p></p>
+<p>讲到这里，我们很自然地又想到了<a href="https://github.com/Kkevsterrr/geneva">Geneva</a>：上述<a href="https://github.com/Kkevsterrr/geneva">Geneva</a>的策略2中服务器规则正是利用了TCP window size做到的四字节分割（设置window size为4）。这样，就绕过了<code>setsockopt()</code>的限制，直接对TCP数据包进行修改了。</p>
+<p></p>
+<p></p>
+<p>在我们把四字节分割法部署到服务器运行<a href="https://github.com/Kkevsterrr/geneva">Geneva</a>后，再结合上述Python小程序，经过测试我们发现已经成功绕过了TCP Reset，浏览器跳转到了微软网站。我们终于成功了！</p>
+<p></p>
+<p></p>
+<p>然而，在浏览器第二次访问服务器时发现依然被TCP Reset了。不过，这已经影响不到301跳转（上述Python小程序还是302跳转，需要301的同学自行修改）了，301跳转的话浏览器已经被重定向到新的网站了，不会再次访问这个服务器（需要保证新旧网站不能使用相同IP），但这并不妨碍我们继续探究一下为什么第二次访问会被TCP Reset：通过抓包我们看到，第一次访问时浏览器虽然在第一个附带用户数据的数据包中只发送了4个字节，但后续会将剩余的整个HTTP Request通过一个数据包发送到服务器导致TCP Reset。而墙是有审查残留的，一段时间（几分钟）内不管是否出现关键字，对源IP和目标IP之间的TCP连接会进行无差别的Reset。所以在之后的这段审查残留时间内，只要TCP连接建立就会被Reset，抢答模式无法起到作用。</p>
+<p></p>
+<p></p>
+<p>知道了原因我们就能采取对策了，我们知道客户端是因为收到了服务器确认数据包中的TCP window size很大，所以才能一次性把剩余的Request发送完毕，所以需要对后续的TCP window size做同样的修改，保证客户端看到的window size一直处于比较小的水平：通过对TCP协议的了解，我们知道连接建立时的window size是通过SYN+ACK包确定的，而后续的window size是通过ACK包确定的。所以，我们对规则2做少许的修改就能做到对后续window size的修改：</p>
+<p></p>
+<p></p>
+<p><code>[TCP:flags:A]-tamper{TCP:window:replace:1}-|</code></p>
+<p></p>
+<p></p>
+<p>在服务器上我们同时运行规则2和上述修改后的规则（需要开2个<a href="https://github.com/Kkevsterrr/geneva">Geneva</a>进程，注意第2个进程需要在命令行中指定--in-queue-num和--out-queue-num避免和第1个冲突），我们终于能稳定地运行上述抢答模式，再也不会被TCP Reset了。</p>
+<p></p>
+<p></p>
+<p>实际上我们可以将2条规则中的window size都设置得更小一些，甚至设置为0，避免客户端发送任何数据（实际上由于window size探测机制的原因，客户端仍旧会以极慢的速度一个字节一个字节地发送数据，不过不影响我们的抢答模式）：<code>[TCP:flags:SA]-tamper{TCP:window:replace:0}-| [TCP:flags:A]-tamper{TCP:window:replace:0}-|</code></p>
+<p></p>
+<p></p>
+<p>至此，HTTP的抢答模式就基本完成了。至于海外301跳转的那些服务可以同时服务于多个网站，原理也很简单：它们的名称虽然都是301跳转，但实际上并不一定必须使用301跳转——以上Python小程序可以修改为通过HTTP 200返回一个正常的HTML页面，其中嵌入一个JavaScript，在JavaScript中就能判断浏览器的网址进行条件跳转了。至于跳转规则，那大家就能在JavaScript中充分发挥自己的想象了。另外，由于<a href="https://github.com/Kkevsterrr/geneva">Geneva</a>和上述小程序都是用Python编写的（甚至都没有使用asyncio），性能会比较差一些。<a href="https://github.com/Kkevsterrr/geneva">Geneva</a>会自己添加iptables的NFQUEUE规则，不过规则太过于宽松，导致不需要处理的数据包也会经过<a href="https://github.com/Kkevsterrr/geneva">Geneva</a>。所以大家可以在启动<a href="https://github.com/Kkevsterrr/geneva">Geneva</a>后手动删除这些规则，自行添加更精确的规则（只处理OUTPUT链中TCP 80端口的SYN+ACK和ACK）。不过经过我的测试，即使使用精确的iptables规则也差不多只能利用20Mbps左右的带宽。如果希望有更高的性能，可以使用C/C++（结合libev，或asio，或直接epoll；或者使用golang、rust等）结合<a href="https://www.netfilter.org/projects/libnetfilter_queue/index.html">libnetfilter_queue</a>，利用iptables的NFQUEUE来完成，可以跑满千兆带宽。其实<a href="https://github.com/Kkevsterrr/geneva">Geneva</a>的底层用的也是<a href="https://www.netfilter.org/projects/libnetfilter_queue/index.html">libnetfilter_queue</a>和NFQUEUE。由于本系列只做概念验证，而且因为篇幅的限制（本文已经很长了），在此就不展开C/C++的实现了，感兴趣的同学可以和我联系，如果感兴趣的同学比较多的话我就再新开一个系列讲一下这方面的内容。另外需要注意的是，<a href="https://github.com/Kkevsterrr/geneva">Geneva</a>的编译环境为Python 3.6，使用Debian 10自带的Python 3.8/3.9会出现各种莫名其妙的问题，建议大家还是从Python官网下载Python 3.6的源码进行编译使用<a href="https://github.com/Kkevsterrr/geneva">Geneva</a>。</p>
+<p></p>
+<p></p>
+<p>在解决了HTTP的TCP Reset问题后，我们还需要解决HTTPS的TCP Reset。而HTTPS由于需要完成TLS握手才能发送HTTP Response，所以抢答模式似乎无法应用于HTTPS。在下一篇中，我会介绍几个绕过HTTPS的TCP Reset方法。敬请期待。</p>
+<p></p>
+<p></p>
+<p>如果对本系列话题感兴趣的同学也可以联系我。对<a href="https://github.com/Kkevsterrr/geneva">Geneva</a>的使用有疑问的，或者对C/C++实现<a href="https://github.com/Kkevsterrr/geneva">Geneva</a>类似功能感兴趣的都可以联系我。我的联系方式为：<br>1、Email: <code>lehui99#gmail.com</code><br>2、Twitter: <a href="https://twitter.com/davidsky2012">@davidsky2012</a><br>3、TG: <a href="https://t.me/davidsky2000">@davidsky2000</a><br>4、本系列Github: <a href="https://github.com/lehui99/articles">lehui99/articles</a></p>
+<p></p>
+<p></p>
+<p><del>BTW，本来想将此文首发于hostloc的（因为hostloc上站长朋友比较多，而本系列是帮助站长解决TCP Reset问题的），不过由于hostloc需要邀请码，一直没有注册成功，而淘宝购买hostloc邀请码曾经有过不愉快的经历，遂作罢。</del>（感谢<a href="https://hostloc.com/?30297">岁月去堂堂</a>赠送的邀请码，<a href="https://hostloc.com/?56272">已注册</a>hostloc。）</p>
+<p></p>
+<p></p>
+<p>最后，本文欢迎转载，不过转载时还请保留<a href="https://github.com/lehui99/articles/blob/main/301%E6%B5%B7%E5%A4%96%E8%B7%B3%E8%BD%AC%E5%8E%9F%E7%90%86%E8%A7%A3%E6%9E%90%E5%85%BC%E8%B0%88%E7%BC%93%E8%A7%A3%E5%81%87%E5%A2%99%E4%BC%AA%E5%A2%99%E6%94%BB%E5%87%BB%E5%8B%92%E7%B4%A2%E7%9A%84%E5%A4%9A%E7%A7%8D%E6%8A%80%E6%9C%AF%E6%89%8B%E6%AE%B5%EF%BC%88%E4%B8%80%EF%BC%89.md">本文链接</a>，因为之后我还会对本文进行完善（如错误修正、内容补充等）。</p>
+<p></p>
+</div>
+</article>
+<div id="comments" class="comments-area card shadow-sm">
+<div class="card-body">
+<span>暂无评论</span>
+</div>
+</div>
+<div id="post_comment" class="card shadow-sm  no-need-name-email no-need-captcha enable-qq-avatar">
+<div class="card-body">
+<h2 class="post-comment-title">
+<i class="fa fa-commenting"></i>
+<span class="hide-on-comment-editing">发送评论</span>
+<span class="hide-on-comment-not-editing">编辑评论</span>
+</h2>
+<div id="post_comment_reply_info" class="post-comment-reply" style="display: none;">
+<span>正在回复 <b><span id="post_comment_reply_name"></span></b> 的评论 :</span>
+<div id="post_comment_reply_preview" class="post-comment-reply-preview"></div>
+<button id="post_comment_reply_cancel" class="btn btn-outline-primary btn-sm">取消回复</button>
+</div>
+<form>
+<div class="row">
+<div class="col-md-12">
+<textarea id="post_comment_content" class="form-control form-control-alternative" placeholder="评论内容" name="comment" style="height: 80px;"></textarea>
+</div>
+<div class="col-md-12" style="height: 0;overflow: hidden;">
+<pre id="post_comment_content_hidden" class></pre>
+</div>
+</div>
+<div class="row hide-on-comment-editing" style="margin-bottom: -10px;">
+<div class="col-md-6">
+<div class="form-group">
+<div class="input-group input-group-alternative mb-4">
+<div class="input-group-prepend">
+<span class="input-group-text"><i class="fa fa-user-circle"></i></span>
+</div>
+<input id="post_comment_name" class="form-control" placeholder="昵称" type="text" name="author" value>
+</div>
+</div>
+</div>
+<div class="col-md-6">
+<div class="form-group">
+<div class="input-group input-group-alternative mb-4">
+<div class="input-group-prepend">
+<span class="input-group-text"><i class="fa fa-envelope"></i></span>
+</div>
+<input id="post_comment_email" class="form-control" placeholder="邮箱 / QQ 号" type="email" name="email" value>
+</div>
+</div>
+</div>
+<div class="d-none">
+<div class="form-group">
+<div class="input-group input-group-alternative mb-4 post-comment-captcha-container" captcha="40 / 5 = ">
+<div class="input-group-prepend">
+<span class="input-group-text"><i class="fa fa-key"></i></span>
+</div>
+<input id="post_comment_captcha" class="form-control" placeholder="验证码" type="text">
+<style>.post-comment-captcha-container:before{
+									content: attr(captcha);
+								}</style>
+<script>$(".post-comment-captcha-container").attr("captcha", "Loading...");
+									$.ajax({
+										url : argonConfig.wp_path + "wp-admin/admin-ajax.php",
+										type : "POST",
+										dataType : "json",
+										data : {
+											action: "get_captcha",
+										},
+										success : function(result){
+											$(".post-comment-captcha-container").attr("captcha", result['captcha']);
+										},
+										error : function(xhr){
+											$(".post-comment-captcha-container").attr("captcha", "获取验证码失败");
+										}
+									});</script>
+</div>
+</div>
+</div>
+</div>
+<div class="row hide-on-comment-editing" id="post_comment_extra_input" style="display: none">
+<div class="col-md-12" style="margin-bottom: -10px;">
+<div class="form-group">
+<div class="input-group input-group-alternative mb-4 post-comment-link-container">
+<div class="input-group-prepend">
+<span class="input-group-text"><i class="fa fa-link"></i></span>
+</div>
+<input id="post_comment_link" class="form-control" placeholder="网站" type="text" name="url" value>
+</div>
+</div>
+</div>
+</div>
+<div class="row hide-on-comment-editing " style="margin-top: 10px;">
+<div class="col-md-12">
+<button id="post_comment_toggle_extra_input" type="button" class="btn btn-icon btn-outline-primary btn-sm" tooltip-show-extra-field="展开附加字段" tooltip-hide-extra-field="折叠附加字段">
+<span class="btn-inner--icon"><i class="fa fa-angle-down"></i></span>
+</button>
+</div>
+</div>
+<div class="row" style="margin-top: 5px; margin-bottom: 10px;">
+<div class="col-md-12">
+<div class="custom-control custom-checkbox comment-post-checkbox comment-post-use-markdown">
+<input class="custom-control-input" id="comment_post_use_markdown" type="checkbox" checked>
+<label class="custom-control-label" for="comment_post_use_markdown">Markdown</label>
+</div>
+<div class="custom-control custom-checkbox comment-post-checkbox comment-post-privatemode" tooltip="评论仅发送者和博主可见">
+<input class="custom-control-input" id="comment_post_privatemode" type="checkbox">
+<label class="custom-control-label" for="comment_post_privatemode">悄悄话</label>
+</div>
+<div class="custom-control custom-checkbox comment-post-checkbox comment-post-mailnotice" tooltip="有回复时邮件通知我">
+<input class="custom-control-input" id="comment_post_mailnotice" type="checkbox" checked>
+<label class="custom-control-label" for="comment_post_mailnotice">邮件提醒</label>
+</div>
+<button id="post_comment_send" class="btn btn-icon btn-primary comment-btn pull-right mr-0" type="button">
+<span class="btn-inner--icon hide-on-comment-editing"><i class="fa fa-send"></i></span>
+<span class="btn-inner--icon hide-on-comment-not-editing"><i class="fa fa-pencil"></i></span>
+<span class="btn-inner--text hide-on-comment-editing" style="margin-right: 0;">发送</span>
+<span class="btn-inner--text hide-on-comment-not-editing" style="margin-right: 0;">编辑</span>
+</button>
+<button id="post_comment_edit_cancel" class="btn btn-icon btn-danger comment-btn pull-right hide-on-comment-not-editing" type="button" style="margin-right: 8px;">
+<span class="btn-inner--icon"><i class="fa fa-close"></i></span>
+<span class="btn-inner--text">取消</span>
+</button>
+<button id="comment_emotion_btn" class="btn btn-icon btn-primary pull-right" type="button" title="表情">
+<i class="fa fa-smile-o" aria-hidden="true"></i>
+</button>
+<div id="emotion_keyboard" class="emotion-keyboard card shadow-sm bg-white">
+<div class="emotion-keyboard-content">
+<div class="emotion-group" index="0">
+<div class="emotion-item" text="|´・ω・)ノ" title>|´・ω・)ノ</div>
+<div class="emotion-item" text="ヾ(≧∇≦*)ゝ" title>ヾ(≧∇≦*)ゝ</div>
+<div class="emotion-item" text="(☆ω☆)" title>(☆ω☆)</div>
+<div class="emotion-item" text="（╯‵□′）╯︵┴─┴" title>（╯‵□′）╯︵┴─┴</div>
+<div class="emotion-item" text="￣﹃￣" title>￣﹃￣</div>
+<div class="emotion-item" text="(/ω＼)" title>(/ω＼)</div>
+<div class="emotion-item" text="∠( ᐛ 」∠)＿" title>∠( ᐛ 」∠)＿</div>
+<div class="emotion-item" text="(๑•̀ㅁ•́ฅ)" title>(๑•̀ㅁ•́ฅ)</div>
+<div class="emotion-item" text="→_→" title>→_→</div>
+<div class="emotion-item" text="୧(๑•̀⌄•́๑)૭" title>୧(๑•̀⌄•́๑)૭</div>
+<div class="emotion-item" text="٩(ˊᗜˋ*)و" title>٩(ˊᗜˋ*)و</div>
+<div class="emotion-item" text="(ノ°ο°)ノ" title>(ノ°ο°)ノ</div>
+<div class="emotion-item" text="(´இ皿இ｀)" title>(´இ皿இ｀)</div>
+<div class="emotion-item" text="⌇●﹏●⌇" title>⌇●﹏●⌇</div>
+<div class="emotion-item" text="(ฅ´ω`ฅ)" title>(ฅ´ω`ฅ)</div>
+<div class="emotion-item" text="(╯°A°)╯︵○○○" title>(╯°A°)╯︵○○○</div>
+<div class="emotion-item" text="φ(￣∇￣o)" title>φ(￣∇￣o)</div>
+<div class="emotion-item" text="ヾ(´･ ･｀｡)ノ&quot;" title>ヾ(´･ ･｀｡)ノ&quot;</div>
+<div class="emotion-item" text="( ง ᵒ̌皿ᵒ̌)ง⁼³₌₃" title>( ง ᵒ̌皿ᵒ̌)ง⁼³₌₃</div>
+<div class="emotion-item" text="(ó﹏ò｡)" title>(ó﹏ò｡)</div>
+<div class="emotion-item" text="Σ(っ °Д °;)っ" title>Σ(っ °Д °;)っ</div>
+<div class="emotion-item" text="( ,,´･ω･)ﾉ&quot;(´っω･｀｡)" title>( ,,´･ω･)ﾉ&quot;(´っω･｀｡)</div>
+<div class="emotion-item" text="╮(╯▽╰)╭" title>╮(╯▽╰)╭</div>
+<div class="emotion-item" text="o(*////▽////*)q" title>o(*////▽////*)q</div>
+<div class="emotion-item" text="＞﹏＜" title>＞﹏＜</div>
+<div class="emotion-item" text="( ๑´•ω•) &quot;(ㆆᴗㆆ)" title>( ๑´•ω•) &quot;(ㆆᴗㆆ)</div>
+</div>
+<div class="emotion-group d-none" index="1">
+<div class="emotion-item" text="😂" title>😂</div>
+<div class="emotion-item" text="😀" title>😀</div>
+<div class="emotion-item" text="😅" title>😅</div>
+<div class="emotion-item" text="😊" title>😊</div>
+<div class="emotion-item" text="🙂" title>🙂</div>
+<div class="emotion-item" text="🙃" title>🙃</div>
+<div class="emotion-item" text="😌" title>😌</div>
+<div class="emotion-item" text="😍" title>😍</div>
+<div class="emotion-item" text="😘" title>😘</div>
+<div class="emotion-item" text="😜" title>😜</div>
+<div class="emotion-item" text="😝" title>😝</div>
+<div class="emotion-item" text="😏" title>😏</div>
+<div class="emotion-item" text="😒" title>😒</div>
+<div class="emotion-item" text="🙄" title>🙄</div>
+<div class="emotion-item" text="😳" title>😳</div>
+<div class="emotion-item" text="😡" title>😡</div>
+<div class="emotion-item" text="😔" title>😔</div>
+<div class="emotion-item" text="😫" title>😫</div>
+<div class="emotion-item" text="😱" title>😱</div>
+<div class="emotion-item" text="😭" title>😭</div>
+<div class="emotion-item" text="💩" title>💩</div>
+<div class="emotion-item" text="👻" title>👻</div>
+<div class="emotion-item" text="🙌" title>🙌</div>
+<div class="emotion-item" text="🖕" title>🖕</div>
+<div class="emotion-item" text="👍" title>👍</div>
+<div class="emotion-item" text="👫" title>👫</div>
+<div class="emotion-item" text="👬" title>👬</div>
+<div class="emotion-item" text="👭" title>👭</div>
+<div class="emotion-item" text="🌚" title>🌚</div>
+<div class="emotion-item" text="🌝" title>🌝</div>
+<div class="emotion-item" text="🙈" title>🙈</div>
+<div class="emotion-item" text="💊" title>💊</div>
+<div class="emotion-item" text="😶" title>😶</div>
+<div class="emotion-item" text="🙏" title>🙏</div>
+<div class="emotion-item" text="🍦" title>🍦</div>
+<div class="emotion-item" text="🍉" title>🍉</div>
+<div class="emotion-item" text="😣" title>😣</div>
+</div>
+<div class="emotion-group d-none" index="2">
+<div class="emotion-item emotion-item-sticker" code="dinosaur-shy" title><img class="lazyload" src="data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iZW1vdGlvbi1sb2FkaW5nIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9Ii04IC04IDQwIDQwIiBzdHJva2U9IiM4ODgiIG9wYWNpdHk9Ii41IiB3aWR0aD0iNjAiIGhlaWdodD0iNjAiPgogIDxwYXRoIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSIxLjUiIGQ9Ik0xNC44MjggMTQuODI4YTQgNCAwIDAxLTUuNjU2IDBNOSAxMGguMDFNMTUgMTBoLjAxTTIxIDEyYTkgOSAwIDExLTE4IDAgOSA5IDAgMDExOCAweiIvPgo8L3N2Zz4=" data-original="https://i19.eu/wp-content/themes/argon/stickers/dinosaur/1.jpg"></div>
+<div class="emotion-item emotion-item-sticker" code="dinosaur-daze" title><img class="lazyload" src="data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iZW1vdGlvbi1sb2FkaW5nIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9Ii04IC04IDQwIDQwIiBzdHJva2U9IiM4ODgiIG9wYWNpdHk9Ii41IiB3aWR0aD0iNjAiIGhlaWdodD0iNjAiPgogIDxwYXRoIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSIxLjUiIGQ9Ik0xNC44MjggMTQuODI4YTQgNCAwIDAxLTUuNjU2IDBNOSAxMGguMDFNMTUgMTBoLjAxTTIxIDEyYTkgOSAwIDExLTE4IDAgOSA5IDAgMDExOCAweiIvPgo8L3N2Zz4=" data-original="https://i19.eu/wp-content/themes/argon/stickers/dinosaur/2.jpg"></div>
+<div class="emotion-item emotion-item-sticker" code="dinosaur-sweat" title><img class="lazyload" src="data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iZW1vdGlvbi1sb2FkaW5nIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9Ii04IC04IDQwIDQwIiBzdHJva2U9IiM4ODgiIG9wYWNpdHk9Ii41IiB3aWR0aD0iNjAiIGhlaWdodD0iNjAiPgogIDxwYXRoIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSIxLjUiIGQ9Ik0xNC44MjggMTQuODI4YTQgNCAwIDAxLTUuNjU2IDBNOSAxMGguMDFNMTUgMTBoLjAxTTIxIDEyYTkgOSAwIDExLTE4IDAgOSA5IDAgMDExOCAweiIvPgo8L3N2Zz4=" data-original="https://i19.eu/wp-content/themes/argon/stickers/dinosaur/3.jpg"></div>
+<div class="emotion-item emotion-item-sticker" code="dinosaur-proud" title><img class="lazyload" src="data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iZW1vdGlvbi1sb2FkaW5nIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9Ii04IC04IDQwIDQwIiBzdHJva2U9IiM4ODgiIG9wYWNpdHk9Ii41IiB3aWR0aD0iNjAiIGhlaWdodD0iNjAiPgogIDxwYXRoIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSIxLjUiIGQ9Ik0xNC44MjggMTQuODI4YTQgNCAwIDAxLTUuNjU2IDBNOSAxMGguMDFNMTUgMTBoLjAxTTIxIDEyYTkgOSAwIDExLTE4IDAgOSA5IDAgMDExOCAweiIvPgo8L3N2Zz4=" data-original="https://i19.eu/wp-content/themes/argon/stickers/dinosaur/4.jpg"></div>
+<div class="emotion-item emotion-item-sticker" code="dinosaur-powerless" title><img class="lazyload" src="data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iZW1vdGlvbi1sb2FkaW5nIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9Ii04IC04IDQwIDQwIiBzdHJva2U9IiM4ODgiIG9wYWNpdHk9Ii41IiB3aWR0aD0iNjAiIGhlaWdodD0iNjAiPgogIDxwYXRoIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSIxLjUiIGQ9Ik0xNC44MjggMTQuODI4YTQgNCAwIDAxLTUuNjU2IDBNOSAxMGguMDFNMTUgMTBoLjAxTTIxIDEyYTkgOSAwIDExLTE4IDAgOSA5IDAgMDExOCAweiIvPgo8L3N2Zz4=" data-original="https://i19.eu/wp-content/themes/argon/stickers/dinosaur/5.jpg"></div>
+<div class="emotion-item emotion-item-sticker" code="dinosaur-pouting" title><img class="lazyload" src="data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iZW1vdGlvbi1sb2FkaW5nIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9Ii04IC04IDQwIDQwIiBzdHJva2U9IiM4ODgiIG9wYWNpdHk9Ii41IiB3aWR0aD0iNjAiIGhlaWdodD0iNjAiPgogIDxwYXRoIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSIxLjUiIGQ9Ik0xNC44MjggMTQuODI4YTQgNCAwIDAxLTUuNjU2IDBNOSAxMGguMDFNMTUgMTBoLjAxTTIxIDEyYTkgOSAwIDExLTE4IDAgOSA5IDAgMDExOCAweiIvPgo8L3N2Zz4=" data-original="https://i19.eu/wp-content/themes/argon/stickers/dinosaur/6.jpg"></div>
+<div class="emotion-item emotion-item-sticker" code="dinosaur-eating" title><img class="lazyload" src="data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iZW1vdGlvbi1sb2FkaW5nIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9Ii04IC04IDQwIDQwIiBzdHJva2U9IiM4ODgiIG9wYWNpdHk9Ii41IiB3aWR0aD0iNjAiIGhlaWdodD0iNjAiPgogIDxwYXRoIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSIxLjUiIGQ9Ik0xNC44MjggMTQuODI4YTQgNCAwIDAxLTUuNjU2IDBNOSAxMGguMDFNMTUgMTBoLjAxTTIxIDEyYTkgOSAwIDExLTE4IDAgOSA5IDAgMDExOCAweiIvPgo8L3N2Zz4=" data-original="https://i19.eu/wp-content/themes/argon/stickers/dinosaur/7.jpg"></div>
+<div class="emotion-item emotion-item-sticker" code="dinosaur-ok" title><img class="lazyload" src="data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iZW1vdGlvbi1sb2FkaW5nIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9Ii04IC04IDQwIDQwIiBzdHJva2U9IiM4ODgiIG9wYWNpdHk9Ii41IiB3aWR0aD0iNjAiIGhlaWdodD0iNjAiPgogIDxwYXRoIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSIxLjUiIGQ9Ik0xNC44MjggMTQuODI4YTQgNCAwIDAxLTUuNjU2IDBNOSAxMGguMDFNMTUgMTBoLjAxTTIxIDEyYTkgOSAwIDExLTE4IDAgOSA5IDAgMDExOCAweiIvPgo8L3N2Zz4=" data-original="https://i19.eu/wp-content/themes/argon/stickers/dinosaur/8.jpg"></div>
+<div class="emotion-item emotion-item-sticker" code="dinosaur-doubt" title><img class="lazyload" src="data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iZW1vdGlvbi1sb2FkaW5nIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9Ii04IC04IDQwIDQwIiBzdHJva2U9IiM4ODgiIG9wYWNpdHk9Ii41IiB3aWR0aD0iNjAiIGhlaWdodD0iNjAiPgogIDxwYXRoIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSIxLjUiIGQ9Ik0xNC44MjggMTQuODI4YTQgNCAwIDAxLTUuNjU2IDBNOSAxMGguMDFNMTUgMTBoLjAxTTIxIDEyYTkgOSAwIDExLTE4IDAgOSA5IDAgMDExOCAweiIvPgo8L3N2Zz4=" data-original="https://i19.eu/wp-content/themes/argon/stickers/dinosaur/9.jpg"></div>
+<div class="emotion-item emotion-item-sticker" code="dinosaur-depressed" title><img class="lazyload" src="data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iZW1vdGlvbi1sb2FkaW5nIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9Ii04IC04IDQwIDQwIiBzdHJva2U9IiM4ODgiIG9wYWNpdHk9Ii41IiB3aWR0aD0iNjAiIGhlaWdodD0iNjAiPgogIDxwYXRoIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSIxLjUiIGQ9Ik0xNC44MjggMTQuODI4YTQgNCAwIDAxLTUuNjU2IDBNOSAxMGguMDFNMTUgMTBoLjAxTTIxIDEyYTkgOSAwIDExLTE4IDAgOSA5IDAgMDExOCAweiIvPgo8L3N2Zz4=" data-original="https://i19.eu/wp-content/themes/argon/stickers/dinosaur/10.jpg"></div>
+<div class="emotion-item emotion-item-sticker" code="dinosaur-close-eyes" title><img class="lazyload" src="data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iZW1vdGlvbi1sb2FkaW5nIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9Ii04IC04IDQwIDQwIiBzdHJva2U9IiM4ODgiIG9wYWNpdHk9Ii41IiB3aWR0aD0iNjAiIGhlaWdodD0iNjAiPgogIDxwYXRoIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSIxLjUiIGQ9Ik0xNC44MjggMTQuODI4YTQgNCAwIDAxLTUuNjU2IDBNOSAxMGguMDFNMTUgMTBoLjAxTTIxIDEyYTkgOSAwIDExLTE4IDAgOSA5IDAgMDExOCAweiIvPgo8L3N2Zz4=" data-original="https://i19.eu/wp-content/themes/argon/stickers/dinosaur/11.jpg"></div>
+<div class="emotion-item emotion-item-sticker" code="dinosaur-sleeping" title><img class="lazyload" src="data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iZW1vdGlvbi1sb2FkaW5nIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9Ii04IC04IDQwIDQwIiBzdHJva2U9IiM4ODgiIG9wYWNpdHk9Ii41IiB3aWR0aD0iNjAiIGhlaWdodD0iNjAiPgogIDxwYXRoIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSIxLjUiIGQ9Ik0xNC44MjggMTQuODI4YTQgNCAwIDAxLTUuNjU2IDBNOSAxMGguMDFNMTUgMTBoLjAxTTIxIDEyYTkgOSAwIDExLTE4IDAgOSA5IDAgMDExOCAweiIvPgo8L3N2Zz4=" data-original="https://i19.eu/wp-content/themes/argon/stickers/dinosaur/12.jpg"></div>
+<div class="emotion-item emotion-item-sticker" code="dinosaur-puzzled" title><img class="lazyload" src="data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iZW1vdGlvbi1sb2FkaW5nIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9Ii04IC04IDQwIDQwIiBzdHJva2U9IiM4ODgiIG9wYWNpdHk9Ii41IiB3aWR0aD0iNjAiIGhlaWdodD0iNjAiPgogIDxwYXRoIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSIxLjUiIGQ9Ik0xNC44MjggMTQuODI4YTQgNCAwIDAxLTUuNjU2IDBNOSAxMGguMDFNMTUgMTBoLjAxTTIxIDEyYTkgOSAwIDExLTE4IDAgOSA5IDAgMDExOCAweiIvPgo8L3N2Zz4=" data-original="https://i19.eu/wp-content/themes/argon/stickers/dinosaur/13.jpg"></div>
+<div class="emotion-item emotion-item-sticker" code="dinosaur-agree" title><img class="lazyload" src="data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iZW1vdGlvbi1sb2FkaW5nIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9Ii04IC04IDQwIDQwIiBzdHJva2U9IiM4ODgiIG9wYWNpdHk9Ii41IiB3aWR0aD0iNjAiIGhlaWdodD0iNjAiPgogIDxwYXRoIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSIxLjUiIGQ9Ik0xNC44MjggMTQuODI4YTQgNCAwIDAxLTUuNjU2IDBNOSAxMGguMDFNMTUgMTBoLjAxTTIxIDEyYTkgOSAwIDExLTE4IDAgOSA5IDAgMDExOCAweiIvPgo8L3N2Zz4=" data-original="https://i19.eu/wp-content/themes/argon/stickers/dinosaur/14.jpg"></div>
+<div class="emotion-item emotion-item-sticker" code="dinosaur-crazy" title><img class="lazyload" src="data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iZW1vdGlvbi1sb2FkaW5nIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9Ii04IC04IDQwIDQwIiBzdHJva2U9IiM4ODgiIG9wYWNpdHk9Ii41IiB3aWR0aD0iNjAiIGhlaWdodD0iNjAiPgogIDxwYXRoIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSIxLjUiIGQ9Ik0xNC44MjggMTQuODI4YTQgNCAwIDAxLTUuNjU2IDBNOSAxMGguMDFNMTUgMTBoLjAxTTIxIDEyYTkgOSAwIDExLTE4IDAgOSA5IDAgMDExOCAweiIvPgo8L3N2Zz4=" data-original="https://i19.eu/wp-content/themes/argon/stickers/dinosaur/15.jpg"></div>
+<div class="emotion-item emotion-item-sticker" code="dinosaur-angry" title><img class="lazyload" src="data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iZW1vdGlvbi1sb2FkaW5nIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9Ii04IC04IDQwIDQwIiBzdHJva2U9IiM4ODgiIG9wYWNpdHk9Ii41IiB3aWR0aD0iNjAiIGhlaWdodD0iNjAiPgogIDxwYXRoIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSIxLjUiIGQ9Ik0xNC44MjggMTQuODI4YTQgNCAwIDAxLTUuNjU2IDBNOSAxMGguMDFNMTUgMTBoLjAxTTIxIDEyYTkgOSAwIDExLTE4IDAgOSA5IDAgMDExOCAweiIvPgo8L3N2Zz4=" data-original="https://i19.eu/wp-content/themes/argon/stickers/dinosaur/16.jpg"></div>
+</div>
+<div class="emotion-group d-none" index="3">
+<div class="emotion-item emotion-item-sticker" code="flower-flower" title><img class="lazyload" src="data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iZW1vdGlvbi1sb2FkaW5nIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9Ii04IC04IDQwIDQwIiBzdHJva2U9IiM4ODgiIG9wYWNpdHk9Ii41IiB3aWR0aD0iNjAiIGhlaWdodD0iNjAiPgogIDxwYXRoIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSIxLjUiIGQ9Ik0xNC44MjggMTQuODI4YTQgNCAwIDAxLTUuNjU2IDBNOSAxMGguMDFNMTUgMTBoLjAxTTIxIDEyYTkgOSAwIDExLTE4IDAgOSA5IDAgMDExOCAweiIvPgo8L3N2Zz4=" data-original="https://i19.eu/wp-content/themes/argon/stickers/flower/1.jpg"></div>
+<div class="emotion-item emotion-item-sticker" code="flower-grass" title><img class="lazyload" src="data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iZW1vdGlvbi1sb2FkaW5nIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9Ii04IC04IDQwIDQwIiBzdHJva2U9IiM4ODgiIG9wYWNpdHk9Ii41IiB3aWR0aD0iNjAiIGhlaWdodD0iNjAiPgogIDxwYXRoIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSIxLjUiIGQ9Ik0xNC44MjggMTQuODI4YTQgNCAwIDAxLTUuNjU2IDBNOSAxMGguMDFNMTUgMTBoLjAxTTIxIDEyYTkgOSAwIDExLTE4IDAgOSA5IDAgMDExOCAweiIvPgo8L3N2Zz4=" data-original="https://i19.eu/wp-content/themes/argon/stickers/flower/2.jpg"></div>
+<div class="emotion-item emotion-item-sticker" code="flower-leaf" title><img class="lazyload" src="data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iZW1vdGlvbi1sb2FkaW5nIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9Ii04IC04IDQwIDQwIiBzdHJva2U9IiM4ODgiIG9wYWNpdHk9Ii41IiB3aWR0aD0iNjAiIGhlaWdodD0iNjAiPgogIDxwYXRoIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSIxLjUiIGQ9Ik0xNC44MjggMTQuODI4YTQgNCAwIDAxLTUuNjU2IDBNOSAxMGguMDFNMTUgMTBoLjAxTTIxIDEyYTkgOSAwIDExLTE4IDAgOSA5IDAgMDExOCAweiIvPgo8L3N2Zz4=" data-original="https://i19.eu/wp-content/themes/argon/stickers/flower/3.jpg"></div>
+<div class="emotion-item emotion-item-sticker" code="flower-star" title><img class="lazyload" src="data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iZW1vdGlvbi1sb2FkaW5nIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9Ii04IC04IDQwIDQwIiBzdHJva2U9IiM4ODgiIG9wYWNpdHk9Ii41IiB3aWR0aD0iNjAiIGhlaWdodD0iNjAiPgogIDxwYXRoIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSIxLjUiIGQ9Ik0xNC44MjggMTQuODI4YTQgNCAwIDAxLTUuNjU2IDBNOSAxMGguMDFNMTUgMTBoLjAxTTIxIDEyYTkgOSAwIDExLTE4IDAgOSA5IDAgMDExOCAweiIvPgo8L3N2Zz4=" data-original="https://i19.eu/wp-content/themes/argon/stickers/flower/4.jpg"></div>
+<div class="emotion-item emotion-item-sticker" code="flower-sun" title><img class="lazyload" src="data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iZW1vdGlvbi1sb2FkaW5nIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9Ii04IC04IDQwIDQwIiBzdHJva2U9IiM4ODgiIG9wYWNpdHk9Ii41IiB3aWR0aD0iNjAiIGhlaWdodD0iNjAiPgogIDxwYXRoIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSIxLjUiIGQ9Ik0xNC44MjggMTQuODI4YTQgNCAwIDAxLTUuNjU2IDBNOSAxMGguMDFNMTUgMTBoLjAxTTIxIDEyYTkgOSAwIDExLTE4IDAgOSA5IDAgMDExOCAweiIvPgo8L3N2Zz4=" data-original="https://i19.eu/wp-content/themes/argon/stickers/flower/5.jpg"></div>
+<div class="emotion-item emotion-item-sticker" code="flower-moon" title><img class="lazyload" src="data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iZW1vdGlvbi1sb2FkaW5nIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9Ii04IC04IDQwIDQwIiBzdHJva2U9IiM4ODgiIG9wYWNpdHk9Ii41IiB3aWR0aD0iNjAiIGhlaWdodD0iNjAiPgogIDxwYXRoIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSIxLjUiIGQ9Ik0xNC44MjggMTQuODI4YTQgNCAwIDAxLTUuNjU2IDBNOSAxMGguMDFNMTUgMTBoLjAxTTIxIDEyYTkgOSAwIDExLTE4IDAgOSA5IDAgMDExOCAweiIvPgo8L3N2Zz4=" data-original="https://i19.eu/wp-content/themes/argon/stickers/flower/6.jpg"></div>
+<div class="emotion-item emotion-item-sticker" code="flower-water" title><img class="lazyload" src="data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iZW1vdGlvbi1sb2FkaW5nIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9Ii04IC04IDQwIDQwIiBzdHJva2U9IiM4ODgiIG9wYWNpdHk9Ii41IiB3aWR0aD0iNjAiIGhlaWdodD0iNjAiPgogIDxwYXRoIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSIxLjUiIGQ9Ik0xNC44MjggMTQuODI4YTQgNCAwIDAxLTUuNjU2IDBNOSAxMGguMDFNMTUgMTBoLjAxTTIxIDEyYTkgOSAwIDExLTE4IDAgOSA5IDAgMDExOCAweiIvPgo8L3N2Zz4=" data-original="https://i19.eu/wp-content/themes/argon/stickers/flower/7.jpg"></div>
+<div class="emotion-item emotion-item-sticker" code="flower-heihei" title><img class="lazyload" src="data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iZW1vdGlvbi1sb2FkaW5nIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9Ii04IC04IDQwIDQwIiBzdHJva2U9IiM4ODgiIG9wYWNpdHk9Ii41IiB3aWR0aD0iNjAiIGhlaWdodD0iNjAiPgogIDxwYXRoIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSIxLjUiIGQ9Ik0xNC44MjggMTQuODI4YTQgNCAwIDAxLTUuNjU2IDBNOSAxMGguMDFNMTUgMTBoLjAxTTIxIDEyYTkgOSAwIDExLTE4IDAgOSA5IDAgMDExOCAweiIvPgo8L3N2Zz4=" data-original="https://i19.eu/wp-content/themes/argon/stickers/flower/8.jpg"></div>
+<div class="emotion-item emotion-item-sticker" code="flower-lemon" title><img class="lazyload" src="data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iZW1vdGlvbi1sb2FkaW5nIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9Ii04IC04IDQwIDQwIiBzdHJva2U9IiM4ODgiIG9wYWNpdHk9Ii41IiB3aWR0aD0iNjAiIGhlaWdodD0iNjAiPgogIDxwYXRoIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSIxLjUiIGQ9Ik0xNC44MjggMTQuODI4YTQgNCAwIDAxLTUuNjU2IDBNOSAxMGguMDFNMTUgMTBoLjAxTTIxIDEyYTkgOSAwIDExLTE4IDAgOSA5IDAgMDExOCAweiIvPgo8L3N2Zz4=" data-original="https://i19.eu/wp-content/themes/argon/stickers/flower/9.jpg"></div>
+<div class="emotion-item emotion-item-sticker" code="flower-birthday" title><img class="lazyload" src="data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iZW1vdGlvbi1sb2FkaW5nIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9Ii04IC04IDQwIDQwIiBzdHJva2U9IiM4ODgiIG9wYWNpdHk9Ii41IiB3aWR0aD0iNjAiIGhlaWdodD0iNjAiPgogIDxwYXRoIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSIxLjUiIGQ9Ik0xNC44MjggMTQuODI4YTQgNCAwIDAxLTUuNjU2IDBNOSAxMGguMDFNMTUgMTBoLjAxTTIxIDEyYTkgOSAwIDExLTE4IDAgOSA5IDAgMDExOCAweiIvPgo8L3N2Zz4=" data-original="https://i19.eu/wp-content/themes/argon/stickers/flower/10.jpg"></div>
+<div class="emotion-item emotion-item-sticker" code="flower-sea" title><img class="lazyload" src="data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iZW1vdGlvbi1sb2FkaW5nIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9Ii04IC04IDQwIDQwIiBzdHJva2U9IiM4ODgiIG9wYWNpdHk9Ii41IiB3aWR0aD0iNjAiIGhlaWdodD0iNjAiPgogIDxwYXRoIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSIxLjUiIGQ9Ik0xNC44MjggMTQuODI4YTQgNCAwIDAxLTUuNjU2IDBNOSAxMGguMDFNMTUgMTBoLjAxTTIxIDEyYTkgOSAwIDExLTE4IDAgOSA5IDAgMDExOCAweiIvPgo8L3N2Zz4=" data-original="https://i19.eu/wp-content/themes/argon/stickers/flower/11.jpg"></div>
+<div class="emotion-item emotion-item-sticker" code="flower-vegetable" title><img class="lazyload" src="data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iZW1vdGlvbi1sb2FkaW5nIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9Ii04IC04IDQwIDQwIiBzdHJva2U9IiM4ODgiIG9wYWNpdHk9Ii41IiB3aWR0aD0iNjAiIGhlaWdodD0iNjAiPgogIDxwYXRoIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSIxLjUiIGQ9Ik0xNC44MjggMTQuODI4YTQgNCAwIDAxLTUuNjU2IDBNOSAxMGguMDFNMTUgMTBoLjAxTTIxIDEyYTkgOSAwIDExLTE4IDAgOSA5IDAgMDExOCAweiIvPgo8L3N2Zz4=" data-original="https://i19.eu/wp-content/themes/argon/stickers/flower/12.jpg"></div>
+<div class="emotion-item emotion-item-sticker" code="flower-tile" title><img class="lazyload" src="data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iZW1vdGlvbi1sb2FkaW5nIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9Ii04IC04IDQwIDQwIiBzdHJva2U9IiM4ODgiIG9wYWNpdHk9Ii41IiB3aWR0aD0iNjAiIGhlaWdodD0iNjAiPgogIDxwYXRoIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSIxLjUiIGQ9Ik0xNC44MjggMTQuODI4YTQgNCAwIDAxLTUuNjU2IDBNOSAxMGguMDFNMTUgMTBoLjAxTTIxIDEyYTkgOSAwIDExLTE4IDAgOSA5IDAgMDExOCAweiIvPgo8L3N2Zz4=" data-original="https://i19.eu/wp-content/themes/argon/stickers/flower/13.jpg"></div>
+<div class="emotion-item emotion-item-sticker" code="flower-utf" title><img class="lazyload" src="data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iZW1vdGlvbi1sb2FkaW5nIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9Ii04IC04IDQwIDQwIiBzdHJva2U9IiM4ODgiIG9wYWNpdHk9Ii41IiB3aWR0aD0iNjAiIGhlaWdodD0iNjAiPgogIDxwYXRoIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSIxLjUiIGQ9Ik0xNC44MjggMTQuODI4YTQgNCAwIDAxLTUuNjU2IDBNOSAxMGguMDFNMTUgMTBoLjAxTTIxIDEyYTkgOSAwIDExLTE4IDAgOSA5IDAgMDExOCAweiIvPgo8L3N2Zz4=" data-original="https://i19.eu/wp-content/themes/argon/stickers/flower/14.jpg"></div>
+<div class="emotion-group-description">Source: github.com/k4yt3x/flowerhd</div>
+</div> </div>
+<div class="emotion-keyboard-bar">
+<div class="emotion-group-name active" index="0">颜文字</div>
+<div class="emotion-group-name" index="1">Emoji</div>
+<div class="emotion-group-name" index="2">小恐龙</div>
+<div class="emotion-group-name" index="3">花!</div> </div>
+</div> </div>
+</div>
+<input id="post_comment_captcha_seed" value="<br />
+<b>Warning</b>:  Undefined variable $commentCaptchaSeed in <b>/www/wwwroot/xy1991.win/wp-content/themes/argon/comments.php</b> on line <b>231</b><br />
+" style="display: none;">
+<input id="post_comment_post_id" value="68" style="display: none;">
+</form>
+</div>
+</div>
+<div id="comment_edit_history" class="modal fade" tabindex="-1" role="dialog" aria-modal="true">
+<div class="modal-dialog modal-lg">
+<div class="modal-content">
+<div class="modal-header">
+<h4 class="modal-title" style="font-size: 20px;"></h4>
+<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+<span aria-hidden="true">×</span>
+</button>
+</div>
+<div class="modal-body" style="word-break: break-word;"></div>
+</div>
+</div>
+</div>
+<div id="comment_pin_comfirm_dialog" class="modal fade" tabindex="-1" role="dialog" aria-modal="true">
+<div class="modal-dialog">
+<div class="modal-content">
+<div class="modal-header">
+<h4 class="modal-title" style="font-size: 20px;"></h4>
+<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+<span aria-hidden="true">×</span>
+</button>
+</div>
+<div class="modal-body" style="word-break: break-word;"></div>
+<div class="modal-footer">
+<button type="button" class="btn btn-secondary btn-dismiss" data-dismiss="modal"></button>
+<button type="button" class="btn btn-primary btn-comfirm"></button>
+</div>
+</div>
+</div>
+</div>
+<div class="post-navigation card shadow-sm">
+<div class="post-navigation-item post-navigation-pre">
+<span class="page-navigation-extra-text"><i class="fa fa-arrow-circle-o-left" aria-hidden="true"></i>上一篇</span><a href="/coreldraw-x6-%e4%b8%8b%e8%bd%bd%e4%b8%8e%e5%8d%87%e7%ba%a7/" rel="prev">CorelDRAW X6 下载与升级</a>
+</div>
+<div class="post-navigation-item post-navigation-next">
+<span class="page-navigation-extra-text">下一篇 <i class="fa fa-arrow-circle-o-right" aria-hidden="true"></i></span><a href="/%e5%ae%9d%e5%a1%94%e2%9e%95cloudflare%e8%87%aa%e9%80%89ip%e8%87%aa%e5%8a%a8%e7%bb%ad%e6%9c%9flets-encrypt%e8%af%81%e4%b9%a6/" rel="next">宝塔➕cloudflare自选ip自动续期Let’s Encrypt证书</a>
+</div>
+</div>
+<footer id="footer" class="site-footer card shadow-sm border-0">
+<div>Theme <a href="https://github.com/solstice23/argon-theme" target="_blank"><strong>Argon</strong></a>
+</div>
+</footer>
+</main>
+</div>
+</div>
+<script src="/wp-content/themes/argon/argontheme.js?v1_3_5"></script>
+<script>window.MathJax = {
+					tex: {
+						inlineMath: [["$", "$"], ["\\\\(", "\\\\)"]],
+						displayMath: [['$$','$$']],
+						processEscapes: true,
+						packages: {'[+]': ['noerrors']}
+					},
+					options: {
+						skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+						ignoreHtmlClass: 'tex2jax_ignore',
+						processHtmlClass: 'tex2jax_process'
+					},
+					loader: {
+						load: ['[tex]/noerrors']
+					}
+				};</script>
+<script src="//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" id="MathJax-script" async></script>
+<link rel="stylesheet" href="/wp-content/themes/argon/assets/vendor/highlight/styles/vs2015.css">
+
+
+<span class="ssp-id" style="display:none">68</span>
+<p id="optimized_by_wpjam_basic">Optimized by <a href="https://blog.wpjam.com/project/wpjam-basic/">WPJAM Basic</a>。</p>
+</body>
+</html>
