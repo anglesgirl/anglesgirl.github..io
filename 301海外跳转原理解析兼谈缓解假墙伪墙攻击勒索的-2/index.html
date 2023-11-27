@@ -1,16 +1,903 @@
-<!DOCTYPE html><html class="amoled-dark article-header-style-default immersion-color no-js toolbar-blur" lang=zh-CN><head><meta charset=UTF-8><meta content="width=device-width, initial-scale=1, maximum-scale=5" name=viewport><meta content="301海外跳转原理解析兼谈缓解假墙伪墙攻击勒索的多种技术手段 - 雅丶涵" property=og:title><meta content=article property=og:type><meta content=/301%E6%B5%B7%E5%A4%96%E8%B7%B3%E8%BD%AC%E5%8E%9F%E7%90%86%E8%A7%A3%E6%9E%90%E5%85%BC%E8%B0%88%E7%BC%93%E8%A7%A3%E5%81%87%E5%A2%99%E4%BC%AA%E5%A2%99%E6%94%BB%E5%87%BB%E5%8B%92%E7%B4%A2%E7%9A%84-2 property=og:url><meta content="在上一篇文章中，我们实现了HTTP的抢答模式，避免了墙的TCP Reset。那么这次我们就来聊一聊HTTPS如何避免被TCP Reset。 我们知道，HTTPS是需要客户端和服务器之间完成TLS握手后才能收发HTTP Request和Respo &hellip;" name=description><meta content="在上一篇文章中，我们实现了HTTP的抢答模式，避免了墙的TCP Reset。那么这次我们就来聊一聊HTTPS如何避免被TCP Reset。 我们知道，HTTPS是需要客户端和服务器之间完成TLS握手后才能收发HTTP Request和Respo &hellip;" property=og:description><meta content=/wp-content/uploads/2021/09/img_7961.jpg property=og:image><meta content=#fa7298 name=theme-color><meta content=250,114,152 name=theme-color-rgb><meta content=#fa7298 name=theme-color-origin><meta content=true name=argon-enable-custom-theme-color><meta content=4 name=theme-card-radius><meta content=4 name=theme-card-radius-origin><meta content=1.3.5 name=theme-version><link href=https://gmpg.org/xfn/11 rel=profile><link href=/xmlrpc.php rel=pingback><title>301海外跳转原理解析兼谈缓解假墙伪墙攻击勒索的多种技术手段 - 雅丶涵</title><meta content="在上一篇文章中，我们实现了HTTP的抢答模式，避免了墙的TCP Reset。那么这次我们就来聊一聊HTTPS如何避免被TCP Reset。 我们知道，HTTPS是需要客户端和服务器之间完成TLS握手后才能收发HTTP Request和Respo &hellip;" name=description><meta content=max-image-preview:large name=robots><link href=//fonts.lug.ustc.edu.cn rel=dns-prefetch><link href="/wp-content/themes/argon/assets/argon_css_merged.css?ver=1.3.5" id=argon_css_merged-css rel=stylesheet><link href="/wp-content/themes/argon/style.css?ver=1.3.5" id=style-css rel=stylesheet><link href="//fonts.lug.ustc.edu.cn/css?family=Open+Sans%3A300%2C400%2C600%2C700%7CNoto+Serif+SC%3A300%2C600&#038;display=swap" id=googlefont-css rel=stylesheet><style id=classic-theme-styles-inline-css>/*! This file is auto-generated */
-.wp-block-button__link{color:#fff;background-color:#32373c;border-radius:9999px;box-shadow:none;text-decoration:none;padding:calc(.667em+2px) calc(1.333em+2px);font-size:1.125em}.wp-block-file__button{background:#32373c;color:#fff;text-decoration:none}</style><style id=global-styles-inline-css>body{--wp--preset--color--black:#000;--wp--preset--color--cyan-bluish-gray:#abb8c3;--wp--preset--color--white:#fff;--wp--preset--color--pale-pink:#f78da7;--wp--preset--color--vivid-red:#cf2e2e;--wp--preset--color--luminous-vivid-orange:#ff6900;--wp--preset--color--luminous-vivid-amber:#fcb900;--wp--preset--color--light-green-cyan:#7bdcb5;--wp--preset--color--vivid-green-cyan:#00d084;--wp--preset--color--pale-cyan-blue:#8ed1fc;--wp--preset--color--vivid-cyan-blue:#0693e3;--wp--preset--color--vivid-purple:#9b51e0;--wp--preset--gradient--vivid-cyan-blue-to-vivid-purple:linear-gradient(135deg,rgba(6,147,227,1) 0,rgb(155,81,224) 100%);--wp--preset--gradient--light-green-cyan-to-vivid-green-cyan:linear-gradient(135deg,rgb(122,220,180) 0,rgb(0,208,130) 100%);--wp--preset--gradient--luminous-vivid-amber-to-luminous-vivid-orange:linear-gradient(135deg,rgba(252,185,0,1) 0,rgba(255,105,0,1) 100%);--wp--preset--gradient--luminous-vivid-orange-to-vivid-red:linear-gradient(135deg,rgba(255,105,0,1) 0,rgb(207,46,46) 100%);--wp--preset--gradient--very-light-gray-to-cyan-bluish-gray:linear-gradient(135deg,rgb(238,238,238) 0,rgb(169,184,195) 100%);--wp--preset--gradient--cool-to-warm-spectrum:linear-gradient(135deg,rgb(74,234,220) 0,rgb(151,120,209) 20%,rgb(207,42,186) 40%,rgb(238,44,130) 60%,rgb(251,105,98) 80%,rgb(254,248,76) 100%);--wp--preset--gradient--blush-light-purple:linear-gradient(135deg,rgb(255,206,236) 0,rgb(152,150,240) 100%);--wp--preset--gradient--blush-bordeaux:linear-gradient(135deg,rgb(254,205,165) 0,rgb(254,45,45) 50%,rgb(107,0,62) 100%);--wp--preset--gradient--luminous-dusk:linear-gradient(135deg,rgb(255,203,112) 0,rgb(199,81,192) 50%,rgb(65,88,208) 100%);--wp--preset--gradient--pale-ocean:linear-gradient(135deg,rgb(255,245,203) 0,rgb(182,227,212) 50%,rgb(51,167,181) 100%);--wp--preset--gradient--electric-grass:linear-gradient(135deg,rgb(202,248,128) 0,rgb(113,206,126) 100%);--wp--preset--gradient--midnight:linear-gradient(135deg,rgb(2,3,129) 0,rgb(40,116,252) 100%);--wp--preset--font-size--small:13px;--wp--preset--font-size--medium:20px;--wp--preset--font-size--large:36px;--wp--preset--font-size--x-large:42px;--wp--preset--spacing--20:.44rem;--wp--preset--spacing--30:.67rem;--wp--preset--spacing--40:1rem;--wp--preset--spacing--50:1.5rem;--wp--preset--spacing--60:2.25rem;--wp--preset--spacing--70:3.38rem;--wp--preset--spacing--80:5.06rem;--wp--preset--shadow--natural:6px 6px 9px rgba(0,0,0,.2);--wp--preset--shadow--deep:12px 12px 50px rgba(0,0,0,.4);--wp--preset--shadow--sharp:6px 6px 0 rgba(0,0,0,.2);--wp--preset--shadow--outlined:6px 6px 0 -3px rgba(255,255,255,1),6px 6px rgba(0,0,0,1);--wp--preset--shadow--crisp:6px 6px 0 rgba(0,0,0,1)}:where(.is-layout-flex){gap:.5em}:where(.is-layout-grid){gap:.5em}body .is-layout-flow>.alignleft{float:left;margin-inline-start:0;margin-inline-end:2em}body .is-layout-flow>.alignright{float:right;margin-inline-start:2em;margin-inline-end:0}body .is-layout-flow>.aligncenter{margin-left:auto!important;margin-right:auto!important}body .is-layout-constrained>.alignleft{float:left;margin-inline-start:0;margin-inline-end:2em}body .is-layout-constrained>.alignright{float:right;margin-inline-start:2em;margin-inline-end:0}body .is-layout-constrained>.aligncenter{margin-left:auto!important;margin-right:auto!important}body .is-layout-constrained>:where(:not(.alignleft):not(.alignright):not(.alignfull)){max-width:var(--wp--style--global--content-size);margin-left:auto!important;margin-right:auto!important}body .is-layout-constrained>.alignwide{max-width:var(--wp--style--global--wide-size)}body .is-layout-flex{display:flex}body .is-layout-flex{flex-wrap:wrap;align-items:center}body .is-layout-flex>*{margin:0}body .is-layout-grid{display:grid}body .is-layout-grid>*{margin:0}:where(.wp-block-columns.is-layout-flex){gap:2em}:where(.wp-block-columns.is-layout-grid){gap:2em}:where(.wp-block-post-template.is-layout-flex){gap:1.25em}:where(.wp-block-post-template.is-layout-grid){gap:1.25em}.has-black-color{color:var(--wp--preset--color--black)!important}.has-cyan-bluish-gray-color{color:var(--wp--preset--color--cyan-bluish-gray)!important}.has-white-color{color:var(--wp--preset--color--white)!important}.has-pale-pink-color{color:var(--wp--preset--color--pale-pink)!important}.has-vivid-red-color{color:var(--wp--preset--color--vivid-red)!important}.has-luminous-vivid-orange-color{color:var(--wp--preset--color--luminous-vivid-orange)!important}.has-luminous-vivid-amber-color{color:var(--wp--preset--color--luminous-vivid-amber)!important}.has-light-green-cyan-color{color:var(--wp--preset--color--light-green-cyan)!important}.has-vivid-green-cyan-color{color:var(--wp--preset--color--vivid-green-cyan)!important}.has-pale-cyan-blue-color{color:var(--wp--preset--color--pale-cyan-blue)!important}.has-vivid-cyan-blue-color{color:var(--wp--preset--color--vivid-cyan-blue)!important}.has-vivid-purple-color{color:var(--wp--preset--color--vivid-purple)!important}.has-black-background-color{background-color:var(--wp--preset--color--black)!important}.has-cyan-bluish-gray-background-color{background-color:var(--wp--preset--color--cyan-bluish-gray)!important}.has-white-background-color{background-color:var(--wp--preset--color--white)!important}.has-pale-pink-background-color{background-color:var(--wp--preset--color--pale-pink)!important}.has-vivid-red-background-color{background-color:var(--wp--preset--color--vivid-red)!important}.has-luminous-vivid-orange-background-color{background-color:var(--wp--preset--color--luminous-vivid-orange)!important}.has-luminous-vivid-amber-background-color{background-color:var(--wp--preset--color--luminous-vivid-amber)!important}.has-light-green-cyan-background-color{background-color:var(--wp--preset--color--light-green-cyan)!important}.has-vivid-green-cyan-background-color{background-color:var(--wp--preset--color--vivid-green-cyan)!important}.has-pale-cyan-blue-background-color{background-color:var(--wp--preset--color--pale-cyan-blue)!important}.has-vivid-cyan-blue-background-color{background-color:var(--wp--preset--color--vivid-cyan-blue)!important}.has-vivid-purple-background-color{background-color:var(--wp--preset--color--vivid-purple)!important}.has-black-border-color{border-color:var(--wp--preset--color--black)!important}.has-cyan-bluish-gray-border-color{border-color:var(--wp--preset--color--cyan-bluish-gray)!important}.has-white-border-color{border-color:var(--wp--preset--color--white)!important}.has-pale-pink-border-color{border-color:var(--wp--preset--color--pale-pink)!important}.has-vivid-red-border-color{border-color:var(--wp--preset--color--vivid-red)!important}.has-luminous-vivid-orange-border-color{border-color:var(--wp--preset--color--luminous-vivid-orange)!important}.has-luminous-vivid-amber-border-color{border-color:var(--wp--preset--color--luminous-vivid-amber)!important}.has-light-green-cyan-border-color{border-color:var(--wp--preset--color--light-green-cyan)!important}.has-vivid-green-cyan-border-color{border-color:var(--wp--preset--color--vivid-green-cyan)!important}.has-pale-cyan-blue-border-color{border-color:var(--wp--preset--color--pale-cyan-blue)!important}.has-vivid-cyan-blue-border-color{border-color:var(--wp--preset--color--vivid-cyan-blue)!important}.has-vivid-purple-border-color{border-color:var(--wp--preset--color--vivid-purple)!important}.has-vivid-cyan-blue-to-vivid-purple-gradient-background{background:var(--wp--preset--gradient--vivid-cyan-blue-to-vivid-purple)!important}.has-light-green-cyan-to-vivid-green-cyan-gradient-background{background:var(--wp--preset--gradient--light-green-cyan-to-vivid-green-cyan)!important}.has-luminous-vivid-amber-to-luminous-vivid-orange-gradient-background{background:var(--wp--preset--gradient--luminous-vivid-amber-to-luminous-vivid-orange)!important}.has-luminous-vivid-orange-to-vivid-red-gradient-background{background:var(--wp--preset--gradient--luminous-vivid-orange-to-vivid-red)!important}.has-very-light-gray-to-cyan-bluish-gray-gradient-background{background:var(--wp--preset--gradient--very-light-gray-to-cyan-bluish-gray)!important}.has-cool-to-warm-spectrum-gradient-background{background:var(--wp--preset--gradient--cool-to-warm-spectrum)!important}.has-blush-light-purple-gradient-background{background:var(--wp--preset--gradient--blush-light-purple)!important}.has-blush-bordeaux-gradient-background{background:var(--wp--preset--gradient--blush-bordeaux)!important}.has-luminous-dusk-gradient-background{background:var(--wp--preset--gradient--luminous-dusk)!important}.has-pale-ocean-gradient-background{background:var(--wp--preset--gradient--pale-ocean)!important}.has-electric-grass-gradient-background{background:var(--wp--preset--gradient--electric-grass)!important}.has-midnight-gradient-background{background:var(--wp--preset--gradient--midnight)!important}.has-small-font-size{font-size:var(--wp--preset--font-size--small)!important}.has-medium-font-size{font-size:var(--wp--preset--font-size--medium)!important}.has-large-font-size{font-size:var(--wp--preset--font-size--large)!important}.has-x-large-font-size{font-size:var(--wp--preset--font-size--x-large)!important}.wp-block-navigation a:where(:not(.wp-element-button)){color:inherit}:where(.wp-block-post-template.is-layout-flex){gap:1.25em}:where(.wp-block-post-template.is-layout-grid){gap:1.25em}:where(.wp-block-columns.is-layout-flex){gap:2em}:where(.wp-block-columns.is-layout-grid){gap:2em}.wp-block-pullquote{font-size:1.5em;line-height:1.6}</style><script id=argon_js_merged-js src="/wp-content/themes/argon/assets/argon_js_merged.js?ver=1.3.5"></script><script id=argonjs-js src="/wp-content/themes/argon/assets/js/argon.min.js?ver=1.3.5"></script><link href=/301%e6%b5%b7%e5%a4%96%e8%b7%b3%e8%bd%ac%e5%8e%9f%e7%90%86%e8%a7%a3%e6%9e%90%e5%85%bc%e8%b0%88%e7%bc%93%e8%a7%a3%e5%81%87%e5%a2%99%e4%bc%aa%e5%a2%99%e6%94%bb%e5%87%bb%e5%8b%92%e7%b4%a2%e7%9a%84-2/ rel=canonical><script></script><style></style><meta content=/wp-content/uploads/simply-static/configs/ name=ssp-config-path><style>.recentcomments a{display:inline!important;padding:0!important;margin:0!important}</style><link href=/wp-content/uploads/2022/06/cropped-IMG_9644-e1655738850667-32x32.png rel=icon sizes=32x32><link href=/wp-content/uploads/2022/06/cropped-IMG_9644-e1655738850667-192x192.png rel=icon sizes=192x192><link href=/wp-content/uploads/2022/06/cropped-IMG_9644-e1655738850667-180x180.png rel=apple-touch-icon><meta content=/wp-content/uploads/2022/06/cropped-IMG_9644-e1655738850667-270x270.png name=msapplication-TileImage><script>document.documentElement.classList.remove("no-js");var argonConfig={wp_path:"/",language:"zh_CN",dateFormat:"YMD",zoomify:false,pangu:"article|shuoshuo|comment",lazyload:{threshold:800,effect:"fadeIn"},fold_long_comments:false,fold_long_shuoshuo:false,disable_pjax:false,pjax_animation_durtion:600,headroom:"true",waterflow_columns:"1",code_highlight:{enable:true,hide_linenumber:false,transparent_linenumber:true,break_line:true}}</script><script>var darkmodeAutoSwitch="system";function setDarkmode(enable){if(enable==true){$("html").addClass("darkmode");}else{$("html").removeClass("darkmode");}
-$(window).trigger("scroll");}
-function toggleDarkmode(){if($("html").hasClass("darkmode")){setDarkmode(false);sessionStorage.setItem("Argon_Enable_Dark_Mode","false");}else{setDarkmode(true);sessionStorage.setItem("Argon_Enable_Dark_Mode","true");}}
-if(sessionStorage.getItem("Argon_Enable_Dark_Mode")=="true"){setDarkmode(true);}
-function toggleDarkmodeByPrefersColorScheme(media){if(sessionStorage.getItem('Argon_Enable_Dark_Mode')=="false"||sessionStorage.getItem('Argon_Enable_Dark_Mode')=="true"){return;}
-if(media.matches){setDarkmode(true);}else{setDarkmode(false);}}
-function toggleDarkmodeByTime(){if(sessionStorage.getItem('Argon_Enable_Dark_Mode')=="false"||sessionStorage.getItem('Argon_Enable_Dark_Mode')=="true"){return;}
-let hour=new Date().getHours();if(hour<7||hour>=22){setDarkmode(true);}else{setDarkmode(false);}}
-if(darkmodeAutoSwitch=='system'){var darkmodeMediaQuery=window.matchMedia("(prefers-color-scheme: dark)");darkmodeMediaQuery.addListener(toggleDarkmodeByPrefersColorScheme);toggleDarkmodeByPrefersColorScheme(darkmodeMediaQuery);}
-if(darkmodeAutoSwitch=='time'){toggleDarkmodeByTime();}
-if(darkmodeAutoSwitch=='alwayson'){setDarkmode(true);}
-function toggleAmoledDarkMode(){$("html").toggleClass("amoled-dark");if($("html").hasClass("amoled-dark")){localStorage.setItem("Argon_Enable_Amoled_Dark_Mode","true");}else{localStorage.setItem("Argon_Enable_Amoled_Dark_Mode","false");}}
-if(localStorage.getItem("Argon_Enable_Amoled_Dark_Mode")=="true"){$("html").addClass("amoled-dark");}else if(localStorage.getItem("Argon_Enable_Amoled_Dark_Mode")=="false"){$("html").removeClass("amoled-dark");}</script><script>if(navigator.userAgent.indexOf("Safari")!==-1&&navigator.userAgent.indexOf("Chrome")===-1){$("html").addClass("using-safari");}</script><script src=/wp-content/themes/argon/assets/vendor/smoothscroll/smoothscroll1.js></script> <style id=themecolor_css>:root{--themecolor:#fa7298;--themecolor-R:250;--themecolor-G:114;--themecolor-B:152;--themecolor-H:343;--themecolor-S:93;--themecolor-L:71}</style> <style id=theme_cardradius_css>:root{--card-radius:4px}</style> <body class="post-template-default postid-170 single single-format-standard single-post"><div id=toolbar><header class=header-global><nav class="bg-primary headroom--not-bottom headroom--not-top headroom--pinned navbar navbar-expand-lg navbar-light navbar-main navbar-transparent" id=navbar-main><div class=container><button aria-expanded=false aria-label="Toggle sidebar" class=navbar-toggler id=open_sidebar type=button><span class=navbar-toggler-icon></span> </button> <div class="mr-0 navbar-brand"><a class="navbar-brand navbar-title" href=/>雅丶涵</a> </div> <div class="collapse navbar-collapse" id=navbar_global><div class=navbar-collapse-header><div class=row style="display:none;"><div class="col-6 collapse-brand"></div> <div class="col-6 collapse-close"><button aria-controls=navbar_global aria-expanded=false aria-label="Toggle navigation" class=navbar-toggler data-target=#navbar_global data-toggle=collapse type=button><span></span> <span></span></button> </div></div> <div class="input-group input-group-alternative"><div class=input-group-prepend><span class=input-group-text><i class="fa fa-search"></i></span> </div> <input autocomplete=off class=form-control id=navbar_search_input_mobile placeholder=搜索什么... type=text></div></div> <ul class="align-items-lg-center navbar-nav navbar-nav-hover"><li class=nav-item><a class=nav-link href=/category/%e6%b8%b8%e6%88%8f/ target=""><i class="d-lg-none ni ni-book-bookmark"></i> <span class=nav-link-inner--text>游戏</span></a> <li class=nav-item><a class=nav-link href=/category/%e8%bd%af%e4%bb%b6%e5%88%86%e4%ba%ab/ target=""><i class="d-lg-none ni ni-book-bookmark"></i> <span class=nav-link-inner--text>软件分享</span></a> <li class=nav-item><a class=nav-link href=/category/%e6%8a%80%e6%9c%af%e8%ae%b0%e5%bd%95/ target=""><i class="d-lg-none ni ni-book-bookmark"></i> <span class=nav-link-inner--text>技术记录</span></a> <li class=nav-item><a class=nav-link href=/category/%e4%b8%8a%e7%bd%91%e5%b7%a5%e5%85%b7/ target=""><i class="d-lg-none ni ni-book-bookmark"></i> <span class=nav-link-inner--text>上网工具</span></a> <li class=nav-item><a class=nav-link href=/category/eve/ target=""><i class="d-lg-none ni ni-book-bookmark"></i> <span class=nav-link-inner--text>EVE</span></a> </ul> <ul class="align-items-lg-center ml-lg-auto navbar-nav"><li class=nav-item data-toggle=modal id=navbar_search_container><div id=navbar_search_input_container><div class="input-group input-group-alternative"><div class=input-group-prepend><span class=input-group-text><i class="fa fa-search"></i></span> </div> <input autocomplete=off class=form-control id=navbar_search_input placeholder=搜索什么... type=text></div> </div> </ul></div> <div data-target=#navbar_global data-toggle=collapse id=navbar_menu_mask></div> <button aria-controls=navbar_global aria-expanded=false aria-label="Toggle navigation" class=navbar-toggler data-target=#navbar_global data-toggle=collapse type=button><span class="navbar-toggler-icon navbar-toggler-searcg-icon"></span> </button></div> </nav> </header> </div> <div aria-hidden=true aria-labelledby="" class="fade modal" id=argon_search_modal role=dialog tabindex=-1><div class="modal-dialog modal-dialog-centered modal-sm" role=document><div class=modal-content><div class=modal-header><h5 class=modal-title>搜索</h5> <button aria-label=Close class=close data-dismiss=modal type=button><span aria-hidden=true>&times;</span> </button></div> <div class=modal-body><form action="" id=argon_serach_form method=get><div class="form-group mb-3"><div class="input-group input-group-alternative"><div class=input-group-prepend><span class=input-group-text><i class="fa fa-search"></i></span> </div> <input autocomplete=off class=form-control name=s placeholder=搜索什么... type=text></div> </div> <div class=text-center><button class="btn btn-primary" onclick="if($('#argon_serach_form input[name=\'s\']').val() != '') {document.getElementById('argon_serach_form').submit();}" type=button>搜索</button> </div></form> </div></div> </div> </div> <section class="banner section section-lg section-shaped" id=banner><div class="shape shape-default shape-style-1"><span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span></div> <div class="banner-container container text-center" id=banner_container><div class="banner-title text-white" data-interval=100><span class=banner-title-inner data-text=雅丶涵>&nbsp;</span> </div> </div></section> <style>#banner:after{content:'';width:100vw;position:absolute;left:0;top:0;height:120px;background:linear-gradient(180deg,rgba(0,0,0,.25) 0,rgba(0,0,0,.15) 35%,rgba(0,0,0,0) 100%);display:block;z-index:-1}.banner-title{text-shadow:0 5px 15px rgba(0,0,0,.2)}</style> <div class="fabtns-unloaded float-action-buttons" id=float_action_buttons><button aria-hidden=true class="btn btn-icon btn-neutral fabtn shadow-sm" id=fabtn_toggle_sides tooltip-move-to-left=移至左侧 tooltip-move-to-right=移至右侧 type=button><span class="btn-inner--icon fabtn-show-on-right"><i class="fa fa-caret-left"></i></span> <span class="btn-inner--icon fabtn-show-on-left"><i class="fa fa-caret-right"></i></span></button> <button aria-label="Back To Top" class="btn btn-icon btn-neutral fabtn shadow-sm" id=fabtn_back_to_top tooltip=回到顶部 type=button><span class=btn-inner--icon><i class="fa fa-angle-up"></i></span> </button> <button aria-label=Comment class="btn btn-icon btn-neutral d-none fabtn shadow-sm" id=fabtn_go_to_comment tooltip=评论 type=button><span class=btn-inner--icon><i class="fa fa-comment-o"></i></span> </button> <button aria-label="Toggle Darkmode" class="btn btn-icon btn-neutral fabtn shadow-sm" id=fabtn_toggle_darkmode style="display:none;" tooltip-blackmode=暗黑模式 tooltip-darkmode=夜间模式 tooltip-lightmode=日间模式 type=button><span class=btn-inner--icon><i class="fa fa-moon-o"></i><i class="fa fa-lightbulb-o"></i></span> </button> <button aria-label="Open Blog Settings Menu" class="btn btn-icon btn-neutral fabtn shadow-sm" id=fabtn_toggle_blog_settings_popup tooltip=设置 type=button><span class=btn-inner--icon><i class="fa fa-cog"></i></span> </button> <div aria-hidden=true class="card shadow-sm" id=fabtn_blog_settings_popup style="opacity:0;"><div id=close_blog_settings><i class="fa fa-close"></i></div> <div class="blog-setting-item mt-3"><div style="transform:translateY(-4px);"><div id=blog_setting_toggle_darkmode_and_amoledarkmode tooltip-switch-to-blackmode=切换到暗黑模式 tooltip-switch-to-darkmode=切换到夜间模式><span>夜间模式</span><span>暗黑模式</span> </div></div> <div style="flex:1;"></div> <label class=custom-toggle id=blog_setting_darkmode_switch><span class="custom-toggle-slider rounded-circle"></span> </label></div> <div class="blog-setting-item mt-3"><div style="flex:1;">字体</div> <div><button class="blog-setting-font blog-setting-selector-left btn btn-outline-primary" id=blog_setting_font_sans_serif type=button>Sans Serif</button><button class="blog-setting-font blog-setting-selector-right btn btn-outline-primary" id=blog_setting_font_serif type=button>Serif</button> </div></div> <div class="blog-setting-item mt-3"><div style="flex:1;">阴影</div> <div><button class="blog-setting-selector-left blog-setting-shadow btn btn-outline-primary" id=blog_setting_shadow_small type=button>浅阴影</button><button class="blog-setting-selector-right blog-setting-shadow btn btn-outline-primary" id=blog_setting_shadow_big type=button>深阴影</button> </div></div> <div class="blog-setting-item mb-3 mt-3"><div style="flex:1;">滤镜</div> <div class=ml-3 id=blog_setting_filters><button class="blog-setting-filter-btn ml-0" filter-name=off id=blog_setting_filter_off type=button>关闭</button> <button class=blog-setting-filter-btn filter-name=sunset id=blog_setting_filter_sunset type=button>日落</button> <button class=blog-setting-filter-btn filter-name=darkness id=blog_setting_filter_darkness type=button>暗化</button> <button class=blog-setting-filter-btn filter-name=grayscale id=blog_setting_filter_grayscale type=button>灰度</button></div></div> <div class="blog-setting-item mb-3"><div id=blog_setting_card_radius_to_default style="cursor:pointer;" tooltip=恢复默认>圆角</div> <div style="flex:1;margin-left:20px;margin-right:8px;transform:translateY(2px);"><div id=blog_setting_card_radius></div> </div></div> <div class="blog-setting-item mb-3 mt-1"><div style="flex:1;">主题色</div> <div class=ml-3 id=theme-color-picker></div></div></div> <button aria-hidden=true class="btn btn-icon btn-neutral fabtn shadow-sm" id=fabtn_reading_progress tooltip=阅读进度 type=button><div id=fabtn_reading_progress_bar style="width:0;"></div> <span id=fabtn_reading_progress_details>0%</span></button></div> <div class=site-content id=content><div class=page-information-card-container></div> <div id=sidebar_mask></div> <aside class="leftbar widget-area" id=leftbar role=complementary><div class="bg-white border-0 card shadow-sm widget widget_search" id=leftbar_part1><div class="card-body leftbar-banner"><span class="leftbar-banner-title text-white">雅丶涵</span> </div> <ul class=leftbar-menu id=leftbar_part1_menu><li class=leftbar-menu-item><a href=/category/%e6%b8%b8%e6%88%8f/ target="">游戏</a> <li class=leftbar-menu-item><a href=/category/%e8%bd%af%e4%bb%b6%e5%88%86%e4%ba%ab/ target="">软件分享</a> <li class=leftbar-menu-item><a href=/category/%e6%8a%80%e6%9c%af%e8%ae%b0%e5%bd%95/ target="">技术记录</a> <li class=leftbar-menu-item><a href=/category/%e4%b8%8a%e7%bd%91%e5%b7%a5%e5%85%b7/ target="">上网工具</a> <li class=leftbar-menu-item><a href=/category/eve/ target="">EVE</a> </ul> <div class="card-body leftbar-search-button text-center"><button class="active border-0 btn btn-block btn-lg btn-secondary btn-sm" id=leftbar_search_container role=button><i class="fa fa-search menu-item-icon mr-0"></i> 搜索 <input autocomplete=off class="form-control form-control-alternative" id=leftbar_search_input placeholder=搜索什么... type=text> </button> </div></div> <div class="bg-white border-0 card shadow-sm widget widget_search" id=leftbar_part2><div class=card-body id=leftbar_part2_inner><div class=nav-wrapper style="padding-top:5px;display:none;"><ul class="nav nav-fill nav-pills" role=tablist><li class="nav-item sidebar-tab-switcher"><a aria-controls=leftbar_tab_overview class="active show" data-toggle=tab href=#leftbar_tab_overview id=leftbar_tab_overview_btn no-pjax="" role=tab>站点概览</a> </ul> </div> <div><div class=tab-content style="padding:10px 10px 0 10px;"><div aria-labelledby=leftbar_tab_overview_btn class="active fade show tab-pane text-center" id=leftbar_tab_overview role=tabpanel><div alt=avatar class="rounded-circle shadow-sm" id=leftbar_overview_author_image style="background-image:url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz48c3ZnIHZlcnNpb249IjEuMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgeD0iMHB4IiB5PSIwcHgiIHZpZXdCb3g9IjAgMCAxMDAgMTAwIiB4bWw6c3BhY2U9InByZXNlcnZlIj48cmVjdCBmaWxsPSIjNUU3MkU0MjIiIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIi8+PGc+PGcgb3BhY2l0eT0iMC4zIj48cGF0aCBmaWxsPSIjNUU3MkU0IiBkPSJNNzQuMzksMzIuODZjLTAuOTgtMS43LTMuMzktMy4wOS01LjM1LTMuMDlINDUuNjJjLTEuOTYsMC00LjM3LDEuMzktNS4zNSwzLjA5TDI4LjU3LDUzLjE1Yy0wLjk4LDEuNy0wLjk4LDQuNDgsMCw2LjE3bDExLjcxLDIwLjI5YzAuOTgsMS43LDMuMzksMy4wOSw1LjM1LDMuMDloMjMuNDNjMS45NiwwLDQuMzctMS4zOSw1LjM1LTMuMDlMODYuMSw1OS4zMmMwLjk4LTEuNywwLjk4LTQuNDgsMC02LjE3TDc0LjM5LDMyLjg2eiIvPjwvZz48ZyBvcGFjaXR5PSIwLjgiPjxwYXRoIGZpbGw9IiM1RTcyRTQiIGQ9Ik02Mi4wNCwyMC4zOWMtMC45OC0xLjctMy4zOS0zLjA5LTUuMzUtMy4wOUgzMS43M2MtMS45NiwwLTQuMzcsMS4zOS01LjM1LDMuMDlMMTMuOSw0Mi4wMWMtMC45OCwxLjctMC45OCw0LjQ4LDAsNi4xN2wxMi40OSwyMS42MmMwLjk4LDEuNywzLjM5LDMuMDksNS4zNSwzLjA5aDI0Ljk3YzEuOTYsMCw0LjM3LTEuMzksNS4zNS0zLjA5bDEyLjQ5LTIxLjYyYzAuOTgtMS43LDAuOTgtNC40OCwwLTYuMTdMNjIuMDQsMjAuMzl6Ii8+PC9nPjwvZz48L3N2Zz4=)"></div> <h6 id=leftbar_overview_author_name>雅丶涵</h6> <nav class=site-state><div class="site-state-item site-state-posts"><a style="cursor:default;"><span class=site-state-item-count>22</span> <span class=site-state-item-name>文章</span></a> </div> <div class="site-state-categories site-state-item"><a data-target=#blog_categories data-toggle=modal><span class=site-state-item-count>6</span> <span class=site-state-item-name>分类</span></a> </div> <div class="site-state-item site-state-tags"><a data-target=#blog_tags data-toggle=modal><span class=site-state-item-count>17</span> <span class=site-state-item-name>标签</span></a> </div></nav> <div class=site-author-links><div class=site-author-links-item><a href=/category/%e6%b8%b8%e6%88%8f/ rel=noopener target=_blank>游戏</a> </div> <div class=site-author-links-item><a href=/category/%e8%bd%af%e4%bb%b6%e5%88%86%e4%ba%ab/ rel=noopener target=_blank>软件分享</a> </div> <div class=site-author-links-item><a href=/category/%e6%8a%80%e6%9c%af%e8%ae%b0%e5%bd%95/ rel=noopener target=_blank>技术记录</a> </div> <div class=site-author-links-item><a href=/category/%e4%b8%8a%e7%bd%91%e5%b7%a5%e5%85%b7/ rel=noopener target=_blank>上网工具</a> </div> <div class=site-author-links-item><a href=/category/eve/ rel=noopener target=_blank>EVE</a> </div></div> <div class=site-friend-links><div class=site-friend-links-title><i class="fa fa-fw fa-link"></i> Links</div> <ul class=site-friend-links-ul><li class=site-friend-links-item><a href=/category/%e6%b8%b8%e6%88%8f/ rel=noopener target=_blank>游戏</a> <li class=site-friend-links-item><a href=/category/%e8%bd%af%e4%bb%b6%e5%88%86%e4%ba%ab/ rel=noopener target=_blank>软件分享</a> <li class=site-friend-links-item><a href=/category/%e6%8a%80%e6%9c%af%e8%ae%b0%e5%bd%95/ rel=noopener target=_blank>技术记录</a> <li class=site-friend-links-item><a href=/category/%e4%b8%8a%e7%bd%91%e5%b7%a5%e5%85%b7/ rel=noopener target=_blank>上网工具</a> <li class=site-friend-links-item><a href=/category/eve/ rel=noopener target=_blank>EVE</a> </ul></div></div> </div> </div></div> </div></aside> <div aria-hidden=true aria-labelledby="" class="fade modal" id=blog_categories role=dialog tabindex=-1><div class="modal-dialog modal-dialog-centered"><div class=modal-content><div class=modal-header><h5 class=modal-title>分类</h5> <button aria-label=Close class=close data-dismiss=modal type=button><span aria-hidden=true>&times;</span> </button></div> <div class=modal-body><a class="badge badge-secondary tag" href=/category/eve/>EVE <span class=tag-num>3</span></a><a class="badge badge-secondary tag" href=/category/%e4%b8%8a%e7%bd%91%e5%b7%a5%e5%85%b7/>上网工具 <span class=tag-num>4</span></a><a class="badge badge-secondary tag" href=/category/%e6%8a%80%e6%9c%af%e8%ae%b0%e5%bd%95/>技术记录 <span class=tag-num>5</span></a><a class="badge badge-secondary tag" href=/category/uncategorized/>未分类 <span class=tag-num>0</span></a><a class="badge badge-secondary tag" href=/category/%e6%b8%b8%e6%88%8f/>游戏 <span class=tag-num>1</span></a><a class="badge badge-secondary tag" href=/category/%e8%bd%af%e4%bb%b6%e5%88%86%e4%ba%ab/>软件分享 <span class=tag-num>9</span></a> </div></div> </div> </div> <div aria-hidden=true aria-labelledby="" class="fade modal" id=blog_tags role=dialog tabindex=-1><div class="modal-dialog modal-dialog-centered"><div class=modal-content><div class=modal-header><h5 class=modal-title>标签</h5> <button aria-label=Close class=close data-dismiss=modal type=button><span aria-hidden=true>&times;</span> </button></div> <div class=modal-body><a class="badge badge-secondary tag" href=/tag/cf/>cf <span class=tag-num>2</span></a><a class="badge badge-secondary tag" href=/tag/cloudflare/>cloudflare <span class=tag-num>3</span></a><a class="badge badge-secondary tag" href=/tag/coreldraw/>CorelDRAW <span class=tag-num>1</span></a><a class="badge badge-secondary tag" href=/tag/dns/>DNS <span class=tag-num>1</span></a><a class="badge badge-secondary tag" href=/tag/fineprint/>FinePrint <span class=tag-num>1</span></a><a class="badge badge-secondary tag" href=/tag/fineprint%e6%b3%a8%e5%86%8c%e7%a0%81/>FinePrint注册码 <span class=tag-num>1</span></a><a class="badge badge-secondary tag" href=/tag/fineprint%e7%a0%b4%e8%a7%a3%e7%89%88/>FinePrint破解版 <span class=tag-num>1</span></a><a class="badge badge-secondary tag" href=/tag/key/>key <span class=tag-num>1</span></a><a class="badge badge-secondary tag" href=/tag/pdf/>PDF <span class=tag-num>1</span></a><a class="badge badge-secondary tag" href=/tag/telegram/>telegram <span class=tag-num>1</span></a><a class="badge badge-secondary tag" href=/tag/tvbox/>tvbox <span class=tag-num>0</span></a><a class="badge badge-secondary tag" href=/tag/worker/>Worker <span class=tag-num>1</span></a><a class="badge badge-secondary tag" href=/tag/%e5%8d%8e%e4%b8%ba%e4%ba%91/>华为云 <span class=tag-num>1</span></a><a class="badge badge-secondary tag" href=/tag/%e7%9b%96tv/>盖tv <span class=tag-num>0</span></a><a class="badge badge-secondary tag" href=/tag/%e7%9c%9f%e5%ae%9eip/>真实ip <span class=tag-num>1</span></a><a class="badge badge-secondary tag" href=/tag/%e8%87%aa%e9%80%89ip/>自选ip <span class=tag-num>1</span></a><a class="badge badge-secondary tag" href=/tag/%e8%99%9a%e6%8b%9f%e6%89%93%e5%8d%b0%e6%9c%ba/>虚拟打印机 <span class=tag-num>1</span></a> </div></div> </div> </div> <div class=content-area id=primary><main class=site-main id=main role=main><article class="bg-white border-0 card post post-full shadow-sm" id=post-170><header class="post-header text-center"><style>body section.banner{background-image:url(/wp-content/uploads/2021/09/img_7961.jpg)!important}</style> <a class=post-title href=/301%e6%b5%b7%e5%a4%96%e8%b7%b3%e8%bd%ac%e5%8e%9f%e7%90%86%e8%a7%a3%e6%9e%90%e5%85%bc%e8%b0%88%e7%bc%93%e8%a7%a3%e5%81%87%e5%a2%99%e4%bc%aa%e5%a2%99%e6%94%bb%e5%87%bb%e5%8b%92%e7%b4%a2%e7%9a%84-2/>301海外跳转原理解析兼谈缓解假墙伪墙攻击勒索的多种技术手段</a> <div class=post-meta><div class="post-meta-detail post-meta-detail-time"><i aria-hidden=true class="fa fa-clock-o"></i> <time title="发布于 2022-1-31 17:22:25 | 编辑于 2022-10-05 21:52:28">2022-1-31 17:22 </time></div> <div class=post-meta-devide>|</div> <div class="post-meta-detail post-meta-detail-views"><i aria-hidden=true class="fa fa-eye"></i> 878</div> <div class=post-meta-devide>|</div> <div class="post-meta-detail post-meta-detail-comments"><i aria-hidden=true class="fa fa-comments-o"></i> 0</div> <div class=post-meta-devide>|</div> <div class="post-meta-detail post-meta-detail-author"><i aria-hidden=true class="fa fa-user-circle-o"></i> <a href=/author/anglesya/ target=_blank>雅丶涵</a></div> <div class="post-meta-detail post-meta-detail-words"><i aria-hidden=true class="fa fa-file-word-o"></i><span> 5554 字</span> </div> <div class=post-meta-devide>|</div> <div class="post-meta-detail post-meta-detail-words"><i aria-hidden=true class="fa fa-hourglass-end"></i> 23 分钟 </div></div></header> <div class=post-content id=post_content><div class=post-outdated-info><i aria-hidden=true class="fa fa-info-circle"></i>本文最后更新于 417 天前，其中的信息可能已经有所发展或是发生改变。</div> <p> <p>在<a href=https://github.com/lehui99/articles/blob/main/301%E6%B5%B7%E5%A4%96%E8%B7%B3%E8%BD%AC%E5%8E%9F%E7%90%86%E8%A7%A3%E6%9E%90%E5%85%BC%E8%B0%88%E7%BC%93%E8%A7%A3%E5%81%87%E5%A2%99%E4%BC%AA%E5%A2%99%E6%94%BB%E5%87%BB%E5%8B%92%E7%B4%A2%E7%9A%84%E5%A4%9A%E7%A7%8D%E6%8A%80%E6%9C%AF%E6%89%8B%E6%AE%B5%EF%BC%88%E4%B8%80%EF%BC%89.md>上一篇文章</a>中，我们实现了HTTP的抢答模式，避免了墙的TCP Reset。那么这次我们就来聊一聊HTTPS如何避免被TCP Reset。 <p> <p> <p>我们知道，HTTPS是需要客户端和服务器之间完成TLS握手后才能收发HTTP Request和Response。然而，墙是在TLS握手时通过SNI中的域名信息进行了TCP Reset，或<a href=https://gfw.report/blog/gfw_esni_blocking/zh/>通过ESNI头进行TCP阻断</a>，这时候还没有到能发送HTTP Request或Response的这个阶段，所以HTTP Response抢答模式无法应用于HTTPS。那么，我们该怎么办呢？ <p> <p> <p>让我们回到TCP Reset本身——既然是TCP Reset，那么它只会对TCP协议生效。如果有一个应用层协议，其底层不是TCP呢？相信聪明的同学已经想到了，那就是HTTP 3.0（简称HTTP/3或h3）。H3的底层协议是QUIC，而QUIC是基于UDP而非TCP的。经过我的测试，发现墙现在无法识别QUIC协议，不管QUIC协议中出现任何敏感词都能无障碍过墙。这也是为什么有些网站（如v2ex）在解决了DNS污染（比如客户端主动加hosts）后，并且连接过一次（首次还是需要科学上网，原因之后会讲）后，就能关闭科学上网访问了。也就是说，使用了H3后，我们甚至不需要进行301跳转，直接就能无障碍访问服务器了（但仍建议使用301跳转，否则可能会使封锁升级，如DNS污染）。虽然H3现在仍旧处于草案阶段，但各大浏览器都已经进行了支持，而其中Google Chrome对H3的支持是最好的。 <p> <p> <p>那么，如何在服务器上部署并开启H3呢？由于H3现在仍是草案阶段，所以Nginx的正式版并不支持H3，需要更换为<a href=https://hg.nginx.org/nginx-quic>Nginx-QUIC</a>来支持H3。编译使用<a href=https://hg.nginx.org/nginx-quic>Nginx-QUIC</a>也可以参考<a href=https://zhuanlan.zhihu.com/p/345660441>这篇文章</a>。另外，Cloudflare也已经支持了H3，可以自行开启（在“网络”设置中打开“HTTP/3（使用 QUIC）”）。在Cloudflare中开启H3后，Cloudflare和服务器的通讯仍旧可以使用HTTP/2（简称h2）或HTTP/1.1，并不需要服务器支持H3，而是由Cloudflare进行协议转换。 <p> <p> <p>H3主要是依赖<code>Alt-Svc</code>这个HTTP头来进行协议选则的。比如我们可以添加HTTP头： <code>Alt-Svc: h3=":443"; ma=86400, h3-29=":443"; ma=86400, h3-28=":443"; ma=86400, h3-27=":443"; ma=86400</code>，指出服务器支持H3，H3的UDP端口为443，有效期（过了有效期后浏览器又会重新使用H2或HTTP/1.1进行访问）为1天（86400秒），支持最新的H3草案以及27、28、29草案。另外，我们也可以灵活地修改<code>Alt-Svc</code>——比如可以在“<code>:443</code>”之前添加IP或域名，做到HTTP和HTTPS使用不用的IP或域名，方便我们在自己的服务器上部署HTTP抢答模式，又能使用Cloudflare的H3协议转换，或者使用不同的域名从而在原域名被DNS污染的情况下老用户（没有过有效期86400秒的）依然可以通过H3访问服务器（因为H3是另一个域名，而不是被DNS污染的那个域名。或者直接使用IP，从根本上杜绝了DNS污染，只不过之后有可能遭到IP封锁）。另外，有效时间也可以进行适当延长（比如从1天延长到1个月或更长时间），避免客户端尝试H2或HTTP/1.1并且延长老用户的过期时间。我们可以在还没遇到HTTPS的TCP Reset时就开启H3，这样即使之后遭遇了HTTPS的TCP Reset，曾经访问过网站的老用户在H3有效期内也能继续访问网站。而且我们也不必担心UDP数据包被ISP丢弃（俗称UDP被QoS）的问题，因为浏览器在H3连接失败的时候会快速回退到H2和HTTP/1.1。 <p> <p> <p>然而，H3是一个Alternative服务。首次访问服务器时，浏览器并不会主动使用H3，还是会优先使用H2或HTTP/1.1。当获取到<code>Alt-Svc</code>头后，浏览器才会在之后的访问中优先使用H3。这也是为什么有些网站（如v2ex）需要在科学上网的情况下访问过一次后才能关闭科学上网进行访问（当然，DNS污染首先还是需要用户自行修改hosts解决）。那么，我们如何让用户全程不使用科学上网的情况下访问服务器呢？ <p> <p> <p>首先想到的是通过<a href="https://github.com/lehui99/articles/blob/main/301%E6%B5%B7%E5%A4%96%E8%B7%B3%E8%BD%AC%E5%8E%9F%E7%90%86%E8%A7%A3%E6%9E%90%E5%85%BC%E8%B0%88%E7%BC%93%E8%A7%A3%E5%81%87%E5%A2%99%E4%BC%AA%E5%A2%99%E6%94%BB%E5%87%BB%E5%8B%92%E7%B4%A2%E7%9A%84%E5%A4%9A%E7%A7%8D%E6%8A%80%E6%9C%AF%E6%89%8B%E6%AE%B5%EF%BC%88%E4%B8%80%EF%BC%89.md">上一篇文章</a>中的HTTP抢答模式提供<code>Alt-Svc</code>头，不过可惜的是现在的主流浏览器会忽略HTTP中的<code>Alt-Svc</code>头，只接受HTTPS中的<code>Alt-Svc</code>头。而如果HTTPS本来就已经被TCP Reset的话，浏览器就无法获取<code>Alt-Svc</code>头了。那么，那些提供HTTPS的301海外跳转服务是怎么做的呢？ <p> <p> <p>在调查和尝试了几个支持HTTPS的301海外跳转服务后，我们发现，它们根本就没有解决HTTPS的TCP Reset问题，HTTPS依然被TCP Reset了，而它们宣称支持HTTPS中301跳转的做法就是在HTTP抢答模式下加上普通的TLS服务。因为大部分网站遭遇的只是HTTP中的TCP Reset而HTTPS并不会被TCP Reset，所以只需要解决HTTP的301跳转，再加上普通的HTTPS，表面上就能同时做到HTTP和HTTPS的301跳转。而且在调查过程中我们还发现有个跳转服务主页的HTTPS也被TCP Reset了，而他们自己却对此毫无办法。那么，对于新用户访问HTTPS的TCP Reset，我们也只能止步于此，束手无策了吗？那也未必。 <p> <p> <p>其实，从本系列一开始，我们就假设301跳转服务器是在国外。如果使用的是国内服务器，那么就能避免墙的识别了（因为不过墙）。但使用国内服务器（似乎）有个绕不过去的坎：备案系统——使用HTTP会提示域名没有备案，使用默认端口443的HTTPS同样会有TCP Reset。我们又该怎么办？其实，备案系统其实就是一个简化版的墙，没有TCP流量重组的功能，使用<a href="https://github.com/lehui99/articles/blob/main/301%E6%B5%B7%E5%A4%96%E8%B7%B3%E8%BD%AC%E5%8E%9F%E7%90%86%E8%A7%A3%E6%9E%90%E5%85%BC%E8%B0%88%E7%BC%93%E8%A7%A3%E5%81%87%E5%A2%99%E4%BC%AA%E5%A2%99%E6%94%BB%E5%87%BB%E5%8B%92%E7%B4%A2%E7%9A%84%E5%A4%9A%E7%A7%8D%E6%8A%80%E6%9C%AF%E6%89%8B%E6%AE%B5%EF%BC%88%E4%B8%80%EF%BC%89.md">上一篇文章</a>的抢答模式同样也能绕过备案系统。而且正是因为备案系统没有TCP流量重组的功能，我们甚至可以在TCP模式的HTTP和HTTPS中设置TCP window size（比如Linux上可以使用<a href="https://github.com/Kkevsterrr/geneva">Geneva</a>；Windows上可以自行编写一个反向代理，在其中设置<code>SO_RCVBUF</code>为1，两者的用法在<a href="https://github.com/lehui99/articles/blob/main/301%E6%B5%B7%E5%A4%96%E8%B7%B3%E8%BD%AC%E5%8E%9F%E7%90%86%E8%A7%A3%E6%9E%90%E5%85%BC%E8%B0%88%E7%BC%93%E8%A7%A3%E5%81%87%E5%A2%99%E4%BC%AA%E5%A2%99%E6%94%BB%E5%87%BB%E5%8B%92%E7%B4%A2%E7%9A%84%E5%A4%9A%E7%A7%8D%E6%8A%80%E6%9C%AF%E6%89%8B%E6%AE%B5%EF%BC%88%E4%B8%80%EF%BC%89.md">上一篇文章</a>中都已进行说明，在此不再重复），从而可以直接通过HTTP和HTTPS绕过备案系统而无需使用301跳转（因为备案系统没有TCP流量重组功能，所以只需要在连接初始时设置个较小的TCP window size，之后恢复正常即可。这也是很多国内免备案服务器的原理和使用的方案）。不过，绕过备案系统展示网页有一定的风险，301跳转风险会小一些，希望大家还是要权衡好利弊。 <p> <p> <p>在讨论好HTTPS中防TCP Reset的方案后，最后让我们来聊一聊DNS污染。 <p> <p> <p>其实，在撰写本文之前，我曾去尝试过几个声称可以解决域名污染的301海外跳转的服务，但无一例外都失败了，都无法解决DNS污染。然后我也去咨询了提供了这些服务的人，他们的说法大致分为两种：<br>1、需要将被DNS污染的域名的NS记录指向国内的DNS服务（如DNSPod、阿里云等），然后需要等一段时间，运气好的话过一段时间就会解封了（对于这种说法，我也曾经亲自验证过，将一个被DNS污染的域名的NS记录转移回国内，等了几个月，依然被污染）。<br>2、域名污染指的是域名被关键字Reset，而不是DNS污染（这个说法和大多数人理解的不同，将域名污染解释为了TCP Reset，和DNS污染分为了两个概念），他的服务只能解决域名污染，不能解决DNS污染。 <p> <p> <p>那么，对于DNS污染，我们只能束手无策，或只能碰运气转移回国内了吗？那也未必。不过，由于解决DNS污染所需要的成本较高，所以这也是为什么之前H3虽然能让用户在原有域名下继续访问，我仍旧建议使用301跳转的原因。否则封锁升级为DNS污染后连301跳转都会变得比较困难了。 <p> <p> <p>讲到这里，细心的同学应该已经发现，其实在刚才H3的使用方法中，已经介绍了如何使老用户在DNS污染的情况下继续进行访问的方法了。这是解决DNS污染部分问题的方法之一。那么，还有没有别的方法也能解决部分问题呢？其实，在H3的方案中，我们主要利用了浏览器的Cache中记录了H3的服务信息，来让老用户通过不同的域名或IP进行访问的。那么，浏览器的Cache中除了能保存H3的信息外，也是可以保存其他内容的。讲到这里，聪明的同学应该已经想到了。没错，就是<code>Cache-Control</code>（或使用<code>Expires</code>也有相同的效果）。通过这个HTTP头，我们可以将一个页面的过期时间设置成很长，在过期之前，浏览器并不会发起HTTP请求，甚至没有网络的离线情况下都能访问（使用F5刷新除外，这时候浏览器会忽略过期时间从而发起HTTP请求；Ctrl+F5更是会发起请求）。在这个页面中，我们可以引用别的域名下的JavaScript脚本文件，在JavaScript而非HTML中渲染整个网页。这样，老用户同样可以在DNS污染的情况下继续访问我们的服务器。不过，这种做法对SEO不是很友好，但我们可以使用HTML和JavaScript同时渲染的方法让搜索引擎可以进行索引——HTML中仍旧是正常内容给搜索引擎进行索引，而浏览器会加载JavaScript，使用JavaScript重新渲染一遍网页，避免Cache没有过期而呈现老页面的问题。老用户的问题可以解决，但新用户怎么办呢？或者我们有没有办法从根本上来解决DNS污染呢？而且听说现在有一些价格昂贵的污染清洗服务，它们真的能从根本上解决DNS污染吗？它们是怎么做的呢？ <p> <p> <p>如果我们想从根本上解决问题，首先我们还需要了解整个DNS系统是怎么工作的：<br>1、DNS服务器分为递归查询服务器、DNS代理和权威服务器（称为ADNS）。我们把递归查询服务器和DNS代理统称为LDNS。<br>2、普通用户上网所使用的一般是ISP提供的LDNS，它会负责向ADNS查询真实的A（和AAAA以及其它）记录。<br>3、ADNS即是域名的NS记录所指向的服务器。 <p> <p> <p>我们知道，DNS污染是墙在海外ADNS返回正确的结果之前进行了抢答，返回了错误的结果。这样，在国内LDNS向海外ADNS查询的时候，同样会受到DNS污染，从而返回给普通用户错误的结果。那么，我们有没有办法劫持ISP的LDNS，从而让其返回我们想要的IP而不是墙返回的错误IP呢？这样，虽然DNS污染仍旧存在，但普通用户却得到了正确的IP，从而可以正常访问我们的服务器了。 <p> <p> <p>讲到这里，就不得不提到<a href=https://zhuanlan.zhihu.com/p/92899876>2008年曾经轰动全球的DNS投毒攻击案</a>了。在<a href=https://zhuanlan.zhihu.com/p/92899876>这篇文章</a>中，Kaminsky可以修改任意LDNS中缓存的A（或AAAA以及其它）记录，虽然在经过了那次事件后这个漏洞更难被利用了，但终究无法完全修复，我们仍旧可以利用其中的原理劫持ISP的LDNS（能猜中源端口和QID就能进行劫持），将被污染域名的IP换成自己想要的IP。而且由于墙污染的TTL较小，我们也能更快地利用这个漏洞而不需要每次等待1天的时间。所以短则几天，慢则几个星期就能劫持成功。这也是现在有些价格不菲的污染清洗服务所采用的方案之一。当然，某些攻击团队也同样在利用这个漏洞就行DNS劫持，虽然导致的结果是LDNS被劫持而非墙的DNS污染，但对于普通用户所造成的结果是一致的——网站无法访问。不过，要实施这种DNS劫持需要源IP欺骗，现在能进行源IP欺骗的服务器已经越来越少了。那么我们还有没有别的方法无需源IP欺骗来劫持LDNS呢？ <p> <p> <p>既然大家已经看了上面的<a href=https://zhuanlan.zhihu.com/p/92899876>这篇文章</a>，那么让我们来重新细致地梳理一下整个DNS查询过程。以浏览器访问 <a href=https://www.youtube.com/>https://www.youtube.com/</a> 为例：<br>1、操作系统向ISP的LDNS发起请求 <a href=https://www.youtube.com/>www.youtube.com</a> 的A（以及AAAA）记录。<br>2、LDNS查询缓存中有没有 <a href=https://www.youtube.com/>www.youtube.com</a> 的A（或AAAA）记录，如有则返回给客户端，如没有则执行第3条。<br>3、LDNS查询（可从缓存中查询）DNS根服务器（当前为13个）的A（或AAAA）记录。<br>4、LDNS向根服务器（或从缓存中）查询 .com 的ADNS。<br>5、LDNS向 .com 的ADNS发起查询 youtube.com 的ADNS（即 youtube.com 的NS记录）。<br>6、LDNS向 youtube.com 的ADNS发起查询 <a href=https://www.youtube.com/>www.youtube.com</a> 的A（或AAAA）记录。之后返回给客户端。 <p> <p> <p>我们知道， youtube.com 是个被DNS污染的域名，所以第5和第6步会受到墙的DNS污染，而前4步不会。第6步我们也很熟悉了，国内IP向国外IP发起查询请求时墙就会抢答 <a href=https://www.youtube.com/>www.youtube.com</a> 的错误A（或AAAA）记录。而第5步中，由于LDNS在国内，查询到 youtube.com 的NS记录同样会受到污染。我们同样知道，墙的DNS污染虽然成功概率接近100%，但仍有很小的概率会污染失败。那么我们能不能不停地向LDNS请求 <a href=https://www.youtube.com/>www.youtube.com</a> 的A（或AAAA）记录，在墙污染失败的时候，LDNS就能刷新到正确的IP地址了呢？可惜的是，LDNS是有缓存的，在缓存有效期内，不会再次向ADNS发起请求。即使在缓存失效后偶尔会由于污染失败得到了正确的IP地址，但在缓存再次失效后由于污染再次回到了错误的IP地址。所以被污染的概率仍旧接近100%。墙看上去似乎无懈可击，我们该怎么办呢？ <p> <p> <p>让我们重新回到第5条，使用国内IP向 .com 的ADNS请求 youtube.com 的NS记录。以Linux为例：<br><code>dig ns youtube.com @e.gtld-servers.net</code> （<code>e.gtld-servers.net</code>为 .com 的其中一个ADNS）<br>我们看到墙返回了污染的结果， youtube.com 被污染的NS是……咦？不对！墙竟然返回的是A（或AAAA）记录，而不是我们查询的NS记录！而且墙的污染是有很小的概率会失败的！相信聪明的同学已经想到了——由于墙返回的是不是NS记录，所以LDNS没有获取到 youtube.com 的NS记录，自然无法将 youtube.com 的NS记录存入缓存中。所以，在下次客户端请求 youtube.com 的NS记录时，LDNS会再次向 .com 的ADNS请求 youtube.com 的NS记录而不是从缓存中获取。既然不存在缓存，我们就能一直向LDNS发起请求，而LDNS就会一直向ADNS发起请求，直到墙的污染失败出现，LDNS终于获得了正确的NS记录。而由于NS记录本身是带有TTL的，所以会被存入LDNS的缓存之中，在缓存过期之前不会再受到墙的污染。而我们可以将NS记录的TTL设置得非常长，从而可以在很长得时间内让墙得污染无法生效。而在TTL过期之后，我们可以利用同样的方法再次让LDNS获得正确的NS记录。 <p> <p> <p>在解决了第5条中的污染后，我们还需要解决第6条中的污染。而第6条中墙返回的确实是查询的A（或AAAA）记录，会被存入LDNS缓存，也就无法利用上述方法了。我们该怎么办呢？相信聪明的同学也已经想到了。没错，就是将NS记录转移回国内，这样DNS请求就不会过墙，自然就不会受到污染了。可是，不对呀？刚才不是讲过我也曾经亲自验证过，将一个被DNS污染的域名的NS记录转移回国内，等了几个月，依然被污染么？那是因为之前的测试只是将NS记录指向了国内服务器，我们并没有大量地发送NS查询请求到LDNS，所以LDNS并没有获得正确的NS记录，所以污染仍旧存在。而且，ISP的LDNS是分运营商并且分区域的。只将一个LDNS中的NS刷新到正确结果只能解决一个运营商的一小片区域中的污染，如果想要在全国范围内解决污染，需要使用大量的IP地址（因为很多ISP的LDNS限制了查询请求的发起IP只能是本地宽带用户），不停地对大量的LDNS查询NS记录，直到全国大部分地区的LDNS都获取到了正确的NS记录，才能在大范围内解决DNS污染。而且即使LDNS获取到了正确的NS记录，查询仍然要继续，因为缓存是有过期时间的。而这，也是现在很多昂贵的污染清洗服务所采用的方案之一。 <p> <p> <p>关于DNS污染，我所了解到的现阶段有这些方案。如果你有别的方法，或者对本系列话题感兴趣的，都欢迎和我联系。我的联系方式为：<br>1、Email: <code>lehui99#gmail.com</code><br>2、Twitter: <a href="https://twitter.com/davidsky2012">@davidsky2012</a><br>3、TG: <a href="https://t.me/davidtechtalk">技术交流群</a>、<a href="https://t.me/davidtechchannel">技术交流频道</a><br>4、本系列Github: <a href="https://github.com/lehui99/articles">lehui99/articles</a> <p> <p> <p>下一篇我会开始讲解如何缓解假墙伪墙攻击方面的话题，敬请期待。 <p> <p> <p>最后，本文欢迎转载，不过转载时还请保留<a href=https://github.com/lehui99/articles/blob/main/301%E6%B5%B7%E5%A4%96%E8%B7%B3%E8%BD%AC%E5%8E%9F%E7%90%86%E8%A7%A3%E6%9E%90%E5%85%BC%E8%B0%88%E7%BC%93%E8%A7%A3%E5%81%87%E5%A2%99%E4%BC%AA%E5%A2%99%E6%94%BB%E5%87%BB%E5%8B%92%E7%B4%A2%E7%9A%84%E5%A4%9A%E7%A7%8D%E6%8A%80%E6%9C%AF%E6%89%8B%E6%AE%B5%EF%BC%88%E4%BA%8C%EF%BC%89.md>本文链接</a>，因为之后我还会对本文进行完善（如错误修正、内容补充等）。 <p></div></article> <div class="card comments-area shadow-sm" id=comments><div class=card-body><span>暂无评论</span> </div> </div> <div class="card enable-qq-avatar no-need-captcha no-need-name-email shadow-sm" id=post_comment><div class=card-body><h2 class=post-comment-title><i class="fa fa-commenting"></i> <span class=hide-on-comment-editing>发送评论</span> <span class=hide-on-comment-not-editing>编辑评论</span></h2> <div class=post-comment-reply id=post_comment_reply_info style="display:none;"><span>正在回复 <b><span id=post_comment_reply_name></span></b> 的评论 :</span> <div class=post-comment-reply-preview id=post_comment_reply_preview></div> <button class="btn btn-outline-primary btn-sm" id=post_comment_reply_cancel>取消回复</button></div> <form><div class=row><div class=col-md-12><textarea class="form-control form-control-alternative" id=post_comment_content name=comment placeholder=评论内容 style="height:80px;"></textarea> </div> <div class=col-md-12 style="height:0;overflow:hidden;"><pre id=post_comment_content_hidden></pre> </div></div> <div class="hide-on-comment-editing row" style="margin-bottom:-10px;"><div class=col-md-6><div class=form-group><div class="input-group input-group-alternative mb-4"><div class=input-group-prepend><span class=input-group-text><i class="fa fa-user-circle"></i></span> </div> <input class=form-control id=post_comment_name name=author placeholder=昵称 type=text></div> </div> </div> <div class=col-md-6><div class=form-group><div class="input-group input-group-alternative mb-4"><div class=input-group-prepend><span class=input-group-text><i class="fa fa-envelope"></i></span> </div> <input class=form-control id=post_comment_email name=email placeholder="邮箱 / QQ 号" type=email value=""></div> </div> </div> <div class=d-none><div class=form-group><div captcha="7 * 9 = " class="input-group input-group-alternative mb-4 post-comment-captcha-container"><div class=input-group-prepend><span class=input-group-text><i class="fa fa-key"></i></span> </div> <input class=form-control id=post_comment_captcha placeholder=验证码 type=text> <style>.post-comment-captcha-container:before{content:attr(captcha)}</style> <script>$(".post-comment-captcha-container").attr("captcha","Loading...");$.ajax({url:argonConfig.wp_path+"wp-admin/admin-ajax.php",type:"POST",dataType:"json",data:{action:"get_captcha",},success:function(result){$(".post-comment-captcha-container").attr("captcha",result['captcha']);},error:function(xhr){$(".post-comment-captcha-container").attr("captcha","获取验证码失败");}});</script></div> </div> </div></div> <div class="hide-on-comment-editing row" id=post_comment_extra_input style="display:none"><div class=col-md-12 style="margin-bottom:-10px;"><div class=form-group><div class="input-group input-group-alternative mb-4 post-comment-link-container"><div class=input-group-prepend><span class=input-group-text><i class="fa fa-link"></i></span> </div> <input class=form-control id=post_comment_link name=url placeholder=网站 type=text></div> </div> </div> </div> <div class="hide-on-comment-editing row" style="margin-top:10px;"><div class=col-md-12><button class="btn btn-icon btn-outline-primary btn-sm" id=post_comment_toggle_extra_input tooltip-hide-extra-field=折叠附加字段 tooltip-show-extra-field=展开附加字段 type=button><span class=btn-inner--icon><i class="fa fa-angle-down"></i></span> </button> </div> </div> <div class=row style="margin-top:5px;margin-bottom:10px;"><div class=col-md-12><div class="comment-post-checkbox comment-post-use-markdown custom-checkbox custom-control"><input checked class=custom-control-input id=comment_post_use_markdown type=checkbox> <label class=custom-control-label for=comment_post_use_markdown>Markdown</label></div> <div class="comment-post-checkbox comment-post-privatemode custom-checkbox custom-control" tooltip=评论仅发送者和博主可见><input class=custom-control-input id=comment_post_privatemode type=checkbox> <label class=custom-control-label for=comment_post_privatemode>悄悄话</label></div> <div class="comment-post-checkbox comment-post-mailnotice custom-checkbox custom-control" tooltip=有回复时邮件通知我><input checked class=custom-control-input id=comment_post_mailnotice type=checkbox> <label class=custom-control-label for=comment_post_mailnotice>邮件提醒</label></div> <button class="btn btn-icon btn-primary comment-btn mr-0 pull-right" id=post_comment_send type=button><span class="btn-inner--icon hide-on-comment-editing"><i class="fa fa-send"></i></span> <span class="btn-inner--icon hide-on-comment-not-editing"><i class="fa fa-pencil"></i></span> <span class="btn-inner--text hide-on-comment-editing" style="margin-right:0;">发送</span> <span class="btn-inner--text hide-on-comment-not-editing" style="margin-right:0;">编辑</span></button> <button class="btn btn-danger btn-icon comment-btn hide-on-comment-not-editing pull-right" id=post_comment_edit_cancel style="margin-right:8px;" type=button><span class=btn-inner--icon><i class="fa fa-close"></i></span> <span class=btn-inner--text>取消</span></button> <button class="btn btn-icon btn-primary pull-right" id=comment_emotion_btn title=表情 type=button><i aria-hidden=true class="fa fa-smile-o"></i> </button> <div class="bg-white card emotion-keyboard shadow-sm" id=emotion_keyboard><div class=emotion-keyboard-content><div class=emotion-group index=0><div class=emotion-item text=|´・ω・)ノ>|´・ω・)ノ</div> <div class=emotion-item text=ヾ(≧∇≦*)ゝ>ヾ(≧∇≦*)ゝ</div> <div class=emotion-item text=(☆ω☆)>(☆ω☆)</div> <div class=emotion-item text=（╯‵□′）╯︵┴─┴>（╯‵□′）╯︵┴─┴</div> <div class=emotion-item text=￣﹃￣>￣﹃￣</div> <div class=emotion-item text=(/ω＼)>(/ω＼)</div> <div class=emotion-item text="∠( ᐛ 」∠)＿">∠( ᐛ 」∠)＿</div> <div class=emotion-item text=(๑•̀ㅁ•́ฅ)>(๑•̀ㅁ•́ฅ)</div> <div class=emotion-item text=→_→>→_→</div> <div class=emotion-item text=୧(๑•̀⌄•́๑)૭>୧(๑•̀⌄•́๑)૭</div> <div class=emotion-item text=٩(ˊᗜˋ*)و>٩(ˊᗜˋ*)و</div> <div class=emotion-item text=(ノ°ο°)ノ>(ノ°ο°)ノ</div> <div class=emotion-item text=(´இ皿இ｀)>(´இ皿இ｀)</div> <div class=emotion-item text=⌇●﹏●⌇>⌇●﹏●⌇</div> <div class=emotion-item text="(ฅ´ω`ฅ)">(ฅ´ω`ฅ)</div> <div class=emotion-item text=(╯°A°)╯︵○○○>(╯°A°)╯︵○○○</div> <div class=emotion-item text=φ(￣∇￣o)>φ(￣∇￣o)</div> <div class=emotion-item text="ヾ(´･ ･｀｡)ノ&quot;">ヾ(´･ ･｀｡)ノ&quot;</div> <div class=emotion-item text="( ง ᵒ̌皿ᵒ̌)ง⁼³₌₃">( ง ᵒ̌皿ᵒ̌)ง⁼³₌₃</div> <div class=emotion-item text=(ó﹏ò｡)>(ó﹏ò｡)</div> <div class=emotion-item text="Σ(っ °Д °;)っ">Σ(っ °Д °;)っ</div> <div class=emotion-item text="( ,,´･ω･)ﾉ&quot;(´っω･｀｡)">( ,,´･ω･)ﾉ&quot;(´っω･｀｡)</div> <div class=emotion-item text=╮(╯▽╰)╭>╮(╯▽╰)╭</div> <div class=emotion-item text=o(*////▽////*)q>o(*////▽////*)q</div> <div class=emotion-item text=＞﹏＜>＞﹏＜</div> <div class=emotion-item text="( ๑´•ω•) &quot;(ㆆᴗㆆ)">( ๑´•ω•) &quot;(ㆆᴗㆆ)</div></div> <div class="d-none emotion-group" index=1><div class=emotion-item text=😂>😂</div> <div class=emotion-item text=😀>😀</div> <div class=emotion-item text=😅>😅</div> <div class=emotion-item text=😊>😊</div> <div class=emotion-item text=🙂>🙂</div> <div class=emotion-item text=🙃>🙃</div> <div class=emotion-item text=😌>😌</div> <div class=emotion-item text=😍>😍</div> <div class=emotion-item text=😘>😘</div> <div class=emotion-item text=😜>😜</div> <div class=emotion-item text=😝>😝</div> <div class=emotion-item text=😏>😏</div> <div class=emotion-item text=😒>😒</div> <div class=emotion-item text=🙄>🙄</div> <div class=emotion-item text=😳>😳</div> <div class=emotion-item text=😡>😡</div> <div class=emotion-item text=😔>😔</div> <div class=emotion-item text=😫>😫</div> <div class=emotion-item text=😱>😱</div> <div class=emotion-item text=😭>😭</div> <div class=emotion-item text=💩>💩</div> <div class=emotion-item text=👻>👻</div> <div class=emotion-item text=🙌>🙌</div> <div class=emotion-item text=🖕>🖕</div> <div class=emotion-item text=👍>👍</div> <div class=emotion-item text=👫>👫</div> <div class=emotion-item text=👬>👬</div> <div class=emotion-item text=👭>👭</div> <div class=emotion-item text=🌚>🌚</div> <div class=emotion-item text=🌝>🌝</div> <div class=emotion-item text=🙈>🙈</div> <div class=emotion-item text=💊>💊</div> <div class=emotion-item text=😶>😶</div> <div class=emotion-item text=🙏>🙏</div> <div class=emotion-item text=🍦>🍦</div> <div class=emotion-item text=🍉>🍉</div> <div class=emotion-item text=😣>😣</div></div> <div class="d-none emotion-group" index=2><div class="emotion-item emotion-item-sticker" code=dinosaur-shy><img class=lazyload data-original=/wp-content/themes/argon/stickers/dinosaur/1.jpg src="data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iZW1vdGlvbi1sb2FkaW5nIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9Ii04IC04IDQwIDQwIiBzdHJva2U9IiM4ODgiIG9wYWNpdHk9Ii41IiB3aWR0aD0iNjAiIGhlaWdodD0iNjAiPgogIDxwYXRoIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSIxLjUiIGQ9Ik0xNC44MjggMTQuODI4YTQgNCAwIDAxLTUuNjU2IDBNOSAxMGguMDFNMTUgMTBoLjAxTTIxIDEyYTkgOSAwIDExLTE4IDAgOSA5IDAgMDExOCAweiIvPgo8L3N2Zz4="></div> <div class="emotion-item emotion-item-sticker" code=dinosaur-daze><img class=lazyload data-original=/wp-content/themes/argon/stickers/dinosaur/2.jpg src="data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iZW1vdGlvbi1sb2FkaW5nIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9Ii04IC04IDQwIDQwIiBzdHJva2U9IiM4ODgiIG9wYWNpdHk9Ii41IiB3aWR0aD0iNjAiIGhlaWdodD0iNjAiPgogIDxwYXRoIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSIxLjUiIGQ9Ik0xNC44MjggMTQuODI4YTQgNCAwIDAxLTUuNjU2IDBNOSAxMGguMDFNMTUgMTBoLjAxTTIxIDEyYTkgOSAwIDExLTE4IDAgOSA5IDAgMDExOCAweiIvPgo8L3N2Zz4="></div> <div class="emotion-item emotion-item-sticker" code=dinosaur-sweat><img class=lazyload data-original=/wp-content/themes/argon/stickers/dinosaur/3.jpg src="data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iZW1vdGlvbi1sb2FkaW5nIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9Ii04IC04IDQwIDQwIiBzdHJva2U9IiM4ODgiIG9wYWNpdHk9Ii41IiB3aWR0aD0iNjAiIGhlaWdodD0iNjAiPgogIDxwYXRoIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSIxLjUiIGQ9Ik0xNC44MjggMTQuODI4YTQgNCAwIDAxLTUuNjU2IDBNOSAxMGguMDFNMTUgMTBoLjAxTTIxIDEyYTkgOSAwIDExLTE4IDAgOSA5IDAgMDExOCAweiIvPgo8L3N2Zz4="></div> <div class="emotion-item emotion-item-sticker" code=dinosaur-proud><img class=lazyload data-original=/wp-content/themes/argon/stickers/dinosaur/4.jpg src="data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iZW1vdGlvbi1sb2FkaW5nIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9Ii04IC04IDQwIDQwIiBzdHJva2U9IiM4ODgiIG9wYWNpdHk9Ii41IiB3aWR0aD0iNjAiIGhlaWdodD0iNjAiPgogIDxwYXRoIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSIxLjUiIGQ9Ik0xNC44MjggMTQuODI4YTQgNCAwIDAxLTUuNjU2IDBNOSAxMGguMDFNMTUgMTBoLjAxTTIxIDEyYTkgOSAwIDExLTE4IDAgOSA5IDAgMDExOCAweiIvPgo8L3N2Zz4="></div> <div class="emotion-item emotion-item-sticker" code=dinosaur-powerless><img class=lazyload data-original=/wp-content/themes/argon/stickers/dinosaur/5.jpg src="data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iZW1vdGlvbi1sb2FkaW5nIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9Ii04IC04IDQwIDQwIiBzdHJva2U9IiM4ODgiIG9wYWNpdHk9Ii41IiB3aWR0aD0iNjAiIGhlaWdodD0iNjAiPgogIDxwYXRoIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSIxLjUiIGQ9Ik0xNC44MjggMTQuODI4YTQgNCAwIDAxLTUuNjU2IDBNOSAxMGguMDFNMTUgMTBoLjAxTTIxIDEyYTkgOSAwIDExLTE4IDAgOSA5IDAgMDExOCAweiIvPgo8L3N2Zz4="></div> <div class="emotion-item emotion-item-sticker" code=dinosaur-pouting><img class=lazyload data-original=/wp-content/themes/argon/stickers/dinosaur/6.jpg src="data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iZW1vdGlvbi1sb2FkaW5nIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9Ii04IC04IDQwIDQwIiBzdHJva2U9IiM4ODgiIG9wYWNpdHk9Ii41IiB3aWR0aD0iNjAiIGhlaWdodD0iNjAiPgogIDxwYXRoIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSIxLjUiIGQ9Ik0xNC44MjggMTQuODI4YTQgNCAwIDAxLTUuNjU2IDBNOSAxMGguMDFNMTUgMTBoLjAxTTIxIDEyYTkgOSAwIDExLTE4IDAgOSA5IDAgMDExOCAweiIvPgo8L3N2Zz4="></div> <div class="emotion-item emotion-item-sticker" code=dinosaur-eating><img class=lazyload data-original=/wp-content/themes/argon/stickers/dinosaur/7.jpg src="data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iZW1vdGlvbi1sb2FkaW5nIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9Ii04IC04IDQwIDQwIiBzdHJva2U9IiM4ODgiIG9wYWNpdHk9Ii41IiB3aWR0aD0iNjAiIGhlaWdodD0iNjAiPgogIDxwYXRoIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSIxLjUiIGQ9Ik0xNC44MjggMTQuODI4YTQgNCAwIDAxLTUuNjU2IDBNOSAxMGguMDFNMTUgMTBoLjAxTTIxIDEyYTkgOSAwIDExLTE4IDAgOSA5IDAgMDExOCAweiIvPgo8L3N2Zz4="></div> <div class="emotion-item emotion-item-sticker" code=dinosaur-ok><img class=lazyload data-original=/wp-content/themes/argon/stickers/dinosaur/8.jpg src="data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iZW1vdGlvbi1sb2FkaW5nIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9Ii04IC04IDQwIDQwIiBzdHJva2U9IiM4ODgiIG9wYWNpdHk9Ii41IiB3aWR0aD0iNjAiIGhlaWdodD0iNjAiPgogIDxwYXRoIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSIxLjUiIGQ9Ik0xNC44MjggMTQuODI4YTQgNCAwIDAxLTUuNjU2IDBNOSAxMGguMDFNMTUgMTBoLjAxTTIxIDEyYTkgOSAwIDExLTE4IDAgOSA5IDAgMDExOCAweiIvPgo8L3N2Zz4="></div> <div class="emotion-item emotion-item-sticker" code=dinosaur-doubt><img class=lazyload data-original=/wp-content/themes/argon/stickers/dinosaur/9.jpg src="data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iZW1vdGlvbi1sb2FkaW5nIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9Ii04IC04IDQwIDQwIiBzdHJva2U9IiM4ODgiIG9wYWNpdHk9Ii41IiB3aWR0aD0iNjAiIGhlaWdodD0iNjAiPgogIDxwYXRoIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSIxLjUiIGQ9Ik0xNC44MjggMTQuODI4YTQgNCAwIDAxLTUuNjU2IDBNOSAxMGguMDFNMTUgMTBoLjAxTTIxIDEyYTkgOSAwIDExLTE4IDAgOSA5IDAgMDExOCAweiIvPgo8L3N2Zz4="></div> <div class="emotion-item emotion-item-sticker" code=dinosaur-depressed><img class=lazyload data-original=/wp-content/themes/argon/stickers/dinosaur/10.jpg src="data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iZW1vdGlvbi1sb2FkaW5nIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9Ii04IC04IDQwIDQwIiBzdHJva2U9IiM4ODgiIG9wYWNpdHk9Ii41IiB3aWR0aD0iNjAiIGhlaWdodD0iNjAiPgogIDxwYXRoIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSIxLjUiIGQ9Ik0xNC44MjggMTQuODI4YTQgNCAwIDAxLTUuNjU2IDBNOSAxMGguMDFNMTUgMTBoLjAxTTIxIDEyYTkgOSAwIDExLTE4IDAgOSA5IDAgMDExOCAweiIvPgo8L3N2Zz4="></div> <div class="emotion-item emotion-item-sticker" code=dinosaur-close-eyes><img class=lazyload data-original=/wp-content/themes/argon/stickers/dinosaur/11.jpg src="data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iZW1vdGlvbi1sb2FkaW5nIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9Ii04IC04IDQwIDQwIiBzdHJva2U9IiM4ODgiIG9wYWNpdHk9Ii41IiB3aWR0aD0iNjAiIGhlaWdodD0iNjAiPgogIDxwYXRoIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSIxLjUiIGQ9Ik0xNC44MjggMTQuODI4YTQgNCAwIDAxLTUuNjU2IDBNOSAxMGguMDFNMTUgMTBoLjAxTTIxIDEyYTkgOSAwIDExLTE4IDAgOSA5IDAgMDExOCAweiIvPgo8L3N2Zz4="></div> <div class="emotion-item emotion-item-sticker" code=dinosaur-sleeping><img class=lazyload data-original=/wp-content/themes/argon/stickers/dinosaur/12.jpg src="data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iZW1vdGlvbi1sb2FkaW5nIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9Ii04IC04IDQwIDQwIiBzdHJva2U9IiM4ODgiIG9wYWNpdHk9Ii41IiB3aWR0aD0iNjAiIGhlaWdodD0iNjAiPgogIDxwYXRoIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSIxLjUiIGQ9Ik0xNC44MjggMTQuODI4YTQgNCAwIDAxLTUuNjU2IDBNOSAxMGguMDFNMTUgMTBoLjAxTTIxIDEyYTkgOSAwIDExLTE4IDAgOSA5IDAgMDExOCAweiIvPgo8L3N2Zz4="></div> <div class="emotion-item emotion-item-sticker" code=dinosaur-puzzled><img class=lazyload data-original=/wp-content/themes/argon/stickers/dinosaur/13.jpg src="data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iZW1vdGlvbi1sb2FkaW5nIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9Ii04IC04IDQwIDQwIiBzdHJva2U9IiM4ODgiIG9wYWNpdHk9Ii41IiB3aWR0aD0iNjAiIGhlaWdodD0iNjAiPgogIDxwYXRoIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSIxLjUiIGQ9Ik0xNC44MjggMTQuODI4YTQgNCAwIDAxLTUuNjU2IDBNOSAxMGguMDFNMTUgMTBoLjAxTTIxIDEyYTkgOSAwIDExLTE4IDAgOSA5IDAgMDExOCAweiIvPgo8L3N2Zz4="></div> <div class="emotion-item emotion-item-sticker" code=dinosaur-agree><img class=lazyload data-original=/wp-content/themes/argon/stickers/dinosaur/14.jpg src="data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iZW1vdGlvbi1sb2FkaW5nIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9Ii04IC04IDQwIDQwIiBzdHJva2U9IiM4ODgiIG9wYWNpdHk9Ii41IiB3aWR0aD0iNjAiIGhlaWdodD0iNjAiPgogIDxwYXRoIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSIxLjUiIGQ9Ik0xNC44MjggMTQuODI4YTQgNCAwIDAxLTUuNjU2IDBNOSAxMGguMDFNMTUgMTBoLjAxTTIxIDEyYTkgOSAwIDExLTE4IDAgOSA5IDAgMDExOCAweiIvPgo8L3N2Zz4="></div> <div class="emotion-item emotion-item-sticker" code=dinosaur-crazy><img class=lazyload data-original=/wp-content/themes/argon/stickers/dinosaur/15.jpg src="data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iZW1vdGlvbi1sb2FkaW5nIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9Ii04IC04IDQwIDQwIiBzdHJva2U9IiM4ODgiIG9wYWNpdHk9Ii41IiB3aWR0aD0iNjAiIGhlaWdodD0iNjAiPgogIDxwYXRoIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSIxLjUiIGQ9Ik0xNC44MjggMTQuODI4YTQgNCAwIDAxLTUuNjU2IDBNOSAxMGguMDFNMTUgMTBoLjAxTTIxIDEyYTkgOSAwIDExLTE4IDAgOSA5IDAgMDExOCAweiIvPgo8L3N2Zz4="></div> <div class="emotion-item emotion-item-sticker" code=dinosaur-angry><img class=lazyload data-original=/wp-content/themes/argon/stickers/dinosaur/16.jpg src="data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iZW1vdGlvbi1sb2FkaW5nIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9Ii04IC04IDQwIDQwIiBzdHJva2U9IiM4ODgiIG9wYWNpdHk9Ii41IiB3aWR0aD0iNjAiIGhlaWdodD0iNjAiPgogIDxwYXRoIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSIxLjUiIGQ9Ik0xNC44MjggMTQuODI4YTQgNCAwIDAxLTUuNjU2IDBNOSAxMGguMDFNMTUgMTBoLjAxTTIxIDEyYTkgOSAwIDExLTE4IDAgOSA5IDAgMDExOCAweiIvPgo8L3N2Zz4="></div></div> <div class="d-none emotion-group" index=3><div class="emotion-item emotion-item-sticker" code=flower-flower><img class=lazyload data-original=/wp-content/themes/argon/stickers/flower/1.jpg src="data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iZW1vdGlvbi1sb2FkaW5nIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9Ii04IC04IDQwIDQwIiBzdHJva2U9IiM4ODgiIG9wYWNpdHk9Ii41IiB3aWR0aD0iNjAiIGhlaWdodD0iNjAiPgogIDxwYXRoIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSIxLjUiIGQ9Ik0xNC44MjggMTQuODI4YTQgNCAwIDAxLTUuNjU2IDBNOSAxMGguMDFNMTUgMTBoLjAxTTIxIDEyYTkgOSAwIDExLTE4IDAgOSA5IDAgMDExOCAweiIvPgo8L3N2Zz4="></div> <div class="emotion-item emotion-item-sticker" code=flower-grass><img class=lazyload data-original=/wp-content/themes/argon/stickers/flower/2.jpg src="data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iZW1vdGlvbi1sb2FkaW5nIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9Ii04IC04IDQwIDQwIiBzdHJva2U9IiM4ODgiIG9wYWNpdHk9Ii41IiB3aWR0aD0iNjAiIGhlaWdodD0iNjAiPgogIDxwYXRoIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSIxLjUiIGQ9Ik0xNC44MjggMTQuODI4YTQgNCAwIDAxLTUuNjU2IDBNOSAxMGguMDFNMTUgMTBoLjAxTTIxIDEyYTkgOSAwIDExLTE4IDAgOSA5IDAgMDExOCAweiIvPgo8L3N2Zz4="></div> <div class="emotion-item emotion-item-sticker" code=flower-leaf><img class=lazyload data-original=/wp-content/themes/argon/stickers/flower/3.jpg src="data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iZW1vdGlvbi1sb2FkaW5nIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9Ii04IC04IDQwIDQwIiBzdHJva2U9IiM4ODgiIG9wYWNpdHk9Ii41IiB3aWR0aD0iNjAiIGhlaWdodD0iNjAiPgogIDxwYXRoIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSIxLjUiIGQ9Ik0xNC44MjggMTQuODI4YTQgNCAwIDAxLTUuNjU2IDBNOSAxMGguMDFNMTUgMTBoLjAxTTIxIDEyYTkgOSAwIDExLTE4IDAgOSA5IDAgMDExOCAweiIvPgo8L3N2Zz4="></div> <div class="emotion-item emotion-item-sticker" code=flower-star><img class=lazyload data-original=/wp-content/themes/argon/stickers/flower/4.jpg src="data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iZW1vdGlvbi1sb2FkaW5nIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9Ii04IC04IDQwIDQwIiBzdHJva2U9IiM4ODgiIG9wYWNpdHk9Ii41IiB3aWR0aD0iNjAiIGhlaWdodD0iNjAiPgogIDxwYXRoIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSIxLjUiIGQ9Ik0xNC44MjggMTQuODI4YTQgNCAwIDAxLTUuNjU2IDBNOSAxMGguMDFNMTUgMTBoLjAxTTIxIDEyYTkgOSAwIDExLTE4IDAgOSA5IDAgMDExOCAweiIvPgo8L3N2Zz4="></div> <div class="emotion-item emotion-item-sticker" code=flower-sun><img class=lazyload data-original=/wp-content/themes/argon/stickers/flower/5.jpg src="data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iZW1vdGlvbi1sb2FkaW5nIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9Ii04IC04IDQwIDQwIiBzdHJva2U9IiM4ODgiIG9wYWNpdHk9Ii41IiB3aWR0aD0iNjAiIGhlaWdodD0iNjAiPgogIDxwYXRoIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSIxLjUiIGQ9Ik0xNC44MjggMTQuODI4YTQgNCAwIDAxLTUuNjU2IDBNOSAxMGguMDFNMTUgMTBoLjAxTTIxIDEyYTkgOSAwIDExLTE4IDAgOSA5IDAgMDExOCAweiIvPgo8L3N2Zz4="></div> <div class="emotion-item emotion-item-sticker" code=flower-moon><img class=lazyload data-original=/wp-content/themes/argon/stickers/flower/6.jpg src="data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iZW1vdGlvbi1sb2FkaW5nIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9Ii04IC04IDQwIDQwIiBzdHJva2U9IiM4ODgiIG9wYWNpdHk9Ii41IiB3aWR0aD0iNjAiIGhlaWdodD0iNjAiPgogIDxwYXRoIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSIxLjUiIGQ9Ik0xNC44MjggMTQuODI4YTQgNCAwIDAxLTUuNjU2IDBNOSAxMGguMDFNMTUgMTBoLjAxTTIxIDEyYTkgOSAwIDExLTE4IDAgOSA5IDAgMDExOCAweiIvPgo8L3N2Zz4="></div> <div class="emotion-item emotion-item-sticker" code=flower-water><img class=lazyload data-original=/wp-content/themes/argon/stickers/flower/7.jpg src="data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iZW1vdGlvbi1sb2FkaW5nIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9Ii04IC04IDQwIDQwIiBzdHJva2U9IiM4ODgiIG9wYWNpdHk9Ii41IiB3aWR0aD0iNjAiIGhlaWdodD0iNjAiPgogIDxwYXRoIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSIxLjUiIGQ9Ik0xNC44MjggMTQuODI4YTQgNCAwIDAxLTUuNjU2IDBNOSAxMGguMDFNMTUgMTBoLjAxTTIxIDEyYTkgOSAwIDExLTE4IDAgOSA5IDAgMDExOCAweiIvPgo8L3N2Zz4="></div> <div class="emotion-item emotion-item-sticker" code=flower-heihei><img class=lazyload data-original=/wp-content/themes/argon/stickers/flower/8.jpg src="data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iZW1vdGlvbi1sb2FkaW5nIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9Ii04IC04IDQwIDQwIiBzdHJva2U9IiM4ODgiIG9wYWNpdHk9Ii41IiB3aWR0aD0iNjAiIGhlaWdodD0iNjAiPgogIDxwYXRoIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSIxLjUiIGQ9Ik0xNC44MjggMTQuODI4YTQgNCAwIDAxLTUuNjU2IDBNOSAxMGguMDFNMTUgMTBoLjAxTTIxIDEyYTkgOSAwIDExLTE4IDAgOSA5IDAgMDExOCAweiIvPgo8L3N2Zz4="></div> <div class="emotion-item emotion-item-sticker" code=flower-lemon><img class=lazyload data-original=/wp-content/themes/argon/stickers/flower/9.jpg src="data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iZW1vdGlvbi1sb2FkaW5nIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9Ii04IC04IDQwIDQwIiBzdHJva2U9IiM4ODgiIG9wYWNpdHk9Ii41IiB3aWR0aD0iNjAiIGhlaWdodD0iNjAiPgogIDxwYXRoIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSIxLjUiIGQ9Ik0xNC44MjggMTQuODI4YTQgNCAwIDAxLTUuNjU2IDBNOSAxMGguMDFNMTUgMTBoLjAxTTIxIDEyYTkgOSAwIDExLTE4IDAgOSA5IDAgMDExOCAweiIvPgo8L3N2Zz4="></div> <div class="emotion-item emotion-item-sticker" code=flower-birthday><img class=lazyload data-original=/wp-content/themes/argon/stickers/flower/10.jpg src="data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iZW1vdGlvbi1sb2FkaW5nIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9Ii04IC04IDQwIDQwIiBzdHJva2U9IiM4ODgiIG9wYWNpdHk9Ii41IiB3aWR0aD0iNjAiIGhlaWdodD0iNjAiPgogIDxwYXRoIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSIxLjUiIGQ9Ik0xNC44MjggMTQuODI4YTQgNCAwIDAxLTUuNjU2IDBNOSAxMGguMDFNMTUgMTBoLjAxTTIxIDEyYTkgOSAwIDExLTE4IDAgOSA5IDAgMDExOCAweiIvPgo8L3N2Zz4="></div> <div class="emotion-item emotion-item-sticker" code=flower-sea><img class=lazyload data-original=/wp-content/themes/argon/stickers/flower/11.jpg src="data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iZW1vdGlvbi1sb2FkaW5nIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9Ii04IC04IDQwIDQwIiBzdHJva2U9IiM4ODgiIG9wYWNpdHk9Ii41IiB3aWR0aD0iNjAiIGhlaWdodD0iNjAiPgogIDxwYXRoIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSIxLjUiIGQ9Ik0xNC44MjggMTQuODI4YTQgNCAwIDAxLTUuNjU2IDBNOSAxMGguMDFNMTUgMTBoLjAxTTIxIDEyYTkgOSAwIDExLTE4IDAgOSA5IDAgMDExOCAweiIvPgo8L3N2Zz4="></div> <div class="emotion-item emotion-item-sticker" code=flower-vegetable><img class=lazyload data-original=/wp-content/themes/argon/stickers/flower/12.jpg src="data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iZW1vdGlvbi1sb2FkaW5nIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9Ii04IC04IDQwIDQwIiBzdHJva2U9IiM4ODgiIG9wYWNpdHk9Ii41IiB3aWR0aD0iNjAiIGhlaWdodD0iNjAiPgogIDxwYXRoIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSIxLjUiIGQ9Ik0xNC44MjggMTQuODI4YTQgNCAwIDAxLTUuNjU2IDBNOSAxMGguMDFNMTUgMTBoLjAxTTIxIDEyYTkgOSAwIDExLTE4IDAgOSA5IDAgMDExOCAweiIvPgo8L3N2Zz4="></div> <div class="emotion-item emotion-item-sticker" code=flower-tile><img class=lazyload data-original=/wp-content/themes/argon/stickers/flower/13.jpg src="data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iZW1vdGlvbi1sb2FkaW5nIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9Ii04IC04IDQwIDQwIiBzdHJva2U9IiM4ODgiIG9wYWNpdHk9Ii41IiB3aWR0aD0iNjAiIGhlaWdodD0iNjAiPgogIDxwYXRoIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSIxLjUiIGQ9Ik0xNC44MjggMTQuODI4YTQgNCAwIDAxLTUuNjU2IDBNOSAxMGguMDFNMTUgMTBoLjAxTTIxIDEyYTkgOSAwIDExLTE4IDAgOSA5IDAgMDExOCAweiIvPgo8L3N2Zz4="></div> <div class="emotion-item emotion-item-sticker" code=flower-utf><img class=lazyload data-original=/wp-content/themes/argon/stickers/flower/14.jpg src="data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iZW1vdGlvbi1sb2FkaW5nIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9Ii04IC04IDQwIDQwIiBzdHJva2U9IiM4ODgiIG9wYWNpdHk9Ii41IiB3aWR0aD0iNjAiIGhlaWdodD0iNjAiPgogIDxwYXRoIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSIxLjUiIGQ9Ik0xNC44MjggMTQuODI4YTQgNCAwIDAxLTUuNjU2IDBNOSAxMGguMDFNMTUgMTBoLjAxTTIxIDEyYTkgOSAwIDExLTE4IDAgOSA5IDAgMDExOCAweiIvPgo8L3N2Zz4="></div> <div class=emotion-group-description>Source: github.com/k4yt3x/flowerhd</div></div></div> <div class=emotion-keyboard-bar><div class="active emotion-group-name" index=0>颜文字</div> <div class=emotion-group-name index=1>Emoji</div> <div class=emotion-group-name index=2>小恐龙</div> <div class=emotion-group-name index=3>花!</div></div></div></div> </div> <input id=post_comment_captcha_seed style="display:none;" value="<br>
-<b>Warning</b>:  Undefined variable $commentCaptchaSeed in <b>/www/wwwroot/xy1991.win/wp-content/themes/argon/comments.php</b> on line <b>231</b><br>
-"> <input id=post_comment_post_id style="display:none;" value=170></form></div> </div> <div aria-modal=true class="fade modal" id=comment_edit_history role=dialog tabindex=-1><div class="modal-dialog modal-lg"><div class=modal-content><div class=modal-header><h4 class=modal-title style="font-size:20px;"></h4> <button aria-label=Close class=close data-dismiss=modal type=button><span aria-hidden=true>×</span> </button></div> <div class=modal-body style="word-break:break-word;"></div></div> </div> </div> <div aria-modal=true class="fade modal" id=comment_pin_comfirm_dialog role=dialog tabindex=-1><div class=modal-dialog><div class=modal-content><div class=modal-header><h4 class=modal-title style="font-size:20px;"></h4> <button aria-label=Close class=close data-dismiss=modal type=button><span aria-hidden=true>×</span> </button></div> <div class=modal-body style="word-break:break-word;"></div> <div class=modal-footer><button class="btn btn-dismiss btn-secondary" data-dismiss=modal type=button></button> <button class="btn btn-comfirm btn-primary" type=button></button></div></div> </div> </div> <div class="card post-navigation shadow-sm"><div class="post-navigation-item post-navigation-pre"><span class=page-navigation-extra-text><i aria-hidden=true class="fa fa-arrow-circle-o-left"></i>上一篇</span><a href=/coreldraw-2021-23-5-0-506-%e7%a0%b4%e8%a7%a3%e7%89%88/ rel=prev>CorelDRAW 2021 23.5.0.506 破解版</a> </div> <div class="post-navigation-item post-navigation-next"><span class=page-navigation-extra-text>下一篇 <i aria-hidden=true class="fa fa-arrow-circle-o-right"></i></span><a href=/%e4%b8%80%e9%94%aedd%e8%84%9a%e6%9c%ac/ rel=next>一键DD脚本</a> </div></div> <footer class="border-0 card shadow-sm site-footer" id=footer><div>Theme <a href=https://github.com/solstice23/argon-theme target=_blank><strong>Argon</strong></a> </div> </footer></main> </div></div> <script src=/wp-content/themes/argon/argontheme.js?v1_3_5></script> <script>window.MathJax={tex:{inlineMath:[["$","$"],["\\\\(","\\\\)"]],displayMath:[['$$','$$']],processEscapes:true,packages:{'[+]':['noerrors']}},options:{skipHtmlTags:['script','noscript','style','textarea','pre','code'],ignoreHtmlClass:'tex2jax_ignore',processHtmlClass:'tex2jax_process'},loader:{load:['[tex]/noerrors']}};</script> <script async id=MathJax-script src=//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js></script> <link href=/wp-content/themes/argon/assets/vendor/highlight/styles/vs2015.css rel=stylesheet> <span class=ssp-id style=display:none>170</span> <p id=optimized_by_wpjam_basic>Optimized by <a href=https://blog.wpjam.com/project/wpjam-basic/>WPJAM Basic</a>。
+<!DOCTYPE html>
+<html lang="zh-CN" class="no-js immersion-color amoled-dark toolbar-blur article-header-style-default ">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5">
+<meta property="og:title" content="301海外跳转原理解析兼谈缓解假墙伪墙攻击勒索的多种技术手段 - 雅丶涵">
+<meta property="og:type" content="article">
+<meta property="og:url" content="/301%E6%B5%B7%E5%A4%96%E8%B7%B3%E8%BD%AC%E5%8E%9F%E7%90%86%E8%A7%A3%E6%9E%90%E5%85%BC%E8%B0%88%E7%BC%93%E8%A7%A3%E5%81%87%E5%A2%99%E4%BC%AA%E5%A2%99%E6%94%BB%E5%87%BB%E5%8B%92%E7%B4%A2%E7%9A%84-2">
+<meta name="description" content="在上一篇文章中，我们实现了HTTP的抢答模式，避免了墙的TCP Reset。那么这次我们就来聊一聊HTTPS如何避免被TCP Reset。 我们知道，HTTPS是需要客户端和服务器之间完成TLS握手后才能收发HTTP Request和Respo &hellip;">
+<meta property="og:description" content="在上一篇文章中，我们实现了HTTP的抢答模式，避免了墙的TCP Reset。那么这次我们就来聊一聊HTTPS如何避免被TCP Reset。 我们知道，HTTPS是需要客户端和服务器之间完成TLS握手后才能收发HTTP Request和Respo &hellip;">
+<meta property="og:image" content="/wp-content/uploads/2021/09/img_7961.jpg">
+<meta name="theme-color" content="#fa7298">
+<meta name="theme-color-rgb" content="250,114,152">
+<meta name="theme-color-origin" content="#fa7298">
+<meta name="argon-enable-custom-theme-color" content="true">
+<meta name="theme-card-radius" content="4">
+<meta name="theme-card-radius-origin" content="4">
+<meta name="theme-version" content="1.3.5">
+<link rel="profile" href="https://gmpg.org/xfn/11">
+<link rel="pingback" href="/xmlrpc.php">
+<title>301海外跳转原理解析兼谈缓解假墙伪墙攻击勒索的多种技术手段 - 雅丶涵</title>
+<meta name="description" content="在上一篇文章中，我们实现了HTTP的抢答模式，避免了墙的TCP Reset。那么这次我们就来聊一聊HTTPS如何避免被TCP Reset。 我们知道，HTTPS是需要客户端和服务器之间完成TLS握手后才能收发HTTP Request和Respo &hellip;">
+<meta name="robots" content="max-image-preview:large">
+<link rel="dns-prefetch" href="//fonts.lug.ustc.edu.cn">
+<link rel="stylesheet" id="argon_css_merged-css" href="/wp-content/themes/argon/assets/argon_css_merged.css?ver=1.3.5" type="text/css" media="all">
+<link rel="stylesheet" id="style-css" href="/wp-content/themes/argon/style.css?ver=1.3.5" type="text/css" media="all">
+<link rel="stylesheet" id="googlefont-css" href="//fonts.lug.ustc.edu.cn/css?family=Open+Sans%3A300%2C400%2C600%2C700%7CNoto+Serif+SC%3A300%2C600&#038;display=swap" type="text/css" media="all">
+<style id="classic-theme-styles-inline-css" type="text/css">/*! This file is auto-generated */
+.wp-block-button__link{color:#fff;background-color:#32373c;border-radius:9999px;box-shadow:none;text-decoration:none;padding:calc(.667em + 2px) calc(1.333em + 2px);font-size:1.125em}.wp-block-file__button{background:#32373c;color:#fff;text-decoration:none}</style>
+<style id="global-styles-inline-css" type="text/css">body{--wp--preset--color--black: #000000;--wp--preset--color--cyan-bluish-gray: #abb8c3;--wp--preset--color--white: #ffffff;--wp--preset--color--pale-pink: #f78da7;--wp--preset--color--vivid-red: #cf2e2e;--wp--preset--color--luminous-vivid-orange: #ff6900;--wp--preset--color--luminous-vivid-amber: #fcb900;--wp--preset--color--light-green-cyan: #7bdcb5;--wp--preset--color--vivid-green-cyan: #00d084;--wp--preset--color--pale-cyan-blue: #8ed1fc;--wp--preset--color--vivid-cyan-blue: #0693e3;--wp--preset--color--vivid-purple: #9b51e0;--wp--preset--gradient--vivid-cyan-blue-to-vivid-purple: linear-gradient(135deg,rgba(6,147,227,1) 0%,rgb(155,81,224) 100%);--wp--preset--gradient--light-green-cyan-to-vivid-green-cyan: linear-gradient(135deg,rgb(122,220,180) 0%,rgb(0,208,130) 100%);--wp--preset--gradient--luminous-vivid-amber-to-luminous-vivid-orange: linear-gradient(135deg,rgba(252,185,0,1) 0%,rgba(255,105,0,1) 100%);--wp--preset--gradient--luminous-vivid-orange-to-vivid-red: linear-gradient(135deg,rgba(255,105,0,1) 0%,rgb(207,46,46) 100%);--wp--preset--gradient--very-light-gray-to-cyan-bluish-gray: linear-gradient(135deg,rgb(238,238,238) 0%,rgb(169,184,195) 100%);--wp--preset--gradient--cool-to-warm-spectrum: linear-gradient(135deg,rgb(74,234,220) 0%,rgb(151,120,209) 20%,rgb(207,42,186) 40%,rgb(238,44,130) 60%,rgb(251,105,98) 80%,rgb(254,248,76) 100%);--wp--preset--gradient--blush-light-purple: linear-gradient(135deg,rgb(255,206,236) 0%,rgb(152,150,240) 100%);--wp--preset--gradient--blush-bordeaux: linear-gradient(135deg,rgb(254,205,165) 0%,rgb(254,45,45) 50%,rgb(107,0,62) 100%);--wp--preset--gradient--luminous-dusk: linear-gradient(135deg,rgb(255,203,112) 0%,rgb(199,81,192) 50%,rgb(65,88,208) 100%);--wp--preset--gradient--pale-ocean: linear-gradient(135deg,rgb(255,245,203) 0%,rgb(182,227,212) 50%,rgb(51,167,181) 100%);--wp--preset--gradient--electric-grass: linear-gradient(135deg,rgb(202,248,128) 0%,rgb(113,206,126) 100%);--wp--preset--gradient--midnight: linear-gradient(135deg,rgb(2,3,129) 0%,rgb(40,116,252) 100%);--wp--preset--font-size--small: 13px;--wp--preset--font-size--medium: 20px;--wp--preset--font-size--large: 36px;--wp--preset--font-size--x-large: 42px;--wp--preset--spacing--20: 0.44rem;--wp--preset--spacing--30: 0.67rem;--wp--preset--spacing--40: 1rem;--wp--preset--spacing--50: 1.5rem;--wp--preset--spacing--60: 2.25rem;--wp--preset--spacing--70: 3.38rem;--wp--preset--spacing--80: 5.06rem;--wp--preset--shadow--natural: 6px 6px 9px rgba(0, 0, 0, 0.2);--wp--preset--shadow--deep: 12px 12px 50px rgba(0, 0, 0, 0.4);--wp--preset--shadow--sharp: 6px 6px 0px rgba(0, 0, 0, 0.2);--wp--preset--shadow--outlined: 6px 6px 0px -3px rgba(255, 255, 255, 1), 6px 6px rgba(0, 0, 0, 1);--wp--preset--shadow--crisp: 6px 6px 0px rgba(0, 0, 0, 1);}:where(.is-layout-flex){gap: 0.5em;}:where(.is-layout-grid){gap: 0.5em;}body .is-layout-flow > .alignleft{float: left;margin-inline-start: 0;margin-inline-end: 2em;}body .is-layout-flow > .alignright{float: right;margin-inline-start: 2em;margin-inline-end: 0;}body .is-layout-flow > .aligncenter{margin-left: auto !important;margin-right: auto !important;}body .is-layout-constrained > .alignleft{float: left;margin-inline-start: 0;margin-inline-end: 2em;}body .is-layout-constrained > .alignright{float: right;margin-inline-start: 2em;margin-inline-end: 0;}body .is-layout-constrained > .aligncenter{margin-left: auto !important;margin-right: auto !important;}body .is-layout-constrained > :where(:not(.alignleft):not(.alignright):not(.alignfull)){max-width: var(--wp--style--global--content-size);margin-left: auto !important;margin-right: auto !important;}body .is-layout-constrained > .alignwide{max-width: var(--wp--style--global--wide-size);}body .is-layout-flex{display: flex;}body .is-layout-flex{flex-wrap: wrap;align-items: center;}body .is-layout-flex > *{margin: 0;}body .is-layout-grid{display: grid;}body .is-layout-grid > *{margin: 0;}:where(.wp-block-columns.is-layout-flex){gap: 2em;}:where(.wp-block-columns.is-layout-grid){gap: 2em;}:where(.wp-block-post-template.is-layout-flex){gap: 1.25em;}:where(.wp-block-post-template.is-layout-grid){gap: 1.25em;}.has-black-color{color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-color{color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-color{color: var(--wp--preset--color--white) !important;}.has-pale-pink-color{color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-color{color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-color{color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-color{color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-color{color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-color{color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-color{color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-color{color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-color{color: var(--wp--preset--color--vivid-purple) !important;}.has-black-background-color{background-color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-background-color{background-color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-background-color{background-color: var(--wp--preset--color--white) !important;}.has-pale-pink-background-color{background-color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-background-color{background-color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-background-color{background-color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-background-color{background-color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-background-color{background-color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-background-color{background-color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-background-color{background-color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-background-color{background-color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-background-color{background-color: var(--wp--preset--color--vivid-purple) !important;}.has-black-border-color{border-color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-border-color{border-color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-border-color{border-color: var(--wp--preset--color--white) !important;}.has-pale-pink-border-color{border-color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-border-color{border-color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-border-color{border-color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-border-color{border-color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-border-color{border-color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-border-color{border-color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-border-color{border-color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-border-color{border-color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-border-color{border-color: var(--wp--preset--color--vivid-purple) !important;}.has-vivid-cyan-blue-to-vivid-purple-gradient-background{background: var(--wp--preset--gradient--vivid-cyan-blue-to-vivid-purple) !important;}.has-light-green-cyan-to-vivid-green-cyan-gradient-background{background: var(--wp--preset--gradient--light-green-cyan-to-vivid-green-cyan) !important;}.has-luminous-vivid-amber-to-luminous-vivid-orange-gradient-background{background: var(--wp--preset--gradient--luminous-vivid-amber-to-luminous-vivid-orange) !important;}.has-luminous-vivid-orange-to-vivid-red-gradient-background{background: var(--wp--preset--gradient--luminous-vivid-orange-to-vivid-red) !important;}.has-very-light-gray-to-cyan-bluish-gray-gradient-background{background: var(--wp--preset--gradient--very-light-gray-to-cyan-bluish-gray) !important;}.has-cool-to-warm-spectrum-gradient-background{background: var(--wp--preset--gradient--cool-to-warm-spectrum) !important;}.has-blush-light-purple-gradient-background{background: var(--wp--preset--gradient--blush-light-purple) !important;}.has-blush-bordeaux-gradient-background{background: var(--wp--preset--gradient--blush-bordeaux) !important;}.has-luminous-dusk-gradient-background{background: var(--wp--preset--gradient--luminous-dusk) !important;}.has-pale-ocean-gradient-background{background: var(--wp--preset--gradient--pale-ocean) !important;}.has-electric-grass-gradient-background{background: var(--wp--preset--gradient--electric-grass) !important;}.has-midnight-gradient-background{background: var(--wp--preset--gradient--midnight) !important;}.has-small-font-size{font-size: var(--wp--preset--font-size--small) !important;}.has-medium-font-size{font-size: var(--wp--preset--font-size--medium) !important;}.has-large-font-size{font-size: var(--wp--preset--font-size--large) !important;}.has-x-large-font-size{font-size: var(--wp--preset--font-size--x-large) !important;}
+.wp-block-navigation a:where(:not(.wp-element-button)){color: inherit;}
+:where(.wp-block-post-template.is-layout-flex){gap: 1.25em;}:where(.wp-block-post-template.is-layout-grid){gap: 1.25em;}
+:where(.wp-block-columns.is-layout-flex){gap: 2em;}:where(.wp-block-columns.is-layout-grid){gap: 2em;}
+.wp-block-pullquote{font-size: 1.5em;line-height: 1.6;}</style>
+<script type="text/javascript" src="/wp-content/themes/argon/assets/argon_js_merged.js?ver=1.3.5" id="argon_js_merged-js"></script>
+<script type="text/javascript" src="/wp-content/themes/argon/assets/js/argon.min.js?ver=1.3.5" id="argonjs-js"></script>
+<link rel="canonical" href="/301%e6%b5%b7%e5%a4%96%e8%b7%b3%e8%bd%ac%e5%8e%9f%e7%90%86%e8%a7%a3%e6%9e%90%e5%85%bc%e8%b0%88%e7%bc%93%e8%a7%a3%e5%81%87%e5%a2%99%e4%bc%aa%e5%a2%99%e6%94%bb%e5%87%bb%e5%8b%92%e7%b4%a2%e7%9a%84-2/">
+<script type="text/javascript"></script>
+<style type="text/css"></style>
+<meta name="ssp-config-path" content="/wp-content/uploads/simply-static/configs/">
+<style type="text/css">.recentcomments a{display:inline !important;padding:0 !important;margin:0 !important;}</style>
+<link rel="icon" href="/wp-content/uploads/2022/06/cropped-IMG_9644-e1655738850667-32x32.png" sizes="32x32">
+<link rel="icon" href="/wp-content/uploads/2022/06/cropped-IMG_9644-e1655738850667-192x192.png" sizes="192x192">
+<link rel="apple-touch-icon" href="/wp-content/uploads/2022/06/cropped-IMG_9644-e1655738850667-180x180.png">
+<meta name="msapplication-TileImage" content="/wp-content/uploads/2022/06/cropped-IMG_9644-e1655738850667-270x270.png">
+<script>document.documentElement.classList.remove("no-js");
+		var argonConfig = {
+			wp_path: "/",
+			language: "zh_CN",
+			dateFormat: "YMD",
+							zoomify: false,
+						pangu: "article|shuoshuo|comment",
+							lazyload: {
+					threshold: 800,
+					effect: "fadeIn"
+				},
+						fold_long_comments: false,
+			fold_long_shuoshuo: false,
+			disable_pjax: false,
+			pjax_animation_durtion: 600,
+			headroom: "true",
+			waterflow_columns: "1",
+			code_highlight: {
+				enable: true,
+				hide_linenumber: false,
+				transparent_linenumber: true,
+				break_line: true			}
+		}</script>
+<script>
+		var darkmodeAutoSwitch = "system";
+		function setDarkmode(enable){
+			if (enable == true){
+				$("html").addClass("darkmode");
+			}else{
+				$("html").removeClass("darkmode");
+			}
+			$(window).trigger("scroll");
+		}
+		function toggleDarkmode(){
+			if ($("html").hasClass("darkmode")){
+				setDarkmode(false);
+				sessionStorage.setItem("Argon_Enable_Dark_Mode", "false");
+			}else{
+				setDarkmode(true);
+				sessionStorage.setItem("Argon_Enable_Dark_Mode", "true");
+			}
+		}
+		if (sessionStorage.getItem("Argon_Enable_Dark_Mode") == "true"){
+			setDarkmode(true);
+		}
+		function toggleDarkmodeByPrefersColorScheme(media){
+			if (sessionStorage.getItem('Argon_Enable_Dark_Mode') == "false" || sessionStorage.getItem('Argon_Enable_Dark_Mode') == "true"){
+				return;
+			}
+			if (media.matches){
+				setDarkmode(true);
+			}else{
+				setDarkmode(false);
+			}
+		}
+		function toggleDarkmodeByTime(){
+			if (sessionStorage.getItem('Argon_Enable_Dark_Mode') == "false" || sessionStorage.getItem('Argon_Enable_Dark_Mode') == "true"){
+				return;
+			}
+			let hour = new Date().getHours();
+			if (hour < 7 || hour >= 22){
+				setDarkmode(true);
+			}else{
+				setDarkmode(false);
+			}
+		}
+		if (darkmodeAutoSwitch == 'system'){
+			var darkmodeMediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+			darkmodeMediaQuery.addListener(toggleDarkmodeByPrefersColorScheme);
+			toggleDarkmodeByPrefersColorScheme(darkmodeMediaQuery);
+		}
+		if (darkmodeAutoSwitch == 'time'){
+			toggleDarkmodeByTime();
+		}
+		if (darkmodeAutoSwitch == 'alwayson'){
+			setDarkmode(true);
+		}
+
+		function toggleAmoledDarkMode(){
+			$("html").toggleClass("amoled-dark");
+			if ($("html").hasClass("amoled-dark")){
+				localStorage.setItem("Argon_Enable_Amoled_Dark_Mode", "true");
+			}else{
+				localStorage.setItem("Argon_Enable_Amoled_Dark_Mode", "false");
+			}
+		}
+		if (localStorage.getItem("Argon_Enable_Amoled_Dark_Mode") == "true"){
+			$("html").addClass("amoled-dark");
+		}else if (localStorage.getItem("Argon_Enable_Amoled_Dark_Mode") == "false"){
+			$("html").removeClass("amoled-dark");
+		}
+	</script>
+<script>if (navigator.userAgent.indexOf("Safari") !== -1 && navigator.userAgent.indexOf("Chrome") === -1){
+			$("html").addClass("using-safari");
+		}</script>
+<script src="/wp-content/themes/argon/assets/vendor/smoothscroll/smoothscroll1.js"></script>
+</head>
+<style id="themecolor_css">:root{
+		--themecolor: #fa7298;
+		--themecolor-R: 250;
+		--themecolor-G: 114;
+		--themecolor-B: 152;
+		--themecolor-H: 343;
+		--themecolor-S: 93;
+		--themecolor-L: 71;
+	}</style>
+<style id="theme_cardradius_css">:root{
+		--card-radius: 4px;
+	}</style>
+<body class="post-template-default single single-post postid-170 single-format-standard">
+<div id="toolbar">
+<header class="header-global">
+<nav id="navbar-main" class="navbar navbar-main navbar-expand-lg navbar-transparent navbar-light bg-primary headroom--not-bottom headroom--not-top headroom--pinned">
+<div class="container">
+<button id="open_sidebar" class="navbar-toggler" type="button" aria-expanded="false" aria-label="Toggle sidebar">
+<span class="navbar-toggler-icon"></span>
+</button>
+<div class="navbar-brand mr-0">
+<a class="navbar-brand navbar-title" href="/">雅丶涵</a>
+</div>
+<div class="navbar-collapse collapse" id="navbar_global">
+<div class="navbar-collapse-header">
+<div class="row" style="display: none;">
+<div class="col-6 collapse-brand"></div>
+<div class="col-6 collapse-close">
+<button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbar_global" aria-controls="navbar_global" aria-expanded="false" aria-label="Toggle navigation">
+<span></span>
+<span></span>
+</button>
+</div>
+</div>
+<div class="input-group input-group-alternative">
+<div class="input-group-prepend">
+<span class="input-group-text"><i class="fa fa-search"></i></span>
+</div>
+<input id="navbar_search_input_mobile" class="form-control" placeholder="搜索什么..." type="text" autocomplete="off">
+</div>
+</div>
+<ul class="navbar-nav navbar-nav-hover align-items-lg-center">
+<li class="nav-item">
+<a href="/category/%e6%b8%b8%e6%88%8f/" class="nav-link" target title>
+<i class="ni ni-book-bookmark d-lg-none"></i>
+<span class="nav-link-inner--text">游戏</span>
+</a>
+</li>
+<li class="nav-item">
+<a href="/category/%e8%bd%af%e4%bb%b6%e5%88%86%e4%ba%ab/" class="nav-link" target title>
+<i class="ni ni-book-bookmark d-lg-none"></i>
+<span class="nav-link-inner--text">软件分享</span>
+</a>
+</li>
+<li class="nav-item">
+<a href="/category/%e6%8a%80%e6%9c%af%e8%ae%b0%e5%bd%95/" class="nav-link" target title>
+<i class="ni ni-book-bookmark d-lg-none"></i>
+<span class="nav-link-inner--text">技术记录</span>
+</a>
+</li>
+<li class="nav-item">
+<a href="/category/%e4%b8%8a%e7%bd%91%e5%b7%a5%e5%85%b7/" class="nav-link" target title>
+<i class="ni ni-book-bookmark d-lg-none"></i>
+<span class="nav-link-inner--text">上网工具</span>
+</a>
+</li>
+<li class="nav-item">
+<a href="/category/eve/" class="nav-link" target title>
+<i class="ni ni-book-bookmark d-lg-none"></i>
+<span class="nav-link-inner--text">EVE</span>
+</a>
+</li>
+</ul> <ul class="navbar-nav align-items-lg-center ml-lg-auto">
+<li id="navbar_search_container" class="nav-item" data-toggle="modal">
+<div id="navbar_search_input_container">
+<div class="input-group input-group-alternative">
+<div class="input-group-prepend">
+<span class="input-group-text"><i class="fa fa-search"></i></span>
+</div>
+<input id="navbar_search_input" class="form-control" placeholder="搜索什么..." type="text" autocomplete="off">
+</div>
+</div>
+</li>
+</ul>
+</div>
+<div id="navbar_menu_mask" data-toggle="collapse" data-target="#navbar_global"></div>
+<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar_global" aria-controls="navbar_global" aria-expanded="false" aria-label="Toggle navigation">
+<span class="navbar-toggler-icon navbar-toggler-searcg-icon"></span>
+</button>
+</div>
+</nav>
+</header>
+</div>
+<div class="modal fade" id="argon_search_modal" tabindex="-1" role="dialog" aria-labelledby aria-hidden="true">
+<div class="modal-dialog modal-dialog-centered modal-sm" role="document">
+<div class="modal-content">
+<div class="modal-header">
+<h5 class="modal-title">搜索</h5>
+<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+<span aria-hidden="true">&times;</span>
+</button>
+</div>
+<div class="modal-body">
+<form id="argon_serach_form" method="get" action="">
+<div class="form-group mb-3">
+<div class="input-group input-group-alternative">
+<div class="input-group-prepend">
+<span class="input-group-text"><i class="fa fa-search"></i></span>
+</div>
+<input name="s" class="form-control" placeholder="搜索什么..." type="text" autocomplete="off">
+</div>
+</div>
+<div class="text-center">
+<button onclick="if($('#argon_serach_form input[name=\'s\']').val() != '') {document.getElementById('argon_serach_form').submit();}" type="button" class="btn btn-primary">搜索</button>
+</div>
+</form> </div>
+</div>
+</div>
+</div>
+
+<section id="banner" class="banner section section-lg section-shaped">
+<div class="shape shape-style-1 shape-default">
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+</div>
+<div id="banner_container" class="banner-container container text-center">
+<div class="banner-title text-white" data-interval="100">
+<span data-text="雅丶涵" class="banner-title-inner">&nbsp;</span>
+</div>
+</div>
+</section>
+<style>#banner:after {
+			content: '';
+			width: 100vw;
+			position: absolute;
+			left: 0;
+			top: 0;
+			height: 120px;
+			background: linear-gradient(180deg, rgba(0,0,0,0.25) 0%, rgba(0,0,0,0.15) 35%, rgba(0,0,0,0) 100%);
+			display: block;
+			z-index: -1;
+		}
+		.banner-title {
+			text-shadow: 0 5px 15px rgba(0, 0, 0, .2);
+		}</style>
+<div id="float_action_buttons" class="float-action-buttons fabtns-unloaded">
+<button id="fabtn_toggle_sides" class="btn btn-icon btn-neutral fabtn shadow-sm" type="button" aria-hidden="true" tooltip-move-to-left="移至左侧" tooltip-move-to-right="移至右侧">
+<span class="btn-inner--icon fabtn-show-on-right"><i class="fa fa-caret-left"></i></span>
+<span class="btn-inner--icon fabtn-show-on-left"><i class="fa fa-caret-right"></i></span>
+</button>
+<button id="fabtn_back_to_top" class="btn btn-icon btn-neutral fabtn shadow-sm" type="button" aria-label="Back To Top" tooltip="回到顶部">
+<span class="btn-inner--icon"><i class="fa fa-angle-up"></i></span>
+</button>
+<button id="fabtn_go_to_comment" class="btn btn-icon btn-neutral fabtn shadow-sm d-none" type="button" aria-label="Comment" tooltip="评论">
+<span class="btn-inner--icon"><i class="fa fa-comment-o"></i></span>
+</button>
+<button id="fabtn_toggle_darkmode" class="btn btn-icon btn-neutral fabtn shadow-sm" type="button" style="display: none;" aria-label="Toggle Darkmode" tooltip-darkmode="夜间模式" tooltip-blackmode="暗黑模式" tooltip-lightmode="日间模式">
+<span class="btn-inner--icon"><i class="fa fa-moon-o"></i><i class="fa fa-lightbulb-o"></i></span>
+</button>
+<button id="fabtn_toggle_blog_settings_popup" class="btn btn-icon btn-neutral fabtn shadow-sm" type="button" aria-label="Open Blog Settings Menu" tooltip="设置">
+<span class="btn-inner--icon"><i class="fa fa-cog"></i></span>
+</button>
+<div id="fabtn_blog_settings_popup" class="card shadow-sm" style="opacity: 0;" aria-hidden="true">
+<div id="close_blog_settings"><i class="fa fa-close"></i></div>
+<div class="blog-setting-item mt-3">
+<div style="transform: translateY(-4px);"><div id="blog_setting_toggle_darkmode_and_amoledarkmode" tooltip-switch-to-darkmode="切换到夜间模式" tooltip-switch-to-blackmode="切换到暗黑模式">
+<span>夜间模式</span><span>暗黑模式</span>
+</div></div>
+<div style="flex: 1;"></div>
+<label id="blog_setting_darkmode_switch" class="custom-toggle">
+<span class="custom-toggle-slider rounded-circle"></span>
+</label>
+</div>
+<div class="blog-setting-item mt-3">
+<div style="flex: 1;">字体</div>
+<div>
+<button id="blog_setting_font_sans_serif" type="button" class="blog-setting-font btn btn-outline-primary blog-setting-selector-left">Sans Serif</button><button id="blog_setting_font_serif" type="button" class="blog-setting-font btn btn-outline-primary blog-setting-selector-right">Serif</button>
+</div>
+</div>
+<div class="blog-setting-item mt-3">
+<div style="flex: 1;">阴影</div>
+<div>
+<button id="blog_setting_shadow_small" type="button" class="blog-setting-shadow btn btn-outline-primary blog-setting-selector-left">浅阴影</button><button id="blog_setting_shadow_big" type="button" class="blog-setting-shadow btn btn-outline-primary blog-setting-selector-right">深阴影</button>
+</div>
+</div>
+<div class="blog-setting-item mt-3 mb-3">
+<div style="flex: 1;">滤镜</div>
+<div id="blog_setting_filters" class="ml-3">
+<button id="blog_setting_filter_off" type="button" class="blog-setting-filter-btn ml-0" filter-name="off">关闭</button>
+<button id="blog_setting_filter_sunset" type="button" class="blog-setting-filter-btn" filter-name="sunset">日落</button>
+<button id="blog_setting_filter_darkness" type="button" class="blog-setting-filter-btn" filter-name="darkness">暗化</button>
+<button id="blog_setting_filter_grayscale" type="button" class="blog-setting-filter-btn" filter-name="grayscale">灰度</button>
+</div>
+</div>
+<div class="blog-setting-item mb-3">
+<div id="blog_setting_card_radius_to_default" style="cursor: pointer;" tooltip="恢复默认">圆角</div>
+<div style="flex: 1;margin-left: 20px;margin-right: 8px;transform: translateY(2px);">
+<div id="blog_setting_card_radius"></div>
+</div>
+</div>
+<div class="blog-setting-item mt-1 mb-3">
+<div style="flex: 1;">主题色</div>
+<div id="theme-color-picker" class="ml-3"></div>
+</div>
+</div>
+<button id="fabtn_reading_progress" class="btn btn-icon btn-neutral fabtn shadow-sm" type="button" aria-hidden="true" tooltip="阅读进度">
+<div id="fabtn_reading_progress_bar" style="width: 0%;"></div>
+<span id="fabtn_reading_progress_details">0%</span>
+</button>
+</div>
+<div id="content" class="site-content">
+<div class="page-information-card-container"></div>
+<div id="sidebar_mask"></div>
+<aside id="leftbar" class="leftbar widget-area" role="complementary">
+<div id="leftbar_part1" class="widget widget_search card bg-white shadow-sm border-0">
+<div class="leftbar-banner card-body">
+<span class="leftbar-banner-title text-white">雅丶涵</span>
+</div>
+<ul id="leftbar_part1_menu" class="leftbar-menu">
+<li class="leftbar-menu-item">
+<a href="/category/%e6%b8%b8%e6%88%8f/" target>游戏</a>
+</li>
+<li class="leftbar-menu-item">
+<a href="/category/%e8%bd%af%e4%bb%b6%e5%88%86%e4%ba%ab/" target>软件分享</a>
+</li>
+<li class="leftbar-menu-item">
+<a href="/category/%e6%8a%80%e6%9c%af%e8%ae%b0%e5%bd%95/" target>技术记录</a>
+</li>
+<li class="leftbar-menu-item">
+<a href="/category/%e4%b8%8a%e7%bd%91%e5%b7%a5%e5%85%b7/" target>上网工具</a>
+</li>
+<li class="leftbar-menu-item">
+<a href="/category/eve/" target>EVE</a>
+</li>
+</ul> <div class="card-body text-center leftbar-search-button">
+<button id="leftbar_search_container" class="btn btn-secondary btn-lg active btn-sm btn-block border-0" role="button">
+<i class="menu-item-icon fa fa-search mr-0"></i> 搜索 <input id="leftbar_search_input" type="text" placeholder="搜索什么..." class="form-control form-control-alternative" autocomplete="off">
+</button>
+</div>
+</div>
+<div id="leftbar_part2" class="widget widget_search card bg-white shadow-sm border-0">
+<div id="leftbar_part2_inner" class="card-body">
+<div class="nav-wrapper" style="padding-top: 5px; display:none;">
+<ul class="nav nav-pills nav-fill" role="tablist">
+<li class="nav-item sidebar-tab-switcher">
+<a class="active show" id="leftbar_tab_overview_btn" data-toggle="tab" href="#leftbar_tab_overview" role="tab" aria-controls="leftbar_tab_overview" no-pjax>站点概览</a>
+</li>
+</ul>
+</div>
+<div>
+<div class="tab-content" style="padding: 10px 10px 0 10px;">
+<div class="tab-pane fade text-center active show" id="leftbar_tab_overview" role="tabpanel" aria-labelledby="leftbar_tab_overview_btn">
+<div id="leftbar_overview_author_image" style="background-image: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz48c3ZnIHZlcnNpb249IjEuMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgeD0iMHB4IiB5PSIwcHgiIHZpZXdCb3g9IjAgMCAxMDAgMTAwIiB4bWw6c3BhY2U9InByZXNlcnZlIj48cmVjdCBmaWxsPSIjNUU3MkU0MjIiIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIi8+PGc+PGcgb3BhY2l0eT0iMC4zIj48cGF0aCBmaWxsPSIjNUU3MkU0IiBkPSJNNzQuMzksMzIuODZjLTAuOTgtMS43LTMuMzktMy4wOS01LjM1LTMuMDlINDUuNjJjLTEuOTYsMC00LjM3LDEuMzktNS4zNSwzLjA5TDI4LjU3LDUzLjE1Yy0wLjk4LDEuNy0wLjk4LDQuNDgsMCw2LjE3bDExLjcxLDIwLjI5YzAuOTgsMS43LDMuMzksMy4wOSw1LjM1LDMuMDloMjMuNDNjMS45NiwwLDQuMzctMS4zOSw1LjM1LTMuMDlMODYuMSw1OS4zMmMwLjk4LTEuNywwLjk4LTQuNDgsMC02LjE3TDc0LjM5LDMyLjg2eiIvPjwvZz48ZyBvcGFjaXR5PSIwLjgiPjxwYXRoIGZpbGw9IiM1RTcyRTQiIGQ9Ik02Mi4wNCwyMC4zOWMtMC45OC0xLjctMy4zOS0zLjA5LTUuMzUtMy4wOUgzMS43M2MtMS45NiwwLTQuMzcsMS4zOS01LjM1LDMuMDlMMTMuOSw0Mi4wMWMtMC45OCwxLjctMC45OCw0LjQ4LDAsNi4xN2wxMi40OSwyMS42MmMwLjk4LDEuNywzLjM5LDMuMDksNS4zNSwzLjA5aDI0Ljk3YzEuOTYsMCw0LjM3LTEuMzksNS4zNS0zLjA5bDEyLjQ5LTIxLjYyYzAuOTgtMS43LDAuOTgtNC40OCwwLTYuMTdMNjIuMDQsMjAuMzl6Ii8+PC9nPjwvZz48L3N2Zz4=)" class="rounded-circle shadow-sm" alt="avatar"></div>
+<h6 id="leftbar_overview_author_name">雅丶涵</h6>
+<nav class="site-state">
+<div class="site-state-item site-state-posts">
+<a style="cursor: default;">
+<span class="site-state-item-count">22</span>
+<span class="site-state-item-name">文章</span>
+</a>
+</div>
+<div class="site-state-item site-state-categories">
+<a data-toggle="modal" data-target="#blog_categories">
+<span class="site-state-item-count">6</span>
+<span class="site-state-item-name">分类</span>
+</a>
+</div>
+<div class="site-state-item site-state-tags">
+<a data-toggle="modal" data-target="#blog_tags">
+<span class="site-state-item-count">17</span>
+<span class="site-state-item-name">标签</span>
+</a>
+</div>
+</nav>
+<div class="site-author-links">
+<div class="site-author-links-item">
+<a href="/category/%e6%b8%b8%e6%88%8f/" rel="noopener" target="_blank">游戏</a>
+</div>
+<div class="site-author-links-item">
+<a href="/category/%e8%bd%af%e4%bb%b6%e5%88%86%e4%ba%ab/" rel="noopener" target="_blank">软件分享</a>
+</div>
+<div class="site-author-links-item">
+<a href="/category/%e6%8a%80%e6%9c%af%e8%ae%b0%e5%bd%95/" rel="noopener" target="_blank">技术记录</a>
+</div>
+<div class="site-author-links-item">
+<a href="/category/%e4%b8%8a%e7%bd%91%e5%b7%a5%e5%85%b7/" rel="noopener" target="_blank">上网工具</a>
+</div>
+<div class="site-author-links-item">
+<a href="/category/eve/" rel="noopener" target="_blank">EVE</a>
+</div>
+</div> <div class="site-friend-links">
+<div class="site-friend-links-title">
+<i class="fa fa-fw fa-link"></i> Links</div>
+<ul class="site-friend-links-ul">
+<li class="site-friend-links-item">
+<a href="/category/%e6%b8%b8%e6%88%8f/" rel="noopener" target="_blank">游戏</a>
+</li>
+<li class="site-friend-links-item">
+<a href="/category/%e8%bd%af%e4%bb%b6%e5%88%86%e4%ba%ab/" rel="noopener" target="_blank">软件分享</a>
+</li>
+<li class="site-friend-links-item">
+<a href="/category/%e6%8a%80%e6%9c%af%e8%ae%b0%e5%bd%95/" rel="noopener" target="_blank">技术记录</a>
+</li>
+<li class="site-friend-links-item">
+<a href="/category/%e4%b8%8a%e7%bd%91%e5%b7%a5%e5%85%b7/" rel="noopener" target="_blank">上网工具</a>
+</li>
+<li class="site-friend-links-item">
+<a href="/category/eve/" rel="noopener" target="_blank">EVE</a>
+</li>
+</ul>
+</div> </div>
+</div>
+</div>
+</div>
+</div>
+</aside>
+<div class="modal fade" id="blog_categories" tabindex="-1" role="dialog" aria-labelledby aria-hidden="true">
+<div class="modal-dialog modal-dialog-centered">
+<div class="modal-content">
+<div class="modal-header">
+<h5 class="modal-title">分类</h5>
+<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+<span aria-hidden="true">&times;</span>
+</button>
+</div>
+<div class="modal-body">
+<a href="/category/eve/" class="badge badge-secondary tag">EVE <span class="tag-num">3</span></a><a href="/category/%e4%b8%8a%e7%bd%91%e5%b7%a5%e5%85%b7/" class="badge badge-secondary tag">上网工具 <span class="tag-num">4</span></a><a href="/category/%e6%8a%80%e6%9c%af%e8%ae%b0%e5%bd%95/" class="badge badge-secondary tag">技术记录 <span class="tag-num">5</span></a><a href="/category/uncategorized/" class="badge badge-secondary tag">未分类 <span class="tag-num">0</span></a><a href="/category/%e6%b8%b8%e6%88%8f/" class="badge badge-secondary tag">游戏 <span class="tag-num">1</span></a><a href="/category/%e8%bd%af%e4%bb%b6%e5%88%86%e4%ba%ab/" class="badge badge-secondary tag">软件分享 <span class="tag-num">9</span></a> </div>
+</div>
+</div>
+</div>
+<div class="modal fade" id="blog_tags" tabindex="-1" role="dialog" aria-labelledby aria-hidden="true">
+<div class="modal-dialog modal-dialog-centered">
+<div class="modal-content">
+<div class="modal-header">
+<h5 class="modal-title">标签</h5>
+<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+<span aria-hidden="true">&times;</span>
+</button>
+</div>
+<div class="modal-body">
+<a href="/tag/cf/" class="badge badge-secondary tag">cf <span class="tag-num">2</span></a><a href="/tag/cloudflare/" class="badge badge-secondary tag">cloudflare <span class="tag-num">3</span></a><a href="/tag/coreldraw/" class="badge badge-secondary tag">CorelDRAW <span class="tag-num">1</span></a><a href="/tag/dns/" class="badge badge-secondary tag">DNS <span class="tag-num">1</span></a><a href="/tag/fineprint/" class="badge badge-secondary tag">FinePrint <span class="tag-num">1</span></a><a href="/tag/fineprint%e6%b3%a8%e5%86%8c%e7%a0%81/" class="badge badge-secondary tag">FinePrint注册码 <span class="tag-num">1</span></a><a href="/tag/fineprint%e7%a0%b4%e8%a7%a3%e7%89%88/" class="badge badge-secondary tag">FinePrint破解版 <span class="tag-num">1</span></a><a href="/tag/key/" class="badge badge-secondary tag">key <span class="tag-num">1</span></a><a href="/tag/pdf/" class="badge badge-secondary tag">PDF <span class="tag-num">1</span></a><a href="/tag/telegram/" class="badge badge-secondary tag">telegram <span class="tag-num">1</span></a><a href="/tag/tvbox/" class="badge badge-secondary tag">tvbox <span class="tag-num">0</span></a><a href="/tag/worker/" class="badge badge-secondary tag">Worker <span class="tag-num">1</span></a><a href="/tag/%e5%8d%8e%e4%b8%ba%e4%ba%91/" class="badge badge-secondary tag">华为云 <span class="tag-num">1</span></a><a href="/tag/%e7%9b%96tv/" class="badge badge-secondary tag">盖tv <span class="tag-num">0</span></a><a href="/tag/%e7%9c%9f%e5%ae%9eip/" class="badge badge-secondary tag">真实ip <span class="tag-num">1</span></a><a href="/tag/%e8%87%aa%e9%80%89ip/" class="badge badge-secondary tag">自选ip <span class="tag-num">1</span></a><a href="/tag/%e8%99%9a%e6%8b%9f%e6%89%93%e5%8d%b0%e6%9c%ba/" class="badge badge-secondary tag">虚拟打印机 <span class="tag-num">1</span></a> </div>
+</div>
+</div>
+</div>
+<div id="primary" class="content-area">
+<main id="main" class="site-main" role="main">
+<article class="post post-full card bg-white shadow-sm border-0" id="post-170">
+<header class="post-header text-center">
+<style>body section.banner {
+						background-image: url(/wp-content/uploads/2021/09/img_7961.jpg) !important;
+					}</style> <a class="post-title" href="/301%e6%b5%b7%e5%a4%96%e8%b7%b3%e8%bd%ac%e5%8e%9f%e7%90%86%e8%a7%a3%e6%9e%90%e5%85%bc%e8%b0%88%e7%bc%93%e8%a7%a3%e5%81%87%e5%a2%99%e4%bc%aa%e5%a2%99%e6%94%bb%e5%87%bb%e5%8b%92%e7%b4%a2%e7%9a%84-2/">301海外跳转原理解析兼谈缓解假墙伪墙攻击勒索的多种技术手段</a>
+<div class="post-meta">
+<div class="post-meta-detail post-meta-detail-time">
+<i class="fa fa-clock-o" aria-hidden="true"></i>
+<time title="发布于 2022-1-31 17:22:25 | 编辑于 2022-10-05 21:52:28">2022-1-31 17:22
+</time>
+</div> <div class="post-meta-devide">|</div> <div class="post-meta-detail post-meta-detail-views">
+<i class="fa fa-eye" aria-hidden="true"></i> 880</div> <div class="post-meta-devide">|</div> <div class="post-meta-detail post-meta-detail-comments">
+<i class="fa fa-comments-o" aria-hidden="true"></i> 0</div> <div class="post-meta-devide">|</div> <div class="post-meta-detail post-meta-detail-author">
+<i class="fa fa-user-circle-o" aria-hidden="true"></i> <a href="/author/anglesya/" target="_blank">雅丶涵</a>
+</div> <div class="post-meta-detail post-meta-detail-words">
+<i class="fa fa-file-word-o" aria-hidden="true"></i><span> 5554 字</span>
+</div>
+<div class="post-meta-devide">|</div>
+<div class="post-meta-detail post-meta-detail-words">
+<i class="fa fa-hourglass-end" aria-hidden="true"></i>
+23 分钟
+</div>
+</div>
+</header>
+<div class="post-content" id="post_content">
+<div class="post-outdated-info">
+<i class="fa fa-info-circle" aria-hidden="true"></i>本文最后更新于 417 天前，其中的信息可能已经有所发展或是发生改变。</div>
+<p></p>
+<p>在<a href="https://github.com/lehui99/articles/blob/main/301%E6%B5%B7%E5%A4%96%E8%B7%B3%E8%BD%AC%E5%8E%9F%E7%90%86%E8%A7%A3%E6%9E%90%E5%85%BC%E8%B0%88%E7%BC%93%E8%A7%A3%E5%81%87%E5%A2%99%E4%BC%AA%E5%A2%99%E6%94%BB%E5%87%BB%E5%8B%92%E7%B4%A2%E7%9A%84%E5%A4%9A%E7%A7%8D%E6%8A%80%E6%9C%AF%E6%89%8B%E6%AE%B5%EF%BC%88%E4%B8%80%EF%BC%89.md">上一篇文章</a>中，我们实现了HTTP的抢答模式，避免了墙的TCP Reset。那么这次我们就来聊一聊HTTPS如何避免被TCP Reset。</p>
+<p></p>
+<p></p>
+<p>我们知道，HTTPS是需要客户端和服务器之间完成TLS握手后才能收发HTTP Request和Response。然而，墙是在TLS握手时通过SNI中的域名信息进行了TCP Reset，或<a href="https://gfw.report/blog/gfw_esni_blocking/zh/">通过ESNI头进行TCP阻断</a>，这时候还没有到能发送HTTP Request或Response的这个阶段，所以HTTP Response抢答模式无法应用于HTTPS。那么，我们该怎么办呢？</p>
+<p></p>
+<p></p>
+<p>让我们回到TCP Reset本身——既然是TCP Reset，那么它只会对TCP协议生效。如果有一个应用层协议，其底层不是TCP呢？相信聪明的同学已经想到了，那就是HTTP 3.0（简称HTTP/3或h3）。H3的底层协议是QUIC，而QUIC是基于UDP而非TCP的。经过我的测试，发现墙现在无法识别QUIC协议，不管QUIC协议中出现任何敏感词都能无障碍过墙。这也是为什么有些网站（如v2ex）在解决了DNS污染（比如客户端主动加hosts）后，并且连接过一次（首次还是需要科学上网，原因之后会讲）后，就能关闭科学上网访问了。也就是说，使用了H3后，我们甚至不需要进行301跳转，直接就能无障碍访问服务器了（但仍建议使用301跳转，否则可能会使封锁升级，如DNS污染）。虽然H3现在仍旧处于草案阶段，但各大浏览器都已经进行了支持，而其中Google Chrome对H3的支持是最好的。</p>
+<p></p>
+<p></p>
+<p>那么，如何在服务器上部署并开启H3呢？由于H3现在仍是草案阶段，所以Nginx的正式版并不支持H3，需要更换为<a href="https://hg.nginx.org/nginx-quic">Nginx-QUIC</a>来支持H3。编译使用<a href="https://hg.nginx.org/nginx-quic">Nginx-QUIC</a>也可以参考<a href="https://zhuanlan.zhihu.com/p/345660441">这篇文章</a>。另外，Cloudflare也已经支持了H3，可以自行开启（在“网络”设置中打开“HTTP/3（使用 QUIC）”）。在Cloudflare中开启H3后，Cloudflare和服务器的通讯仍旧可以使用HTTP/2（简称h2）或HTTP/1.1，并不需要服务器支持H3，而是由Cloudflare进行协议转换。</p>
+<p></p>
+<p></p>
+<p>H3主要是依赖<code>Alt-Svc</code>这个HTTP头来进行协议选则的。比如我们可以添加HTTP头： <code>Alt-Svc: h3=":443"; ma=86400, h3-29=":443"; ma=86400, h3-28=":443"; ma=86400, h3-27=":443"; ma=86400</code>，指出服务器支持H3，H3的UDP端口为443，有效期（过了有效期后浏览器又会重新使用H2或HTTP/1.1进行访问）为1天（86400秒），支持最新的H3草案以及27、28、29草案。另外，我们也可以灵活地修改<code>Alt-Svc</code>——比如可以在“<code>:443</code>”之前添加IP或域名，做到HTTP和HTTPS使用不用的IP或域名，方便我们在自己的服务器上部署HTTP抢答模式，又能使用Cloudflare的H3协议转换，或者使用不同的域名从而在原域名被DNS污染的情况下老用户（没有过有效期86400秒的）依然可以通过H3访问服务器（因为H3是另一个域名，而不是被DNS污染的那个域名。或者直接使用IP，从根本上杜绝了DNS污染，只不过之后有可能遭到IP封锁）。另外，有效时间也可以进行适当延长（比如从1天延长到1个月或更长时间），避免客户端尝试H2或HTTP/1.1并且延长老用户的过期时间。我们可以在还没遇到HTTPS的TCP Reset时就开启H3，这样即使之后遭遇了HTTPS的TCP Reset，曾经访问过网站的老用户在H3有效期内也能继续访问网站。而且我们也不必担心UDP数据包被ISP丢弃（俗称UDP被QoS）的问题，因为浏览器在H3连接失败的时候会快速回退到H2和HTTP/1.1。</p>
+<p></p>
+<p></p>
+<p>然而，H3是一个Alternative服务。首次访问服务器时，浏览器并不会主动使用H3，还是会优先使用H2或HTTP/1.1。当获取到<code>Alt-Svc</code>头后，浏览器才会在之后的访问中优先使用H3。这也是为什么有些网站（如v2ex）需要在科学上网的情况下访问过一次后才能关闭科学上网进行访问（当然，DNS污染首先还是需要用户自行修改hosts解决）。那么，我们如何让用户全程不使用科学上网的情况下访问服务器呢？</p>
+<p></p>
+<p></p>
+<p>首先想到的是通过<a href="https://github.com/lehui99/articles/blob/main/301%E6%B5%B7%E5%A4%96%E8%B7%B3%E8%BD%AC%E5%8E%9F%E7%90%86%E8%A7%A3%E6%9E%90%E5%85%BC%E8%B0%88%E7%BC%93%E8%A7%A3%E5%81%87%E5%A2%99%E4%BC%AA%E5%A2%99%E6%94%BB%E5%87%BB%E5%8B%92%E7%B4%A2%E7%9A%84%E5%A4%9A%E7%A7%8D%E6%8A%80%E6%9C%AF%E6%89%8B%E6%AE%B5%EF%BC%88%E4%B8%80%EF%BC%89.md">上一篇文章</a>中的HTTP抢答模式提供<code>Alt-Svc</code>头，不过可惜的是现在的主流浏览器会忽略HTTP中的<code>Alt-Svc</code>头，只接受HTTPS中的<code>Alt-Svc</code>头。而如果HTTPS本来就已经被TCP Reset的话，浏览器就无法获取<code>Alt-Svc</code>头了。那么，那些提供HTTPS的301海外跳转服务是怎么做的呢？</p>
+<p></p>
+<p></p>
+<p>在调查和尝试了几个支持HTTPS的301海外跳转服务后，我们发现，它们根本就没有解决HTTPS的TCP Reset问题，HTTPS依然被TCP Reset了，而它们宣称支持HTTPS中301跳转的做法就是在HTTP抢答模式下加上普通的TLS服务。因为大部分网站遭遇的只是HTTP中的TCP Reset而HTTPS并不会被TCP Reset，所以只需要解决HTTP的301跳转，再加上普通的HTTPS，表面上就能同时做到HTTP和HTTPS的301跳转。而且在调查过程中我们还发现有个跳转服务主页的HTTPS也被TCP Reset了，而他们自己却对此毫无办法。那么，对于新用户访问HTTPS的TCP Reset，我们也只能止步于此，束手无策了吗？那也未必。</p>
+<p></p>
+<p></p>
+<p>其实，从本系列一开始，我们就假设301跳转服务器是在国外。如果使用的是国内服务器，那么就能避免墙的识别了（因为不过墙）。但使用国内服务器（似乎）有个绕不过去的坎：备案系统——使用HTTP会提示域名没有备案，使用默认端口443的HTTPS同样会有TCP Reset。我们又该怎么办？其实，备案系统其实就是一个简化版的墙，没有TCP流量重组的功能，使用<a href="https://github.com/lehui99/articles/blob/main/301%E6%B5%B7%E5%A4%96%E8%B7%B3%E8%BD%AC%E5%8E%9F%E7%90%86%E8%A7%A3%E6%9E%90%E5%85%BC%E8%B0%88%E7%BC%93%E8%A7%A3%E5%81%87%E5%A2%99%E4%BC%AA%E5%A2%99%E6%94%BB%E5%87%BB%E5%8B%92%E7%B4%A2%E7%9A%84%E5%A4%9A%E7%A7%8D%E6%8A%80%E6%9C%AF%E6%89%8B%E6%AE%B5%EF%BC%88%E4%B8%80%EF%BC%89.md">上一篇文章</a>的抢答模式同样也能绕过备案系统。而且正是因为备案系统没有TCP流量重组的功能，我们甚至可以在TCP模式的HTTP和HTTPS中设置TCP window size（比如Linux上可以使用<a href="https://github.com/Kkevsterrr/geneva">Geneva</a>；Windows上可以自行编写一个反向代理，在其中设置<code>SO_RCVBUF</code>为1，两者的用法在<a href="https://github.com/lehui99/articles/blob/main/301%E6%B5%B7%E5%A4%96%E8%B7%B3%E8%BD%AC%E5%8E%9F%E7%90%86%E8%A7%A3%E6%9E%90%E5%85%BC%E8%B0%88%E7%BC%93%E8%A7%A3%E5%81%87%E5%A2%99%E4%BC%AA%E5%A2%99%E6%94%BB%E5%87%BB%E5%8B%92%E7%B4%A2%E7%9A%84%E5%A4%9A%E7%A7%8D%E6%8A%80%E6%9C%AF%E6%89%8B%E6%AE%B5%EF%BC%88%E4%B8%80%EF%BC%89.md">上一篇文章</a>中都已进行说明，在此不再重复），从而可以直接通过HTTP和HTTPS绕过备案系统而无需使用301跳转（因为备案系统没有TCP流量重组功能，所以只需要在连接初始时设置个较小的TCP window size，之后恢复正常即可。这也是很多国内免备案服务器的原理和使用的方案）。不过，绕过备案系统展示网页有一定的风险，301跳转风险会小一些，希望大家还是要权衡好利弊。</p>
+<p></p>
+<p></p>
+<p>在讨论好HTTPS中防TCP Reset的方案后，最后让我们来聊一聊DNS污染。</p>
+<p></p>
+<p></p>
+<p>其实，在撰写本文之前，我曾去尝试过几个声称可以解决域名污染的301海外跳转的服务，但无一例外都失败了，都无法解决DNS污染。然后我也去咨询了提供了这些服务的人，他们的说法大致分为两种：<br>1、需要将被DNS污染的域名的NS记录指向国内的DNS服务（如DNSPod、阿里云等），然后需要等一段时间，运气好的话过一段时间就会解封了（对于这种说法，我也曾经亲自验证过，将一个被DNS污染的域名的NS记录转移回国内，等了几个月，依然被污染）。<br>2、域名污染指的是域名被关键字Reset，而不是DNS污染（这个说法和大多数人理解的不同，将域名污染解释为了TCP Reset，和DNS污染分为了两个概念），他的服务只能解决域名污染，不能解决DNS污染。</p>
+<p></p>
+<p></p>
+<p>那么，对于DNS污染，我们只能束手无策，或只能碰运气转移回国内了吗？那也未必。不过，由于解决DNS污染所需要的成本较高，所以这也是为什么之前H3虽然能让用户在原有域名下继续访问，我仍旧建议使用301跳转的原因。否则封锁升级为DNS污染后连301跳转都会变得比较困难了。</p>
+<p></p>
+<p></p>
+<p>讲到这里，细心的同学应该已经发现，其实在刚才H3的使用方法中，已经介绍了如何使老用户在DNS污染的情况下继续进行访问的方法了。这是解决DNS污染部分问题的方法之一。那么，还有没有别的方法也能解决部分问题呢？其实，在H3的方案中，我们主要利用了浏览器的Cache中记录了H3的服务信息，来让老用户通过不同的域名或IP进行访问的。那么，浏览器的Cache中除了能保存H3的信息外，也是可以保存其他内容的。讲到这里，聪明的同学应该已经想到了。没错，就是<code>Cache-Control</code>（或使用<code>Expires</code>也有相同的效果）。通过这个HTTP头，我们可以将一个页面的过期时间设置成很长，在过期之前，浏览器并不会发起HTTP请求，甚至没有网络的离线情况下都能访问（使用F5刷新除外，这时候浏览器会忽略过期时间从而发起HTTP请求；Ctrl+F5更是会发起请求）。在这个页面中，我们可以引用别的域名下的JavaScript脚本文件，在JavaScript而非HTML中渲染整个网页。这样，老用户同样可以在DNS污染的情况下继续访问我们的服务器。不过，这种做法对SEO不是很友好，但我们可以使用HTML和JavaScript同时渲染的方法让搜索引擎可以进行索引——HTML中仍旧是正常内容给搜索引擎进行索引，而浏览器会加载JavaScript，使用JavaScript重新渲染一遍网页，避免Cache没有过期而呈现老页面的问题。老用户的问题可以解决，但新用户怎么办呢？或者我们有没有办法从根本上来解决DNS污染呢？而且听说现在有一些价格昂贵的污染清洗服务，它们真的能从根本上解决DNS污染吗？它们是怎么做的呢？</p>
+<p></p>
+<p></p>
+<p>如果我们想从根本上解决问题，首先我们还需要了解整个DNS系统是怎么工作的：<br>1、DNS服务器分为递归查询服务器、DNS代理和权威服务器（称为ADNS）。我们把递归查询服务器和DNS代理统称为LDNS。<br>2、普通用户上网所使用的一般是ISP提供的LDNS，它会负责向ADNS查询真实的A（和AAAA以及其它）记录。<br>3、ADNS即是域名的NS记录所指向的服务器。</p>
+<p></p>
+<p></p>
+<p>我们知道，DNS污染是墙在海外ADNS返回正确的结果之前进行了抢答，返回了错误的结果。这样，在国内LDNS向海外ADNS查询的时候，同样会受到DNS污染，从而返回给普通用户错误的结果。那么，我们有没有办法劫持ISP的LDNS，从而让其返回我们想要的IP而不是墙返回的错误IP呢？这样，虽然DNS污染仍旧存在，但普通用户却得到了正确的IP，从而可以正常访问我们的服务器了。</p>
+<p></p>
+<p></p>
+<p>讲到这里，就不得不提到<a href="https://zhuanlan.zhihu.com/p/92899876">2008年曾经轰动全球的DNS投毒攻击案</a>了。在<a href="https://zhuanlan.zhihu.com/p/92899876">这篇文章</a>中，Kaminsky可以修改任意LDNS中缓存的A（或AAAA以及其它）记录，虽然在经过了那次事件后这个漏洞更难被利用了，但终究无法完全修复，我们仍旧可以利用其中的原理劫持ISP的LDNS（能猜中源端口和QID就能进行劫持），将被污染域名的IP换成自己想要的IP。而且由于墙污染的TTL较小，我们也能更快地利用这个漏洞而不需要每次等待1天的时间。所以短则几天，慢则几个星期就能劫持成功。这也是现在有些价格不菲的污染清洗服务所采用的方案之一。当然，某些攻击团队也同样在利用这个漏洞就行DNS劫持，虽然导致的结果是LDNS被劫持而非墙的DNS污染，但对于普通用户所造成的结果是一致的——网站无法访问。不过，要实施这种DNS劫持需要源IP欺骗，现在能进行源IP欺骗的服务器已经越来越少了。那么我们还有没有别的方法无需源IP欺骗来劫持LDNS呢？</p>
+<p></p>
+<p></p>
+<p>既然大家已经看了上面的<a href="https://zhuanlan.zhihu.com/p/92899876">这篇文章</a>，那么让我们来重新细致地梳理一下整个DNS查询过程。以浏览器访问 <a href="https://www.youtube.com/">https://www.youtube.com/</a> 为例：<br>1、操作系统向ISP的LDNS发起请求 <a href="https://www.youtube.com/">www.youtube.com</a> 的A（以及AAAA）记录。<br>2、LDNS查询缓存中有没有 <a href="https://www.youtube.com/">www.youtube.com</a> 的A（或AAAA）记录，如有则返回给客户端，如没有则执行第3条。<br>3、LDNS查询（可从缓存中查询）DNS根服务器（当前为13个）的A（或AAAA）记录。<br>4、LDNS向根服务器（或从缓存中）查询 .com 的ADNS。<br>5、LDNS向 .com 的ADNS发起查询 youtube.com 的ADNS（即 youtube.com 的NS记录）。<br>6、LDNS向 youtube.com 的ADNS发起查询 <a href="https://www.youtube.com/">www.youtube.com</a> 的A（或AAAA）记录。之后返回给客户端。</p>
+<p></p>
+<p></p>
+<p>我们知道， youtube.com 是个被DNS污染的域名，所以第5和第6步会受到墙的DNS污染，而前4步不会。第6步我们也很熟悉了，国内IP向国外IP发起查询请求时墙就会抢答 <a href="https://www.youtube.com/">www.youtube.com</a> 的错误A（或AAAA）记录。而第5步中，由于LDNS在国内，查询到 youtube.com 的NS记录同样会受到污染。我们同样知道，墙的DNS污染虽然成功概率接近100%，但仍有很小的概率会污染失败。那么我们能不能不停地向LDNS请求 <a href="https://www.youtube.com/">www.youtube.com</a> 的A（或AAAA）记录，在墙污染失败的时候，LDNS就能刷新到正确的IP地址了呢？可惜的是，LDNS是有缓存的，在缓存有效期内，不会再次向ADNS发起请求。即使在缓存失效后偶尔会由于污染失败得到了正确的IP地址，但在缓存再次失效后由于污染再次回到了错误的IP地址。所以被污染的概率仍旧接近100%。墙看上去似乎无懈可击，我们该怎么办呢？</p>
+<p></p>
+<p></p>
+<p>让我们重新回到第5条，使用国内IP向 .com 的ADNS请求 youtube.com 的NS记录。以Linux为例：<br><code>dig ns youtube.com @e.gtld-servers.net</code> （<code>e.gtld-servers.net</code>为 .com 的其中一个ADNS）<br>我们看到墙返回了污染的结果， youtube.com 被污染的NS是……咦？不对！墙竟然返回的是A（或AAAA）记录，而不是我们查询的NS记录！而且墙的污染是有很小的概率会失败的！相信聪明的同学已经想到了——由于墙返回的是不是NS记录，所以LDNS没有获取到 youtube.com 的NS记录，自然无法将 youtube.com 的NS记录存入缓存中。所以，在下次客户端请求 youtube.com 的NS记录时，LDNS会再次向 .com 的ADNS请求 youtube.com 的NS记录而不是从缓存中获取。既然不存在缓存，我们就能一直向LDNS发起请求，而LDNS就会一直向ADNS发起请求，直到墙的污染失败出现，LDNS终于获得了正确的NS记录。而由于NS记录本身是带有TTL的，所以会被存入LDNS的缓存之中，在缓存过期之前不会再受到墙的污染。而我们可以将NS记录的TTL设置得非常长，从而可以在很长得时间内让墙得污染无法生效。而在TTL过期之后，我们可以利用同样的方法再次让LDNS获得正确的NS记录。</p>
+<p></p>
+<p></p>
+<p>在解决了第5条中的污染后，我们还需要解决第6条中的污染。而第6条中墙返回的确实是查询的A（或AAAA）记录，会被存入LDNS缓存，也就无法利用上述方法了。我们该怎么办呢？相信聪明的同学也已经想到了。没错，就是将NS记录转移回国内，这样DNS请求就不会过墙，自然就不会受到污染了。可是，不对呀？刚才不是讲过我也曾经亲自验证过，将一个被DNS污染的域名的NS记录转移回国内，等了几个月，依然被污染么？那是因为之前的测试只是将NS记录指向了国内服务器，我们并没有大量地发送NS查询请求到LDNS，所以LDNS并没有获得正确的NS记录，所以污染仍旧存在。而且，ISP的LDNS是分运营商并且分区域的。只将一个LDNS中的NS刷新到正确结果只能解决一个运营商的一小片区域中的污染，如果想要在全国范围内解决污染，需要使用大量的IP地址（因为很多ISP的LDNS限制了查询请求的发起IP只能是本地宽带用户），不停地对大量的LDNS查询NS记录，直到全国大部分地区的LDNS都获取到了正确的NS记录，才能在大范围内解决DNS污染。而且即使LDNS获取到了正确的NS记录，查询仍然要继续，因为缓存是有过期时间的。而这，也是现在很多昂贵的污染清洗服务所采用的方案之一。</p>
+<p></p>
+<p></p>
+<p>关于DNS污染，我所了解到的现阶段有这些方案。如果你有别的方法，或者对本系列话题感兴趣的，都欢迎和我联系。我的联系方式为：<br>1、Email: <code>lehui99#gmail.com</code><br>2、Twitter: <a href="https://twitter.com/davidsky2012">@davidsky2012</a><br>3、TG: <a href="https://t.me/davidtechtalk">技术交流群</a>、<a href="https://t.me/davidtechchannel">技术交流频道</a><br>4、本系列Github: <a href="https://github.com/lehui99/articles">lehui99/articles</a></p>
+<p></p>
+<p></p>
+<p>下一篇我会开始讲解如何缓解假墙伪墙攻击方面的话题，敬请期待。</p>
+<p></p>
+<p></p>
+<p>最后，本文欢迎转载，不过转载时还请保留<a href="https://github.com/lehui99/articles/blob/main/301%E6%B5%B7%E5%A4%96%E8%B7%B3%E8%BD%AC%E5%8E%9F%E7%90%86%E8%A7%A3%E6%9E%90%E5%85%BC%E8%B0%88%E7%BC%93%E8%A7%A3%E5%81%87%E5%A2%99%E4%BC%AA%E5%A2%99%E6%94%BB%E5%87%BB%E5%8B%92%E7%B4%A2%E7%9A%84%E5%A4%9A%E7%A7%8D%E6%8A%80%E6%9C%AF%E6%89%8B%E6%AE%B5%EF%BC%88%E4%BA%8C%EF%BC%89.md">本文链接</a>，因为之后我还会对本文进行完善（如错误修正、内容补充等）。</p>
+<p></p>
+</div>
+</article>
+<div id="comments" class="comments-area card shadow-sm">
+<div class="card-body">
+<span>暂无评论</span>
+</div>
+</div>
+<div id="post_comment" class="card shadow-sm  no-need-name-email no-need-captcha enable-qq-avatar">
+<div class="card-body">
+<h2 class="post-comment-title">
+<i class="fa fa-commenting"></i>
+<span class="hide-on-comment-editing">发送评论</span>
+<span class="hide-on-comment-not-editing">编辑评论</span>
+</h2>
+<div id="post_comment_reply_info" class="post-comment-reply" style="display: none;">
+<span>正在回复 <b><span id="post_comment_reply_name"></span></b> 的评论 :</span>
+<div id="post_comment_reply_preview" class="post-comment-reply-preview"></div>
+<button id="post_comment_reply_cancel" class="btn btn-outline-primary btn-sm">取消回复</button>
+</div>
+<form>
+<div class="row">
+<div class="col-md-12">
+<textarea id="post_comment_content" class="form-control form-control-alternative" placeholder="评论内容" name="comment" style="height: 80px;"></textarea>
+</div>
+<div class="col-md-12" style="height: 0;overflow: hidden;">
+<pre id="post_comment_content_hidden" class></pre>
+</div>
+</div>
+<div class="row hide-on-comment-editing" style="margin-bottom: -10px;">
+<div class="col-md-6">
+<div class="form-group">
+<div class="input-group input-group-alternative mb-4">
+<div class="input-group-prepend">
+<span class="input-group-text"><i class="fa fa-user-circle"></i></span>
+</div>
+<input id="post_comment_name" class="form-control" placeholder="昵称" type="text" name="author" value>
+</div>
+</div>
+</div>
+<div class="col-md-6">
+<div class="form-group">
+<div class="input-group input-group-alternative mb-4">
+<div class="input-group-prepend">
+<span class="input-group-text"><i class="fa fa-envelope"></i></span>
+</div>
+<input id="post_comment_email" class="form-control" placeholder="邮箱 / QQ 号" type="email" name="email" value>
+</div>
+</div>
+</div>
+<div class="d-none">
+<div class="form-group">
+<div class="input-group input-group-alternative mb-4 post-comment-captcha-container" captcha="6 + 4 = ">
+<div class="input-group-prepend">
+<span class="input-group-text"><i class="fa fa-key"></i></span>
+</div>
+<input id="post_comment_captcha" class="form-control" placeholder="验证码" type="text">
+<style>.post-comment-captcha-container:before{
+									content: attr(captcha);
+								}</style>
+<script>$(".post-comment-captcha-container").attr("captcha", "Loading...");
+									$.ajax({
+										url : argonConfig.wp_path + "wp-admin/admin-ajax.php",
+										type : "POST",
+										dataType : "json",
+										data : {
+											action: "get_captcha",
+										},
+										success : function(result){
+											$(".post-comment-captcha-container").attr("captcha", result['captcha']);
+										},
+										error : function(xhr){
+											$(".post-comment-captcha-container").attr("captcha", "获取验证码失败");
+										}
+									});</script>
+</div>
+</div>
+</div>
+</div>
+<div class="row hide-on-comment-editing" id="post_comment_extra_input" style="display: none">
+<div class="col-md-12" style="margin-bottom: -10px;">
+<div class="form-group">
+<div class="input-group input-group-alternative mb-4 post-comment-link-container">
+<div class="input-group-prepend">
+<span class="input-group-text"><i class="fa fa-link"></i></span>
+</div>
+<input id="post_comment_link" class="form-control" placeholder="网站" type="text" name="url" value>
+</div>
+</div>
+</div>
+</div>
+<div class="row hide-on-comment-editing " style="margin-top: 10px;">
+<div class="col-md-12">
+<button id="post_comment_toggle_extra_input" type="button" class="btn btn-icon btn-outline-primary btn-sm" tooltip-show-extra-field="展开附加字段" tooltip-hide-extra-field="折叠附加字段">
+<span class="btn-inner--icon"><i class="fa fa-angle-down"></i></span>
+</button>
+</div>
+</div>
+<div class="row" style="margin-top: 5px; margin-bottom: 10px;">
+<div class="col-md-12">
+<div class="custom-control custom-checkbox comment-post-checkbox comment-post-use-markdown">
+<input class="custom-control-input" id="comment_post_use_markdown" type="checkbox" checked>
+<label class="custom-control-label" for="comment_post_use_markdown">Markdown</label>
+</div>
+<div class="custom-control custom-checkbox comment-post-checkbox comment-post-privatemode" tooltip="评论仅发送者和博主可见">
+<input class="custom-control-input" id="comment_post_privatemode" type="checkbox">
+<label class="custom-control-label" for="comment_post_privatemode">悄悄话</label>
+</div>
+<div class="custom-control custom-checkbox comment-post-checkbox comment-post-mailnotice" tooltip="有回复时邮件通知我">
+<input class="custom-control-input" id="comment_post_mailnotice" type="checkbox" checked>
+<label class="custom-control-label" for="comment_post_mailnotice">邮件提醒</label>
+</div>
+<button id="post_comment_send" class="btn btn-icon btn-primary comment-btn pull-right mr-0" type="button">
+<span class="btn-inner--icon hide-on-comment-editing"><i class="fa fa-send"></i></span>
+<span class="btn-inner--icon hide-on-comment-not-editing"><i class="fa fa-pencil"></i></span>
+<span class="btn-inner--text hide-on-comment-editing" style="margin-right: 0;">发送</span>
+<span class="btn-inner--text hide-on-comment-not-editing" style="margin-right: 0;">编辑</span>
+</button>
+<button id="post_comment_edit_cancel" class="btn btn-icon btn-danger comment-btn pull-right hide-on-comment-not-editing" type="button" style="margin-right: 8px;">
+<span class="btn-inner--icon"><i class="fa fa-close"></i></span>
+<span class="btn-inner--text">取消</span>
+</button>
+<button id="comment_emotion_btn" class="btn btn-icon btn-primary pull-right" type="button" title="表情">
+<i class="fa fa-smile-o" aria-hidden="true"></i>
+</button>
+<div id="emotion_keyboard" class="emotion-keyboard card shadow-sm bg-white">
+<div class="emotion-keyboard-content">
+<div class="emotion-group" index="0">
+<div class="emotion-item" text="|´・ω・)ノ" title>|´・ω・)ノ</div>
+<div class="emotion-item" text="ヾ(≧∇≦*)ゝ" title>ヾ(≧∇≦*)ゝ</div>
+<div class="emotion-item" text="(☆ω☆)" title>(☆ω☆)</div>
+<div class="emotion-item" text="（╯‵□′）╯︵┴─┴" title>（╯‵□′）╯︵┴─┴</div>
+<div class="emotion-item" text="￣﹃￣" title>￣﹃￣</div>
+<div class="emotion-item" text="(/ω＼)" title>(/ω＼)</div>
+<div class="emotion-item" text="∠( ᐛ 」∠)＿" title>∠( ᐛ 」∠)＿</div>
+<div class="emotion-item" text="(๑•̀ㅁ•́ฅ)" title>(๑•̀ㅁ•́ฅ)</div>
+<div class="emotion-item" text="→_→" title>→_→</div>
+<div class="emotion-item" text="୧(๑•̀⌄•́๑)૭" title>୧(๑•̀⌄•́๑)૭</div>
+<div class="emotion-item" text="٩(ˊᗜˋ*)و" title>٩(ˊᗜˋ*)و</div>
+<div class="emotion-item" text="(ノ°ο°)ノ" title>(ノ°ο°)ノ</div>
+<div class="emotion-item" text="(´இ皿இ｀)" title>(´இ皿இ｀)</div>
+<div class="emotion-item" text="⌇●﹏●⌇" title>⌇●﹏●⌇</div>
+<div class="emotion-item" text="(ฅ´ω`ฅ)" title>(ฅ´ω`ฅ)</div>
+<div class="emotion-item" text="(╯°A°)╯︵○○○" title>(╯°A°)╯︵○○○</div>
+<div class="emotion-item" text="φ(￣∇￣o)" title>φ(￣∇￣o)</div>
+<div class="emotion-item" text="ヾ(´･ ･｀｡)ノ&quot;" title>ヾ(´･ ･｀｡)ノ&quot;</div>
+<div class="emotion-item" text="( ง ᵒ̌皿ᵒ̌)ง⁼³₌₃" title>( ง ᵒ̌皿ᵒ̌)ง⁼³₌₃</div>
+<div class="emotion-item" text="(ó﹏ò｡)" title>(ó﹏ò｡)</div>
+<div class="emotion-item" text="Σ(っ °Д °;)っ" title>Σ(っ °Д °;)っ</div>
+<div class="emotion-item" text="( ,,´･ω･)ﾉ&quot;(´っω･｀｡)" title>( ,,´･ω･)ﾉ&quot;(´っω･｀｡)</div>
+<div class="emotion-item" text="╮(╯▽╰)╭" title>╮(╯▽╰)╭</div>
+<div class="emotion-item" text="o(*////▽////*)q" title>o(*////▽////*)q</div>
+<div class="emotion-item" text="＞﹏＜" title>＞﹏＜</div>
+<div class="emotion-item" text="( ๑´•ω•) &quot;(ㆆᴗㆆ)" title>( ๑´•ω•) &quot;(ㆆᴗㆆ)</div>
+</div>
+<div class="emotion-group d-none" index="1">
+<div class="emotion-item" text="😂" title>😂</div>
+<div class="emotion-item" text="😀" title>😀</div>
+<div class="emotion-item" text="😅" title>😅</div>
+<div class="emotion-item" text="😊" title>😊</div>
+<div class="emotion-item" text="🙂" title>🙂</div>
+<div class="emotion-item" text="🙃" title>🙃</div>
+<div class="emotion-item" text="😌" title>😌</div>
+<div class="emotion-item" text="😍" title>😍</div>
+<div class="emotion-item" text="😘" title>😘</div>
+<div class="emotion-item" text="😜" title>😜</div>
+<div class="emotion-item" text="😝" title>😝</div>
+<div class="emotion-item" text="😏" title>😏</div>
+<div class="emotion-item" text="😒" title>😒</div>
+<div class="emotion-item" text="🙄" title>🙄</div>
+<div class="emotion-item" text="😳" title>😳</div>
+<div class="emotion-item" text="😡" title>😡</div>
+<div class="emotion-item" text="😔" title>😔</div>
+<div class="emotion-item" text="😫" title>😫</div>
+<div class="emotion-item" text="😱" title>😱</div>
+<div class="emotion-item" text="😭" title>😭</div>
+<div class="emotion-item" text="💩" title>💩</div>
+<div class="emotion-item" text="👻" title>👻</div>
+<div class="emotion-item" text="🙌" title>🙌</div>
+<div class="emotion-item" text="🖕" title>🖕</div>
+<div class="emotion-item" text="👍" title>👍</div>
+<div class="emotion-item" text="👫" title>👫</div>
+<div class="emotion-item" text="👬" title>👬</div>
+<div class="emotion-item" text="👭" title>👭</div>
+<div class="emotion-item" text="🌚" title>🌚</div>
+<div class="emotion-item" text="🌝" title>🌝</div>
+<div class="emotion-item" text="🙈" title>🙈</div>
+<div class="emotion-item" text="💊" title>💊</div>
+<div class="emotion-item" text="😶" title>😶</div>
+<div class="emotion-item" text="🙏" title>🙏</div>
+<div class="emotion-item" text="🍦" title>🍦</div>
+<div class="emotion-item" text="🍉" title>🍉</div>
+<div class="emotion-item" text="😣" title>😣</div>
+</div>
+<div class="emotion-group d-none" index="2">
+<div class="emotion-item emotion-item-sticker" code="dinosaur-shy" title><img class="lazyload" src="data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iZW1vdGlvbi1sb2FkaW5nIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9Ii04IC04IDQwIDQwIiBzdHJva2U9IiM4ODgiIG9wYWNpdHk9Ii41IiB3aWR0aD0iNjAiIGhlaWdodD0iNjAiPgogIDxwYXRoIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSIxLjUiIGQ9Ik0xNC44MjggMTQuODI4YTQgNCAwIDAxLTUuNjU2IDBNOSAxMGguMDFNMTUgMTBoLjAxTTIxIDEyYTkgOSAwIDExLTE4IDAgOSA5IDAgMDExOCAweiIvPgo8L3N2Zz4=" data-original="/wp-content/themes/argon/stickers/dinosaur/1.jpg"></div>
+<div class="emotion-item emotion-item-sticker" code="dinosaur-daze" title><img class="lazyload" src="data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iZW1vdGlvbi1sb2FkaW5nIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9Ii04IC04IDQwIDQwIiBzdHJva2U9IiM4ODgiIG9wYWNpdHk9Ii41IiB3aWR0aD0iNjAiIGhlaWdodD0iNjAiPgogIDxwYXRoIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSIxLjUiIGQ9Ik0xNC44MjggMTQuODI4YTQgNCAwIDAxLTUuNjU2IDBNOSAxMGguMDFNMTUgMTBoLjAxTTIxIDEyYTkgOSAwIDExLTE4IDAgOSA5IDAgMDExOCAweiIvPgo8L3N2Zz4=" data-original="/wp-content/themes/argon/stickers/dinosaur/2.jpg"></div>
+<div class="emotion-item emotion-item-sticker" code="dinosaur-sweat" title><img class="lazyload" src="data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iZW1vdGlvbi1sb2FkaW5nIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9Ii04IC04IDQwIDQwIiBzdHJva2U9IiM4ODgiIG9wYWNpdHk9Ii41IiB3aWR0aD0iNjAiIGhlaWdodD0iNjAiPgogIDxwYXRoIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSIxLjUiIGQ9Ik0xNC44MjggMTQuODI4YTQgNCAwIDAxLTUuNjU2IDBNOSAxMGguMDFNMTUgMTBoLjAxTTIxIDEyYTkgOSAwIDExLTE4IDAgOSA5IDAgMDExOCAweiIvPgo8L3N2Zz4=" data-original="/wp-content/themes/argon/stickers/dinosaur/3.jpg"></div>
+<div class="emotion-item emotion-item-sticker" code="dinosaur-proud" title><img class="lazyload" src="data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iZW1vdGlvbi1sb2FkaW5nIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9Ii04IC04IDQwIDQwIiBzdHJva2U9IiM4ODgiIG9wYWNpdHk9Ii41IiB3aWR0aD0iNjAiIGhlaWdodD0iNjAiPgogIDxwYXRoIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSIxLjUiIGQ9Ik0xNC44MjggMTQuODI4YTQgNCAwIDAxLTUuNjU2IDBNOSAxMGguMDFNMTUgMTBoLjAxTTIxIDEyYTkgOSAwIDExLTE4IDAgOSA5IDAgMDExOCAweiIvPgo8L3N2Zz4=" data-original="/wp-content/themes/argon/stickers/dinosaur/4.jpg"></div>
+<div class="emotion-item emotion-item-sticker" code="dinosaur-powerless" title><img class="lazyload" src="data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iZW1vdGlvbi1sb2FkaW5nIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9Ii04IC04IDQwIDQwIiBzdHJva2U9IiM4ODgiIG9wYWNpdHk9Ii41IiB3aWR0aD0iNjAiIGhlaWdodD0iNjAiPgogIDxwYXRoIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSIxLjUiIGQ9Ik0xNC44MjggMTQuODI4YTQgNCAwIDAxLTUuNjU2IDBNOSAxMGguMDFNMTUgMTBoLjAxTTIxIDEyYTkgOSAwIDExLTE4IDAgOSA5IDAgMDExOCAweiIvPgo8L3N2Zz4=" data-original="/wp-content/themes/argon/stickers/dinosaur/5.jpg"></div>
+<div class="emotion-item emotion-item-sticker" code="dinosaur-pouting" title><img class="lazyload" src="data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iZW1vdGlvbi1sb2FkaW5nIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9Ii04IC04IDQwIDQwIiBzdHJva2U9IiM4ODgiIG9wYWNpdHk9Ii41IiB3aWR0aD0iNjAiIGhlaWdodD0iNjAiPgogIDxwYXRoIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSIxLjUiIGQ9Ik0xNC44MjggMTQuODI4YTQgNCAwIDAxLTUuNjU2IDBNOSAxMGguMDFNMTUgMTBoLjAxTTIxIDEyYTkgOSAwIDExLTE4IDAgOSA5IDAgMDExOCAweiIvPgo8L3N2Zz4=" data-original="/wp-content/themes/argon/stickers/dinosaur/6.jpg"></div>
+<div class="emotion-item emotion-item-sticker" code="dinosaur-eating" title><img class="lazyload" src="data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iZW1vdGlvbi1sb2FkaW5nIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9Ii04IC04IDQwIDQwIiBzdHJva2U9IiM4ODgiIG9wYWNpdHk9Ii41IiB3aWR0aD0iNjAiIGhlaWdodD0iNjAiPgogIDxwYXRoIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSIxLjUiIGQ9Ik0xNC44MjggMTQuODI4YTQgNCAwIDAxLTUuNjU2IDBNOSAxMGguMDFNMTUgMTBoLjAxTTIxIDEyYTkgOSAwIDExLTE4IDAgOSA5IDAgMDExOCAweiIvPgo8L3N2Zz4=" data-original="/wp-content/themes/argon/stickers/dinosaur/7.jpg"></div>
+<div class="emotion-item emotion-item-sticker" code="dinosaur-ok" title><img class="lazyload" src="data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iZW1vdGlvbi1sb2FkaW5nIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9Ii04IC04IDQwIDQwIiBzdHJva2U9IiM4ODgiIG9wYWNpdHk9Ii41IiB3aWR0aD0iNjAiIGhlaWdodD0iNjAiPgogIDxwYXRoIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSIxLjUiIGQ9Ik0xNC44MjggMTQuODI4YTQgNCAwIDAxLTUuNjU2IDBNOSAxMGguMDFNMTUgMTBoLjAxTTIxIDEyYTkgOSAwIDExLTE4IDAgOSA5IDAgMDExOCAweiIvPgo8L3N2Zz4=" data-original="/wp-content/themes/argon/stickers/dinosaur/8.jpg"></div>
+<div class="emotion-item emotion-item-sticker" code="dinosaur-doubt" title><img class="lazyload" src="data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iZW1vdGlvbi1sb2FkaW5nIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9Ii04IC04IDQwIDQwIiBzdHJva2U9IiM4ODgiIG9wYWNpdHk9Ii41IiB3aWR0aD0iNjAiIGhlaWdodD0iNjAiPgogIDxwYXRoIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSIxLjUiIGQ9Ik0xNC44MjggMTQuODI4YTQgNCAwIDAxLTUuNjU2IDBNOSAxMGguMDFNMTUgMTBoLjAxTTIxIDEyYTkgOSAwIDExLTE4IDAgOSA5IDAgMDExOCAweiIvPgo8L3N2Zz4=" data-original="/wp-content/themes/argon/stickers/dinosaur/9.jpg"></div>
+<div class="emotion-item emotion-item-sticker" code="dinosaur-depressed" title><img class="lazyload" src="data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iZW1vdGlvbi1sb2FkaW5nIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9Ii04IC04IDQwIDQwIiBzdHJva2U9IiM4ODgiIG9wYWNpdHk9Ii41IiB3aWR0aD0iNjAiIGhlaWdodD0iNjAiPgogIDxwYXRoIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSIxLjUiIGQ9Ik0xNC44MjggMTQuODI4YTQgNCAwIDAxLTUuNjU2IDBNOSAxMGguMDFNMTUgMTBoLjAxTTIxIDEyYTkgOSAwIDExLTE4IDAgOSA5IDAgMDExOCAweiIvPgo8L3N2Zz4=" data-original="/wp-content/themes/argon/stickers/dinosaur/10.jpg"></div>
+<div class="emotion-item emotion-item-sticker" code="dinosaur-close-eyes" title><img class="lazyload" src="data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iZW1vdGlvbi1sb2FkaW5nIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9Ii04IC04IDQwIDQwIiBzdHJva2U9IiM4ODgiIG9wYWNpdHk9Ii41IiB3aWR0aD0iNjAiIGhlaWdodD0iNjAiPgogIDxwYXRoIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSIxLjUiIGQ9Ik0xNC44MjggMTQuODI4YTQgNCAwIDAxLTUuNjU2IDBNOSAxMGguMDFNMTUgMTBoLjAxTTIxIDEyYTkgOSAwIDExLTE4IDAgOSA5IDAgMDExOCAweiIvPgo8L3N2Zz4=" data-original="/wp-content/themes/argon/stickers/dinosaur/11.jpg"></div>
+<div class="emotion-item emotion-item-sticker" code="dinosaur-sleeping" title><img class="lazyload" src="data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iZW1vdGlvbi1sb2FkaW5nIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9Ii04IC04IDQwIDQwIiBzdHJva2U9IiM4ODgiIG9wYWNpdHk9Ii41IiB3aWR0aD0iNjAiIGhlaWdodD0iNjAiPgogIDxwYXRoIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSIxLjUiIGQ9Ik0xNC44MjggMTQuODI4YTQgNCAwIDAxLTUuNjU2IDBNOSAxMGguMDFNMTUgMTBoLjAxTTIxIDEyYTkgOSAwIDExLTE4IDAgOSA5IDAgMDExOCAweiIvPgo8L3N2Zz4=" data-original="/wp-content/themes/argon/stickers/dinosaur/12.jpg"></div>
+<div class="emotion-item emotion-item-sticker" code="dinosaur-puzzled" title><img class="lazyload" src="data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iZW1vdGlvbi1sb2FkaW5nIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9Ii04IC04IDQwIDQwIiBzdHJva2U9IiM4ODgiIG9wYWNpdHk9Ii41IiB3aWR0aD0iNjAiIGhlaWdodD0iNjAiPgogIDxwYXRoIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSIxLjUiIGQ9Ik0xNC44MjggMTQuODI4YTQgNCAwIDAxLTUuNjU2IDBNOSAxMGguMDFNMTUgMTBoLjAxTTIxIDEyYTkgOSAwIDExLTE4IDAgOSA5IDAgMDExOCAweiIvPgo8L3N2Zz4=" data-original="/wp-content/themes/argon/stickers/dinosaur/13.jpg"></div>
+<div class="emotion-item emotion-item-sticker" code="dinosaur-agree" title><img class="lazyload" src="data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iZW1vdGlvbi1sb2FkaW5nIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9Ii04IC04IDQwIDQwIiBzdHJva2U9IiM4ODgiIG9wYWNpdHk9Ii41IiB3aWR0aD0iNjAiIGhlaWdodD0iNjAiPgogIDxwYXRoIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSIxLjUiIGQ9Ik0xNC44MjggMTQuODI4YTQgNCAwIDAxLTUuNjU2IDBNOSAxMGguMDFNMTUgMTBoLjAxTTIxIDEyYTkgOSAwIDExLTE4IDAgOSA5IDAgMDExOCAweiIvPgo8L3N2Zz4=" data-original="/wp-content/themes/argon/stickers/dinosaur/14.jpg"></div>
+<div class="emotion-item emotion-item-sticker" code="dinosaur-crazy" title><img class="lazyload" src="data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iZW1vdGlvbi1sb2FkaW5nIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9Ii04IC04IDQwIDQwIiBzdHJva2U9IiM4ODgiIG9wYWNpdHk9Ii41IiB3aWR0aD0iNjAiIGhlaWdodD0iNjAiPgogIDxwYXRoIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSIxLjUiIGQ9Ik0xNC44MjggMTQuODI4YTQgNCAwIDAxLTUuNjU2IDBNOSAxMGguMDFNMTUgMTBoLjAxTTIxIDEyYTkgOSAwIDExLTE4IDAgOSA5IDAgMDExOCAweiIvPgo8L3N2Zz4=" data-original="/wp-content/themes/argon/stickers/dinosaur/15.jpg"></div>
+<div class="emotion-item emotion-item-sticker" code="dinosaur-angry" title><img class="lazyload" src="data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iZW1vdGlvbi1sb2FkaW5nIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9Ii04IC04IDQwIDQwIiBzdHJva2U9IiM4ODgiIG9wYWNpdHk9Ii41IiB3aWR0aD0iNjAiIGhlaWdodD0iNjAiPgogIDxwYXRoIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSIxLjUiIGQ9Ik0xNC44MjggMTQuODI4YTQgNCAwIDAxLTUuNjU2IDBNOSAxMGguMDFNMTUgMTBoLjAxTTIxIDEyYTkgOSAwIDExLTE4IDAgOSA5IDAgMDExOCAweiIvPgo8L3N2Zz4=" data-original="/wp-content/themes/argon/stickers/dinosaur/16.jpg"></div>
+</div>
+<div class="emotion-group d-none" index="3">
+<div class="emotion-item emotion-item-sticker" code="flower-flower" title><img class="lazyload" src="data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iZW1vdGlvbi1sb2FkaW5nIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9Ii04IC04IDQwIDQwIiBzdHJva2U9IiM4ODgiIG9wYWNpdHk9Ii41IiB3aWR0aD0iNjAiIGhlaWdodD0iNjAiPgogIDxwYXRoIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSIxLjUiIGQ9Ik0xNC44MjggMTQuODI4YTQgNCAwIDAxLTUuNjU2IDBNOSAxMGguMDFNMTUgMTBoLjAxTTIxIDEyYTkgOSAwIDExLTE4IDAgOSA5IDAgMDExOCAweiIvPgo8L3N2Zz4=" data-original="/wp-content/themes/argon/stickers/flower/1.jpg"></div>
+<div class="emotion-item emotion-item-sticker" code="flower-grass" title><img class="lazyload" src="data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iZW1vdGlvbi1sb2FkaW5nIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9Ii04IC04IDQwIDQwIiBzdHJva2U9IiM4ODgiIG9wYWNpdHk9Ii41IiB3aWR0aD0iNjAiIGhlaWdodD0iNjAiPgogIDxwYXRoIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSIxLjUiIGQ9Ik0xNC44MjggMTQuODI4YTQgNCAwIDAxLTUuNjU2IDBNOSAxMGguMDFNMTUgMTBoLjAxTTIxIDEyYTkgOSAwIDExLTE4IDAgOSA5IDAgMDExOCAweiIvPgo8L3N2Zz4=" data-original="/wp-content/themes/argon/stickers/flower/2.jpg"></div>
+<div class="emotion-item emotion-item-sticker" code="flower-leaf" title><img class="lazyload" src="data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iZW1vdGlvbi1sb2FkaW5nIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9Ii04IC04IDQwIDQwIiBzdHJva2U9IiM4ODgiIG9wYWNpdHk9Ii41IiB3aWR0aD0iNjAiIGhlaWdodD0iNjAiPgogIDxwYXRoIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSIxLjUiIGQ9Ik0xNC44MjggMTQuODI4YTQgNCAwIDAxLTUuNjU2IDBNOSAxMGguMDFNMTUgMTBoLjAxTTIxIDEyYTkgOSAwIDExLTE4IDAgOSA5IDAgMDExOCAweiIvPgo8L3N2Zz4=" data-original="/wp-content/themes/argon/stickers/flower/3.jpg"></div>
+<div class="emotion-item emotion-item-sticker" code="flower-star" title><img class="lazyload" src="data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iZW1vdGlvbi1sb2FkaW5nIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9Ii04IC04IDQwIDQwIiBzdHJva2U9IiM4ODgiIG9wYWNpdHk9Ii41IiB3aWR0aD0iNjAiIGhlaWdodD0iNjAiPgogIDxwYXRoIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSIxLjUiIGQ9Ik0xNC44MjggMTQuODI4YTQgNCAwIDAxLTUuNjU2IDBNOSAxMGguMDFNMTUgMTBoLjAxTTIxIDEyYTkgOSAwIDExLTE4IDAgOSA5IDAgMDExOCAweiIvPgo8L3N2Zz4=" data-original="/wp-content/themes/argon/stickers/flower/4.jpg"></div>
+<div class="emotion-item emotion-item-sticker" code="flower-sun" title><img class="lazyload" src="data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iZW1vdGlvbi1sb2FkaW5nIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9Ii04IC04IDQwIDQwIiBzdHJva2U9IiM4ODgiIG9wYWNpdHk9Ii41IiB3aWR0aD0iNjAiIGhlaWdodD0iNjAiPgogIDxwYXRoIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSIxLjUiIGQ9Ik0xNC44MjggMTQuODI4YTQgNCAwIDAxLTUuNjU2IDBNOSAxMGguMDFNMTUgMTBoLjAxTTIxIDEyYTkgOSAwIDExLTE4IDAgOSA5IDAgMDExOCAweiIvPgo8L3N2Zz4=" data-original="/wp-content/themes/argon/stickers/flower/5.jpg"></div>
+<div class="emotion-item emotion-item-sticker" code="flower-moon" title><img class="lazyload" src="data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iZW1vdGlvbi1sb2FkaW5nIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9Ii04IC04IDQwIDQwIiBzdHJva2U9IiM4ODgiIG9wYWNpdHk9Ii41IiB3aWR0aD0iNjAiIGhlaWdodD0iNjAiPgogIDxwYXRoIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSIxLjUiIGQ9Ik0xNC44MjggMTQuODI4YTQgNCAwIDAxLTUuNjU2IDBNOSAxMGguMDFNMTUgMTBoLjAxTTIxIDEyYTkgOSAwIDExLTE4IDAgOSA5IDAgMDExOCAweiIvPgo8L3N2Zz4=" data-original="/wp-content/themes/argon/stickers/flower/6.jpg"></div>
+<div class="emotion-item emotion-item-sticker" code="flower-water" title><img class="lazyload" src="data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iZW1vdGlvbi1sb2FkaW5nIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9Ii04IC04IDQwIDQwIiBzdHJva2U9IiM4ODgiIG9wYWNpdHk9Ii41IiB3aWR0aD0iNjAiIGhlaWdodD0iNjAiPgogIDxwYXRoIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSIxLjUiIGQ9Ik0xNC44MjggMTQuODI4YTQgNCAwIDAxLTUuNjU2IDBNOSAxMGguMDFNMTUgMTBoLjAxTTIxIDEyYTkgOSAwIDExLTE4IDAgOSA5IDAgMDExOCAweiIvPgo8L3N2Zz4=" data-original="/wp-content/themes/argon/stickers/flower/7.jpg"></div>
+<div class="emotion-item emotion-item-sticker" code="flower-heihei" title><img class="lazyload" src="data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iZW1vdGlvbi1sb2FkaW5nIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9Ii04IC04IDQwIDQwIiBzdHJva2U9IiM4ODgiIG9wYWNpdHk9Ii41IiB3aWR0aD0iNjAiIGhlaWdodD0iNjAiPgogIDxwYXRoIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSIxLjUiIGQ9Ik0xNC44MjggMTQuODI4YTQgNCAwIDAxLTUuNjU2IDBNOSAxMGguMDFNMTUgMTBoLjAxTTIxIDEyYTkgOSAwIDExLTE4IDAgOSA5IDAgMDExOCAweiIvPgo8L3N2Zz4=" data-original="/wp-content/themes/argon/stickers/flower/8.jpg"></div>
+<div class="emotion-item emotion-item-sticker" code="flower-lemon" title><img class="lazyload" src="data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iZW1vdGlvbi1sb2FkaW5nIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9Ii04IC04IDQwIDQwIiBzdHJva2U9IiM4ODgiIG9wYWNpdHk9Ii41IiB3aWR0aD0iNjAiIGhlaWdodD0iNjAiPgogIDxwYXRoIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSIxLjUiIGQ9Ik0xNC44MjggMTQuODI4YTQgNCAwIDAxLTUuNjU2IDBNOSAxMGguMDFNMTUgMTBoLjAxTTIxIDEyYTkgOSAwIDExLTE4IDAgOSA5IDAgMDExOCAweiIvPgo8L3N2Zz4=" data-original="/wp-content/themes/argon/stickers/flower/9.jpg"></div>
+<div class="emotion-item emotion-item-sticker" code="flower-birthday" title><img class="lazyload" src="data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iZW1vdGlvbi1sb2FkaW5nIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9Ii04IC04IDQwIDQwIiBzdHJva2U9IiM4ODgiIG9wYWNpdHk9Ii41IiB3aWR0aD0iNjAiIGhlaWdodD0iNjAiPgogIDxwYXRoIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSIxLjUiIGQ9Ik0xNC44MjggMTQuODI4YTQgNCAwIDAxLTUuNjU2IDBNOSAxMGguMDFNMTUgMTBoLjAxTTIxIDEyYTkgOSAwIDExLTE4IDAgOSA5IDAgMDExOCAweiIvPgo8L3N2Zz4=" data-original="/wp-content/themes/argon/stickers/flower/10.jpg"></div>
+<div class="emotion-item emotion-item-sticker" code="flower-sea" title><img class="lazyload" src="data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iZW1vdGlvbi1sb2FkaW5nIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9Ii04IC04IDQwIDQwIiBzdHJva2U9IiM4ODgiIG9wYWNpdHk9Ii41IiB3aWR0aD0iNjAiIGhlaWdodD0iNjAiPgogIDxwYXRoIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSIxLjUiIGQ9Ik0xNC44MjggMTQuODI4YTQgNCAwIDAxLTUuNjU2IDBNOSAxMGguMDFNMTUgMTBoLjAxTTIxIDEyYTkgOSAwIDExLTE4IDAgOSA5IDAgMDExOCAweiIvPgo8L3N2Zz4=" data-original="/wp-content/themes/argon/stickers/flower/11.jpg"></div>
+<div class="emotion-item emotion-item-sticker" code="flower-vegetable" title><img class="lazyload" src="data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iZW1vdGlvbi1sb2FkaW5nIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9Ii04IC04IDQwIDQwIiBzdHJva2U9IiM4ODgiIG9wYWNpdHk9Ii41IiB3aWR0aD0iNjAiIGhlaWdodD0iNjAiPgogIDxwYXRoIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSIxLjUiIGQ9Ik0xNC44MjggMTQuODI4YTQgNCAwIDAxLTUuNjU2IDBNOSAxMGguMDFNMTUgMTBoLjAxTTIxIDEyYTkgOSAwIDExLTE4IDAgOSA5IDAgMDExOCAweiIvPgo8L3N2Zz4=" data-original="/wp-content/themes/argon/stickers/flower/12.jpg"></div>
+<div class="emotion-item emotion-item-sticker" code="flower-tile" title><img class="lazyload" src="data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iZW1vdGlvbi1sb2FkaW5nIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9Ii04IC04IDQwIDQwIiBzdHJva2U9IiM4ODgiIG9wYWNpdHk9Ii41IiB3aWR0aD0iNjAiIGhlaWdodD0iNjAiPgogIDxwYXRoIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSIxLjUiIGQ9Ik0xNC44MjggMTQuODI4YTQgNCAwIDAxLTUuNjU2IDBNOSAxMGguMDFNMTUgMTBoLjAxTTIxIDEyYTkgOSAwIDExLTE4IDAgOSA5IDAgMDExOCAweiIvPgo8L3N2Zz4=" data-original="/wp-content/themes/argon/stickers/flower/13.jpg"></div>
+<div class="emotion-item emotion-item-sticker" code="flower-utf" title><img class="lazyload" src="data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iZW1vdGlvbi1sb2FkaW5nIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9Ii04IC04IDQwIDQwIiBzdHJva2U9IiM4ODgiIG9wYWNpdHk9Ii41IiB3aWR0aD0iNjAiIGhlaWdodD0iNjAiPgogIDxwYXRoIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSIxLjUiIGQ9Ik0xNC44MjggMTQuODI4YTQgNCAwIDAxLTUuNjU2IDBNOSAxMGguMDFNMTUgMTBoLjAxTTIxIDEyYTkgOSAwIDExLTE4IDAgOSA5IDAgMDExOCAweiIvPgo8L3N2Zz4=" data-original="/wp-content/themes/argon/stickers/flower/14.jpg"></div>
+<div class="emotion-group-description">Source: github.com/k4yt3x/flowerhd</div>
+</div> </div>
+<div class="emotion-keyboard-bar">
+<div class="emotion-group-name active" index="0">颜文字</div>
+<div class="emotion-group-name" index="1">Emoji</div>
+<div class="emotion-group-name" index="2">小恐龙</div>
+<div class="emotion-group-name" index="3">花!</div> </div>
+</div> </div>
+</div>
+<input id="post_comment_captcha_seed" value="<br />
+<b>Warning</b>:  Undefined variable $commentCaptchaSeed in <b>/www/wwwroot/xy1991.win/wp-content/themes/argon/comments.php</b> on line <b>231</b><br />
+" style="display: none;">
+<input id="post_comment_post_id" value="170" style="display: none;">
+</form>
+</div>
+</div>
+<div id="comment_edit_history" class="modal fade" tabindex="-1" role="dialog" aria-modal="true">
+<div class="modal-dialog modal-lg">
+<div class="modal-content">
+<div class="modal-header">
+<h4 class="modal-title" style="font-size: 20px;"></h4>
+<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+<span aria-hidden="true">×</span>
+</button>
+</div>
+<div class="modal-body" style="word-break: break-word;"></div>
+</div>
+</div>
+</div>
+<div id="comment_pin_comfirm_dialog" class="modal fade" tabindex="-1" role="dialog" aria-modal="true">
+<div class="modal-dialog">
+<div class="modal-content">
+<div class="modal-header">
+<h4 class="modal-title" style="font-size: 20px;"></h4>
+<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+<span aria-hidden="true">×</span>
+</button>
+</div>
+<div class="modal-body" style="word-break: break-word;"></div>
+<div class="modal-footer">
+<button type="button" class="btn btn-secondary btn-dismiss" data-dismiss="modal"></button>
+<button type="button" class="btn btn-primary btn-comfirm"></button>
+</div>
+</div>
+</div>
+</div>
+<div class="post-navigation card shadow-sm">
+<div class="post-navigation-item post-navigation-pre">
+<span class="page-navigation-extra-text"><i class="fa fa-arrow-circle-o-left" aria-hidden="true"></i>上一篇</span><a href="/coreldraw-2021-23-5-0-506-%e7%a0%b4%e8%a7%a3%e7%89%88/" rel="prev">CorelDRAW 2021 23.5.0.506 破解版</a>
+</div>
+<div class="post-navigation-item post-navigation-next">
+<span class="page-navigation-extra-text">下一篇 <i class="fa fa-arrow-circle-o-right" aria-hidden="true"></i></span><a href="/%e4%b8%80%e9%94%aedd%e8%84%9a%e6%9c%ac/" rel="next">一键DD脚本</a>
+</div>
+</div>
+<footer id="footer" class="site-footer card shadow-sm border-0">
+<div>Theme <a href="https://github.com/solstice23/argon-theme" target="_blank"><strong>Argon</strong></a>
+</div>
+</footer>
+</main>
+</div>
+</div>
+<script src="/wp-content/themes/argon/argontheme.js?v1_3_5"></script>
+<script>window.MathJax = {
+					tex: {
+						inlineMath: [["$", "$"], ["\\\\(", "\\\\)"]],
+						displayMath: [['$$','$$']],
+						processEscapes: true,
+						packages: {'[+]': ['noerrors']}
+					},
+					options: {
+						skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+						ignoreHtmlClass: 'tex2jax_ignore',
+						processHtmlClass: 'tex2jax_process'
+					},
+					loader: {
+						load: ['[tex]/noerrors']
+					}
+				};</script>
+<script src="//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" id="MathJax-script" async></script>
+<link rel="stylesheet" href="/wp-content/themes/argon/assets/vendor/highlight/styles/vs2015.css">
+
+
+<span class="ssp-id" style="display:none">170</span>
+<p id="optimized_by_wpjam_basic">Optimized by <a href="https://blog.wpjam.com/project/wpjam-basic/">WPJAM Basic</a>。</p>
+</body>
+</html>
